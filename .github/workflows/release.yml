@@ -1,0 +1,44 @@
+name: Release
+
+# On a pushed `v*` tag: build the static SPA, zip it as dist.zip, and attach it
+# to the GitHub Release. The prebuilt artifact lets self-hosters (including
+# air-gapped enterprise) drop the static site behind any web server without a
+# toolchain (council §7).
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install (locked, reproducible)
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Package dist.zip
+        run: |
+          cd dist
+          zip -r ../dist.zip .
+
+      - name: Create release and attach dist.zip
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist.zip
+          generate_release_notes: true
