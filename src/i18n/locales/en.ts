@@ -22,9 +22,31 @@ export const en = {
   'home.tasksEmpty': 'The curated task library is coming soon.',
 
   'task.backToHome': '← All tasks',
-  'task.placeholderHeading': 'Task: {task}',
-  'task.placeholderBody':
-    'This is a routing placeholder. The form engine and curated tasks are not built yet.',
+
+  // Two-pane workbench chrome (issue #6), shared by every task.
+  'workbench.formRegionLabel': 'Task form',
+
+  // Form renderer chrome (#4). `errors.*` are interpolated with {label}/{min}/{max}.
+  'form.required': '(required)',
+  'form.errorSummaryHeading': 'Please fix the following',
+  'form.submit': 'Validate form',
+  'form.error.required': '{label} is required',
+  'form.error.pattern': '{label} is not in the expected format',
+  'form.error.min': '{label} must be at least {min}',
+  'form.error.max': '{label} must be at most {max}',
+  'form.error.notANumber': '{label} must be a number',
+
+  // Device-CLI preview pane (#5).
+  'preview.regionLabel': 'Device CLI preview',
+  'preview.heading': 'Device CLI preview',
+  'preview.degradedNotice':
+    'Preview may differ from the device — the generated vars are still valid.',
+  'preview.empty': 'Fill out the form to see the device configuration.',
+
+  // group_vars/host_vars output (display only here; copy/download land in #12).
+  'output.heading': 'Ansible vars',
+  'output.pathLabel': 'Suggested path',
+  'output.regionLabel': 'Generated Ansible vars YAML',
 
   'notFound.title': 'Page not found',
   'notFound.body': "We couldn't find the page you were looking for.",
