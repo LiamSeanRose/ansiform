@@ -7,7 +7,7 @@
  *   src/tasks/<slug>/index.ts   →   export const task: TaskModule = { … }
  *
  * No edit to this file, no shared index, no registration call. Because each task
- * owns a disjoint folder, five agents can add #7–#11 in parallel without ever
+ * owns a disjoint folder, #7–#11 can be added in parallel without ever
  * touching the same file. See `src/tasks/README.md` for the authoring guide.
  *
  * i18n note: a task carries its own copy in `messages` (label/help/legend keys

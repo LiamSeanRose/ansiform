@@ -3,7 +3,7 @@
 Each curated task is **one self-contained folder** under `src/tasks/<slug>/`. Adding a
 task is adding a folder — there is **no shared index to edit and no registration call**.
 `registry.ts` discovers tasks with Vite's `import.meta.glob('./*/index.ts')`, so the
-wave-3 fan-out (#7–#11) is conflict-free: five agents can add five folders in parallel
+wave-3 fan-out (#7–#11) is conflict-free: five folders can be added in parallel
 without touching the same file.
 
 ## Add a task
