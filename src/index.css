@@ -106,3 +106,181 @@ main {
 .site-footer p {
   margin: 0;
 }
+
+/* Task pages get more room for the two-pane layout. */
+.page--task {
+  max-width: none;
+}
+
+/* Home task listing. */
+.task-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+.task-list__item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--surface);
+}
+.task-list__link {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.task-list__desc {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+/* Two-pane workbench: form left, outputs right; stacks on narrow screens. */
+.workbench {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+}
+@media (max-width: 60rem) {
+  .workbench {
+    grid-template-columns: 1fr;
+  }
+}
+.workbench__pane {
+  min-width: 0;
+}
+.workbench__heading,
+.output__heading,
+.preview__heading {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* Form fields. */
+.form__group {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem 1.25rem;
+  margin: 0 0 1rem;
+  background: var(--surface);
+}
+.form__legend {
+  padding: 0 0.4rem;
+  font-weight: 600;
+}
+.form-field {
+  margin: 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.form-field--boolean {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+.form-field__label {
+  font-weight: 600;
+}
+.form-field--boolean .form-field__label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+.form-field__required {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+.form-field__help {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.form-field__error {
+  color: #fca5a5;
+  font-size: 0.85rem;
+}
+.form-field__control {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+}
+.form-field__control[aria-invalid='true'] {
+  border-color: #f87171;
+}
+.form__error-summary {
+  border: 1px solid #f87171;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+  background: rgba(248, 113, 113, 0.08);
+}
+.form__error-summary-heading {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+.form__error-summary-link {
+  background: none;
+  border: none;
+  color: #fca5a5;
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+.form__submit {
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  color: #0b1120;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Preview + YAML output panes share the monospace block treatment. */
+.preview,
+.output {
+  margin: 0 0 1.5rem;
+}
+.preview__notice {
+  margin: 0 0 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #fde68a;
+  background: rgba(253, 230, 138, 0.1);
+  border: 1px solid rgba(253, 230, 138, 0.35);
+}
+.preview__cli,
+.output__yaml {
+  margin: 0;
+  padding: 1rem;
+  background: #0b1120;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: auto;
+  font-family: ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  white-space: pre;
+  min-height: 4rem;
+}
+.output__path {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.output__filename {
+  color: var(--text);
+}

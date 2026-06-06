@@ -1,0 +1,105 @@
+/**
+ * Reference task: Cisco IOS interface + IPv4 address (issue #6).
+ *
+ * This is the copy-paste pattern for the wave-3 task library (#7–#11). A task is
+ * a `TaskModule`: a correct-by-construction `FormSchema`, a Jinja2 preview
+ * template that renders to device CLI, a default output scope, and its own copy.
+ * Drop a folder like this under `src/tasks/<slug>/` and it auto-registers.
+ *
+ * Correctness model (council §4): the YAML vars are taken straight from the field
+ * values and are always correct; this template only drives the *preview*, which
+ * uses the `exact`-tier `ipaddr` filter so the rendered CLI matches Ansible.
+ */
+import type { FormSchema } from '../../core';
+import type { TaskModule } from '../registry';
+
+const schema: FormSchema = {
+  groups: [
+    {
+      legend: 'task.interface-ip.legend',
+      fields: [
+        {
+          type: 'text',
+          name: 'interface',
+          label: 'task.interface-ip.field.interface.label',
+          help: 'task.interface-ip.field.interface.help',
+          required: true,
+          placeholder: 'GigabitEthernet0/1',
+        },
+        {
+          type: 'text',
+          name: 'description',
+          label: 'task.interface-ip.field.description.label',
+          help: 'task.interface-ip.field.description.help',
+          placeholder: 'Uplink to core',
+          omitWhenBlank: true,
+        },
+        {
+          type: 'text',
+          name: 'ip_address',
+          label: 'task.interface-ip.field.ip_address.label',
+          help: 'task.interface-ip.field.ip_address.help',
+          required: true,
+          placeholder: '10.0.0.1/24',
+        },
+        {
+          type: 'number',
+          name: 'mtu',
+          label: 'task.interface-ip.field.mtu.label',
+          help: 'task.interface-ip.field.mtu.help',
+          min: 68,
+          max: 9216,
+          omitWhenBlank: true,
+        },
+        {
+          type: 'boolean',
+          name: 'enabled',
+          label: 'task.interface-ip.field.enabled.label',
+          help: 'task.interface-ip.field.enabled.help',
+          default: true,
+        },
+      ],
+    },
+  ],
+};
+
+// Jinja2 → Cisco IOS. Authored for Ansible's environment (trim_blocks=True): the
+// newline after each `{% endif %}` is swallowed, so optional lines leave no gap.
+const template = [
+  'interface {{ interface }}',
+  '{% if description %} description {{ description }}',
+  "{% endif %} ip address {{ ip_address | ipaddr('address') }} {{ ip_address | ipaddr('netmask') }}",
+  '{% if mtu %} mtu {{ mtu }}',
+  '{% endif %}{% if enabled %} no shutdown',
+  '{% else %} shutdown',
+  '{% endif %}',
+].join('\n');
+
+export const task: TaskModule = {
+  definition: {
+    slug: 'interface-ip',
+    title: 'Cisco IOS interface & IP address',
+    description:
+      'Generate Ansible host_vars and a Cisco IOS interface configuration — set the interface, IPv4 address, MTU, and admin state — with a live device-CLI preview.',
+    schema,
+    template,
+    defaultScope: { kind: 'host', name: 'switch1' },
+  },
+  messages: {
+    en: {
+      'task.interface-ip.legend': 'Interface & IP address',
+      'task.interface-ip.field.interface.label': 'Interface',
+      'task.interface-ip.field.interface.help':
+        'The interface to configure, e.g. GigabitEthernet0/1.',
+      'task.interface-ip.field.description.label': 'Description',
+      'task.interface-ip.field.description.help':
+        'Optional interface description. Omitted from the vars when left blank.',
+      'task.interface-ip.field.ip_address.label': 'IP address',
+      'task.interface-ip.field.ip_address.help': 'IPv4 address with prefix, e.g. 10.0.0.1/24.',
+      'task.interface-ip.field.mtu.label': 'MTU',
+      'task.interface-ip.field.mtu.help': 'Optional MTU in bytes (68–9216). Omitted when blank.',
+      'task.interface-ip.field.enabled.label': 'Administratively enabled',
+      'task.interface-ip.field.enabled.help': 'When off, the interface is shut down.',
+    },
+  },
+};

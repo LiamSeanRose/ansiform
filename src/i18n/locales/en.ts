@@ -31,6 +31,28 @@ export const en = {
   'notFound.backHome': 'Go to the home page',
 
   'footer.tagline': 'Client-side · zero-egress · free and open source (Apache-2.0)',
+
+  // Form chrome (#4) — shared by every task. Field labels/help come from the
+  // task itself; these are the renderer's own copy.
+  'form.requiredLabel': '(required)',
+  'form.errorSummaryHeading': 'Please fix the following before continuing:',
+  'form.submitLabel': 'Validate',
+  'form.error.required': '{label} is required.',
+  'form.error.pattern': '{label} is not in the expected format.',
+  'form.error.min': '{label} must be at least {min}.',
+  'form.error.max': '{label} must be at most {max}.',
+  'form.error.notANumber': '{label} must be a number.',
+
+  // Device-CLI preview (#5).
+  'preview.regionLabel': 'Device CLI preview',
+  'preview.heading': 'Live preview (Cisco IOS)',
+  'preview.degradedNotice': 'Preview may differ — the YAML output is still valid.',
+  'preview.empty': 'Fill in the form to see the device configuration.',
+
+  // Two-pane workbench (#6).
+  'workbench.formHeading': 'Configure',
+  'workbench.outputHeading': 'Ansible vars (YAML)',
+  'workbench.outputPathLabel': 'Suggested file:',
 } as const;
 
 /** The canonical message catalogue shape every locale must satisfy. */
