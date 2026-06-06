@@ -1,18 +1,14 @@
 /**
- * Curated task: Cisco IOS OSPF (issue #9).
+ * Curated task: Cisco IOS OSPF — multi-network (issues #9, #25).
  *
- * Cloned from the interface-ip reference (#6). A single OSPF process with a
- * router-id and **one** network/area statement.
- *
- * Scope note (per the #18 design review, 2026-06-06): OSPF normally carries many
- * `network … area …` lines, but `FormSchema` has no `list`/repeating-group field
- * type yet, and improvising one is out of scope for a task module. v1 ships the
- * **single-entry cut** (one network) — the same approach #8 took for a single BGP
- * neighbor. Multiple networks land once a real `list` field type exists.
+ * A single OSPF process with an optional router-id and one or more `network …
+ * area …` statements, built on the `list` field type (#20). Cloned from the
+ * interface-ip reference (#6).
  *
  * Correctness (council §4): the YAML vars come straight from the field values and
  * are always correct. The template uses no filters, so the device-CLI preview is
- * always `exact`.
+ * always `exact`. Each network line ends on an output token, so Ansible's
+ * trim_blocks keeps the per-line break.
  */
 import type { FormSchema } from '../../core';
 import type { TaskModule } from '../registry';
@@ -43,52 +39,57 @@ const schema: FormSchema = {
           placeholder: '1.1.1.1',
           omitWhenBlank: true,
         },
-      ],
-    },
-    {
-      legend: 'task.ospf.legend.network',
-      fields: [
         {
-          type: 'text',
-          name: 'network',
-          label: 'task.ospf.field.network.label',
-          help: 'task.ospf.field.network.help',
+          type: 'list',
+          name: 'networks',
+          label: 'task.ospf.field.networks.label',
+          help: 'task.ospf.field.networks.help',
           required: true,
-          pattern: IPV4,
-          placeholder: '10.0.0.0',
-        },
-        {
-          type: 'text',
-          name: 'wildcard',
-          label: 'task.ospf.field.wildcard.label',
-          help: 'task.ospf.field.wildcard.help',
-          required: true,
-          pattern: IPV4,
-          placeholder: '0.0.0.255',
-        },
-        {
-          type: 'number',
-          name: 'area',
-          label: 'task.ospf.field.area.label',
-          help: 'task.ospf.field.area.help',
-          required: true,
-          min: 0,
-          max: 4294967295,
-          default: 0,
+          minRows: 1,
+          addLabel: 'task.ospf.networks.add',
+          removeLabel: 'task.ospf.networks.remove',
+          itemLabel: 'task.ospf.networks.item',
+          fields: [
+            {
+              type: 'text',
+              name: 'network',
+              label: 'task.ospf.field.network.label',
+              help: 'task.ospf.field.network.help',
+              required: true,
+              pattern: IPV4,
+              placeholder: '10.0.0.0',
+            },
+            {
+              type: 'text',
+              name: 'wildcard',
+              label: 'task.ospf.field.wildcard.label',
+              help: 'task.ospf.field.wildcard.help',
+              required: true,
+              pattern: IPV4,
+              placeholder: '0.0.0.255',
+            },
+            {
+              type: 'number',
+              name: 'area',
+              label: 'task.ospf.field.area.label',
+              help: 'task.ospf.field.area.help',
+              required: true,
+              min: 0,
+              max: 4294967295,
+              default: 0,
+            },
+          ],
         },
       ],
     },
   ],
 };
 
-// Jinja2 → Cisco IOS. Authored for Ansible's environment (trim_blocks=True): the
-// newline after each `{% endif %}` is swallowed, so the optional router-id line
-// leaves no gap when blank.
 const template = [
   'router ospf {{ process_id }}',
   '{% if router_id %} router-id {{ router_id }}',
-  '{% endif %} network {{ network }} {{ wildcard }} area {{ area }}',
-  '',
+  '{% endif %}{% for n in networks %} network {{ n.network }} {{ n.wildcard }} area {{ n.area }}',
+  '{% endfor %}',
 ].join('\n');
 
 export const task: TaskModule = {
@@ -96,7 +97,7 @@ export const task: TaskModule = {
     slug: 'ospf',
     title: 'Cisco IOS OSPF',
     description:
-      'Generate Ansible host_vars and a Cisco IOS OSPF configuration — process ID, router ID, and a network/area statement — with a live device-CLI preview.',
+      'Generate Ansible host_vars and a Cisco IOS OSPF configuration — process ID, router ID, and one or more network/area statements — with a live device-CLI preview.',
     schema,
     template,
     defaultScope: { kind: 'host', name: 'router1' },
@@ -104,12 +105,17 @@ export const task: TaskModule = {
   messages: {
     en: {
       'task.ospf.legend.process': 'OSPF process',
-      'task.ospf.legend.network': 'Network',
       'task.ospf.field.process_id.label': 'Process ID',
       'task.ospf.field.process_id.help': 'OSPF process ID, local to the device (1–65535).',
       'task.ospf.field.router_id.label': 'Router ID',
       'task.ospf.field.router_id.help':
         'Optional OSPF router ID in IPv4 form, e.g. 1.1.1.1. Omitted from the vars when left blank.',
+      'task.ospf.field.networks.label': 'Networks',
+      'task.ospf.field.networks.help':
+        'One or more networks to advertise; each is a network address, wildcard mask, and area.',
+      'task.ospf.networks.add': 'Add network',
+      'task.ospf.networks.item': 'Network {index}',
+      'task.ospf.networks.remove': 'Remove network {index}',
       'task.ospf.field.network.label': 'Network',
       'task.ospf.field.network.help': 'Network address to advertise, e.g. 10.0.0.0.',
       'task.ospf.field.wildcard.label': 'Wildcard mask',
@@ -119,13 +125,17 @@ export const task: TaskModule = {
     },
     fr: {
       'task.ospf.legend.process': 'Processus OSPF',
-      'task.ospf.legend.network': 'Réseau',
       'task.ospf.field.process_id.label': 'ID de processus',
-      'task.ospf.field.process_id.help':
-        'ID de processus OSPF, local à l’équipement (1–65535).',
+      'task.ospf.field.process_id.help': 'ID de processus OSPF, local à l’équipement (1–65535).',
       'task.ospf.field.router_id.label': 'Identifiant de routeur (Router ID)',
       'task.ospf.field.router_id.help':
         'Router ID OSPF facultatif au format IPv4, par ex. 1.1.1.1. Omis des variables si laissé vide.',
+      'task.ospf.field.networks.label': 'Réseaux',
+      'task.ospf.field.networks.help':
+        'Un ou plusieurs réseaux à annoncer ; chacun avec adresse réseau, masque générique et aire.',
+      'task.ospf.networks.add': 'Ajouter un réseau',
+      'task.ospf.networks.item': 'Réseau {index}',
+      'task.ospf.networks.remove': 'Supprimer le réseau {index}',
       'task.ospf.field.network.label': 'Réseau',
       'task.ospf.field.network.help': 'Adresse réseau à annoncer, par ex. 10.0.0.0.',
       'task.ospf.field.wildcard.label': 'Masque générique (wildcard)',
