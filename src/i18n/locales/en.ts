@@ -127,6 +127,18 @@ export const en = {
     'Preview may differ — the underlying values are still correct. Some filters are approximated here.',
   'reader.fidelity.unsupported':
     'Preview may differ — this template uses filters or constructs Ansiform cannot render exactly, so the variable list may be incomplete. Verify against the real template.',
+
+  // Template reader — edit mode (#31). All-text extracted fields, no inference.
+  'reader.edit.ack':
+    'I understand types and validation are not inferred — verify these values before deploying.',
+  'reader.edit.enter': 'Edit these variables',
+  'reader.edit.exit': 'Back to read-only',
+  'reader.edit.uninferred':
+    'Every field below is plain text with no inferred type, format, or validation — exactly what was extracted, nothing more. The generated YAML is byte-correct for the values you enter; verify them against the real template before deploying.',
+  'reader.edit.formHeading': 'Fill the extracted variables',
+  'reader.edit.fieldsLegend': 'Extracted variables (untyped)',
+  'reader.edit.submitLabel': 'Refresh preview',
+  'reader.edit.outputHeading': 'Extracted vars (YAML)',
 } as const;
 
 /**

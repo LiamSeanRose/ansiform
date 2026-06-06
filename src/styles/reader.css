@@ -103,3 +103,37 @@
   color: var(--danger-text);
   border-color: var(--danger);
 }
+
+/* Edit-mode gate (#31): acknowledgment + read/edit toggle. */
+.reader__modebar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+.reader__ack {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  flex: 1 1 16rem;
+}
+.reader__mode-toggle {
+  flex: 0 0 auto;
+}
+.reader__mode-toggle[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Extracted-field provenance: a thin left rule makes the wall around the
+   untrusted, uninferred fields visible. */
+.reader__edit {
+  border-left: 4px solid var(--warning-border);
+  padding-left: var(--space-4);
+}

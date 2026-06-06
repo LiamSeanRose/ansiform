@@ -119,6 +119,10 @@ function renderControl({ field, value, fieldId, aria, invalid, onValueChange, t,
     'aria-describedby': aria,
     'aria-invalid': invalid,
     'aria-required': field.required || undefined,
+    // Provenance marker (#31): present only on reader-extracted fields, so the
+    // DOM advertises that this input's type was not inferred. Undefined → React
+    // omits the attribute entirely for curated task fields.
+    'data-source': field.dataSource,
   };
 
   switch (field.type) {

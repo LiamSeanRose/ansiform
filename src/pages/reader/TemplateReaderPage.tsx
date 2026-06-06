@@ -18,6 +18,7 @@ import { useTranslation } from '../../i18n/useTranslation';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { extractTemplate, MAX_TEMPLATE_LENGTH, renderPreview, type Scope } from '../../core/preview';
 import { hasVaultBlock, looksLikeSecretName, segmentTemplate } from './segment';
+import { EditMode } from './EditMode';
 
 // Pure + stable: build the seed filter registry once for the whole page.
 const registry = createSeedRegistry();
@@ -38,7 +39,12 @@ export function TemplateReaderPage() {
   const { t } = useTranslation();
   const [template, setTemplate] = useState('');
   const [sample, setSample] = useState<Record<string, string>>({});
+  // Edit mode (#31) is gated behind an explicit acknowledgment that types and
+  // validation are NOT inferred. Unchecking the gate drops back to read-only.
+  const [acked, setAcked] = useState(false);
+  const [mode, setMode] = useState<'read' | 'edit'>('read');
   const ids = useId();
+  const editMode = acked && mode === 'edit';
 
   useEffect(() => {
     const prev = document.title;
@@ -115,6 +121,29 @@ export function TemplateReaderPage() {
             <p className="preview__notice">{t('reader.vaultNote')}</p>
           )}
 
+          <div className="reader__modebar">
+            <label className="reader__ack">
+              <input
+                type="checkbox"
+                checked={acked}
+                onChange={(e) => setAcked(e.target.checked)}
+              />{' '}
+              {t('reader.edit.ack')}
+            </label>
+            <button
+              type="button"
+              className="reader__mode-toggle"
+              disabled={!acked}
+              aria-pressed={editMode}
+              onClick={() => setMode((m) => (m === 'edit' ? 'read' : 'edit'))}
+            >
+              {editMode ? t('reader.edit.exit') : t('reader.edit.enter')}
+            </button>
+          </div>
+
+          {editMode ? (
+            <EditMode template={template} variables={extraction.variables} t={t} />
+          ) : (
           <div className="workbench">
             <div className="workbench__pane">
               <fieldset className="form__group">
@@ -201,6 +230,7 @@ export function TemplateReaderPage() {
               </section>
             </div>
           </div>
+          )}
         </>
       )}
     </section>

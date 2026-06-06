@@ -118,4 +118,16 @@ export const fr: Messages = {
     'L’aperçu peut différer — les valeurs sous-jacentes restent correctes. Certains filtres sont approximés ici.',
   'reader.fidelity.unsupported':
     'L’aperçu peut différer — ce template utilise des filtres ou constructions qu’Ansiform ne peut pas rendre exactement ; la liste des variables peut donc être incomplète. Vérifiez avec le template réel.',
+
+  // Lecteur de template — mode édition (#31). Champs texte extraits, sans inférence.
+  'reader.edit.ack':
+    'Je comprends que les types et la validation ne sont pas déduits — vérifiez ces valeurs avant tout déploiement.',
+  'reader.edit.enter': 'Éditer ces variables',
+  'reader.edit.exit': 'Revenir en lecture seule',
+  'reader.edit.uninferred':
+    'Chaque champ ci-dessous est du texte brut, sans type, format ni validation déduits — exactement ce qui a été extrait, rien de plus. Le YAML généré est exact pour les valeurs saisies ; vérifiez-les avec le template réel avant tout déploiement.',
+  'reader.edit.formHeading': 'Renseigner les variables extraites',
+  'reader.edit.fieldsLegend': 'Variables extraites (sans type)',
+  'reader.edit.submitLabel': 'Actualiser l’aperçu',
+  'reader.edit.outputHeading': 'Variables extraites (YAML)',
 };

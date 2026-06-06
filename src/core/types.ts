@@ -34,6 +34,13 @@ export interface BaseField {
    * empty/null value. The always-correct YAML path (#2) enforces this.
    */
   omitWhenBlank?: boolean;
+  /**
+   * Provenance marker, surfaced to the DOM as `data-source` (#31). Curated task
+   * fields leave this unset; the template reader's edit mode tags every field it
+   * synthesizes from a pasted template as `'extracted'` — an honesty signal that
+   * the field's type was NOT inferred and carries no validation.
+   */
+  dataSource?: 'extracted';
 }
 
 export interface TextField extends BaseField {
