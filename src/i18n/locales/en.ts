@@ -20,8 +20,12 @@ export const en = {
     'Fill out a friendly form, get valid Ansible group_vars/host_vars — with a live preview of the device config you already read.',
   'home.tasksHeading': 'Tasks',
   'home.tasksEmpty': 'The curated task library is coming soon.',
+  'home.guidesHeading': 'Guides',
 
   'task.backToHome': '← All tasks',
+
+  'guide.backToHome': '← Home',
+  'guide.relatedLabel': 'Related',
 
   // Two-pane workbench chrome (issue #6), shared by every task.
   'workbench.formRegionLabel': 'Task form',
@@ -46,10 +50,22 @@ export const en = {
     'Preview may differ from the device — the generated vars are still valid.',
   'preview.empty': 'Fill out the form to see the device configuration.',
 
-  // group_vars/host_vars output (display only here; copy/download land in #12).
-  'output.heading': 'Ansible vars',
+  // Output panel (#12 copy/download + scope picker, #13 survey-spec export).
+  'output.heading': 'Output',
   'output.pathLabel': 'Suggested path',
-  'output.regionLabel': 'Generated Ansible vars YAML',
+  'output.regionLabel': 'Generated output',
+  'output.format.label': 'Format',
+  'output.format.yaml': 'Ansible vars (group_vars/host_vars)',
+  'output.format.survey': 'AWX Survey spec (JSON)',
+  'output.scope.kindLabel': 'Scope',
+  'output.scope.group': 'Group (group_vars)',
+  'output.scope.host': 'Host (host_vars)',
+  'output.scope.nameLabel': 'Name',
+  'output.copy': 'Copy',
+  'output.copied': 'Copied ✓',
+  'output.download': 'Download',
+  'output.groupVarsYaml.label': 'Ansible vars (group_vars/host_vars)',
+  'output.awxSurveySpec.label': 'AWX Survey spec (JSON)',
 
   'notFound.title': 'Page not found',
   'notFound.body': "We couldn't find the page you were looking for.",

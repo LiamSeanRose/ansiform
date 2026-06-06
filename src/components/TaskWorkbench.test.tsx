@@ -47,4 +47,48 @@ describe('TaskWorkbench (two-pane integration)', () => {
     ui = mount(<TaskWorkbench task={interfaceIpTask.task} t={t} />);
     expect(ui.container.querySelector('.preview__notice')).toBeNull();
   });
+
+  it('updates the suggested path when the scope picker changes', () => {
+    ui = mount(<TaskWorkbench task={interfaceIpTask.task} t={t} />);
+    const code = () => ui!.container.querySelector('.vars-output__path code')!.textContent;
+    expect(code()).toBe('host_vars/switch01.yml');
+
+    setValue(scopeKind(ui.container), 'group');
+    expect(code()).toBe('group_vars/switch01.yml');
+
+    setValue(scopeName(ui.container), 'core');
+    expect(code()).toBe('group_vars/core.yml');
+  });
+
+  it('switches the output to AWX survey-spec JSON (#13)', () => {
+    ui = mount(<TaskWorkbench task={interfaceIpTask.task} t={t} />);
+    setValue(formatSelect(ui.container), 'survey');
+
+    const out = ui.container.querySelector('.vars-output__yaml')!.textContent ?? '';
+    const parsed = JSON.parse(out) as { spec: { variable: string }[] };
+    expect(parsed.spec.map((q) => q.variable)).toContain('interface_name');
+    expect(ui.container.querySelector('.vars-output__path code')!.textContent).toBe(
+      'survey-spec.json',
+    );
+  });
+
+  it('offers copy and download controls (#12)', () => {
+    ui = mount(<TaskWorkbench task={interfaceIpTask.task} t={t} />);
+    const buttons = [...ui.container.querySelectorAll('.vars-output__btn')].map(
+      (b) => b.textContent,
+    );
+    expect(buttons).toContain('Copy');
+    expect(buttons).toContain('Download');
+  });
 });
+
+// The output selects have generated ids, so locate them structurally.
+function formatSelect(root: ParentNode): HTMLSelectElement {
+  return root.querySelectorAll<HTMLSelectElement>('.vars-output__field select')[0];
+}
+function scopeKind(root: ParentNode): HTMLSelectElement {
+  return root.querySelectorAll<HTMLSelectElement>('.vars-output__field select')[1];
+}
+function scopeName(root: ParentNode): HTMLInputElement {
+  return root.querySelector<HTMLInputElement>('.vars-output__field input')!;
+}

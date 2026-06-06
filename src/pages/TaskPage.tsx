@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import { getTask } from '../tasks/registry';
 import { composeTranslate } from '../tasks/i18n';
 import { TaskWorkbench } from '../components/TaskWorkbench';
+import { useDocumentMeta } from './useDocumentMeta';
 import { NotFoundPage } from './NotFoundPage';
 
 /**
@@ -18,20 +18,10 @@ export function TaskPage() {
   const { task: slug = '' } = useParams<{ task: string }>();
   const mod = getTask(slug);
 
-  useEffect(() => {
-    if (!mod) return;
-    const previousTitle = document.title;
-    const meta = ensureMetaDescription();
-    const previousDescription = meta.getAttribute('content');
-
-    document.title = `${mod.task.title} · ${appT('app.name')}`;
-    meta.setAttribute('content', mod.task.description);
-
-    return () => {
-      document.title = previousTitle;
-      if (previousDescription !== null) meta.setAttribute('content', previousDescription);
-    };
-  }, [mod, appT]);
+  useDocumentMeta(
+    mod ? `${mod.task.title} · ${appT('app.name')}` : null,
+    mod ? mod.task.description : null,
+  );
 
   if (!mod) return <NotFoundPage />;
 
@@ -49,15 +39,4 @@ export function TaskPage() {
       <TaskWorkbench task={mod.task} t={t} />
     </section>
   );
-}
-
-/** Find the document's `<meta name="description">`, creating it if absent. */
-function ensureMetaDescription(): HTMLMetaElement {
-  let meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-  if (!meta) {
-    meta = document.createElement('meta');
-    meta.name = 'description';
-    document.head.appendChild(meta);
-  }
-  return meta;
 }

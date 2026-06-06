@@ -134,6 +134,51 @@ main {
   font-size: 0.9rem;
 }
 
+/* ── Reference guides (issue #17) ───────────────────────────────────────── */
+.guide__section {
+  margin-top: 1.5rem;
+}
+.guide__section h2 {
+  margin-bottom: 0.4rem;
+}
+.guide__rows {
+  margin: 0.6rem 0 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.guide__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+@media (min-width: 40rem) {
+  .guide__row {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+}
+.guide__row dt {
+  margin: 0;
+}
+.guide__row dt code {
+  font-size: 0.85rem;
+  word-break: break-word;
+}
+.guide__row dd {
+  margin: 0;
+  color: var(--muted);
+}
+.guide__related {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
 /* ── Two-pane workbench (issue #6) ──────────────────────────────────────── */
 .workbench {
   display: grid;
@@ -359,4 +404,47 @@ main {
 }
 .vars-output__path code {
   color: var(--text);
+}
+.vars-output__controls {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0 0 0.8rem;
+}
+.vars-output__field {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+}
+.vars-output__field label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.vars-output__field select,
+.vars-output__field input {
+  padding: 0.45rem 0.55rem;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+}
+.vars-output__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 0 0.7rem;
+}
+.vars-output__btn {
+  padding: 0.4rem 0.9rem;
+  background: var(--accent);
+  color: #0b1120;
+  border: none;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.vars-output__btn:last-child {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--border);
 }
