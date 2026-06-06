@@ -1,0 +1,112 @@
+/**
+ * Two-pane workbench: form on the left, live preview + YAML output on the right;
+ * stacks on narrow screens (issues #5, #6, #12, #24).
+ */
+.workbench {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+}
+@media (max-width: 60rem) {
+  .workbench {
+    grid-template-columns: 1fr;
+  }
+}
+.workbench__pane {
+  min-width: 0;
+}
+
+.workbench__heading,
+.output__heading,
+.preview__heading {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-base);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.preview,
+.output {
+  margin: 0 0 var(--space-5);
+}
+
+/*
+ * Degraded-preview affordance (council §11): when a filter isn't `exact` the
+ * preview may differ from real Ansible. Make that impossible to miss — a warning
+ * banner with a ⚠ marker — so the preview is never silently trusted.
+ */
+.preview__notice {
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--warning-text);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  border-left-width: 4px;
+}
+.preview__notice::before {
+  content: '⚠ ';
+  font-weight: 700;
+}
+
+/* Preview CLI and YAML output share the monospace code-block treatment. */
+.preview__cli,
+.output__yaml {
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  white-space: pre;
+  min-height: 4rem;
+}
+
+/* Output panel: heading + copy/download actions, path, status. */
+.output__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.output__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.output__action {
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.output__action:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.output__path {
+  margin: var(--space-2) 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+.output__filename {
+  color: var(--text);
+}
+/* Reserve a line so the aria-live status announcement doesn't shift layout. */
+.output__status {
+  margin: var(--space-2) 0 0;
+  min-height: 1.2em;
+  font-size: var(--text-sm);
+  color: var(--accent);
+}

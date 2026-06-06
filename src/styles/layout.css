@@ -1,0 +1,115 @@
+/**
+ * App shell: header (brand + language switcher), main, footer, and page
+ * containers (issue #24).
+ */
+.site-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text);
+}
+.brand-tagline {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Language switcher sits at the far right of the header. */
+.locale-switcher {
+  margin-left: auto;
+  display: inline-flex;
+  gap: var(--space-1);
+  align-self: center;
+}
+.locale-switcher__option {
+  padding: var(--space-1) var(--space-3);
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.locale-switcher__option:hover {
+  border-color: var(--accent);
+}
+.locale-switcher__option[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+}
+
+.page h1 {
+  margin-top: 0;
+}
+.lede {
+  font-size: var(--text-lg);
+  color: var(--text);
+}
+.muted {
+  color: var(--muted);
+}
+
+/* Task pages need the full width for the two-pane workbench. */
+.page--task {
+  max-width: none;
+}
+/* Reference (prose) pages read better a touch narrower. */
+.page--reference {
+  max-width: 48rem;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: var(--space-4) var(--space-5);
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.site-footer p {
+  margin: 0;
+}
+
+/* Home listings: curated tasks and reference pages share the card grid. */
+.task-list,
+.reference-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+.task-list__item,
+.reference-list__item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--surface);
+}
+.task-list__link,
+.reference-list__link {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.task-list__desc,
+.reference-list__desc {
+  margin: var(--space-2) 0 0;
+  font-size: 0.9rem;
+}

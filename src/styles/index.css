@@ -1,0 +1,13 @@
+/**
+ * App stylesheet entry (issue #24).
+ *
+ * Tokenised, class-based styling — CSP-friendly (no inline styles, no remote
+ * fonts; everything bundled from 'self'). Imported once from `main.tsx`. Order
+ * matters: tokens first, then base, then the component layers.
+ */
+@import './tokens.css';
+@import './base.css';
+@import './layout.css';
+@import './forms.css';
+@import './workbench.css';
+@import './reference.css';

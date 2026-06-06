@@ -1,0 +1,74 @@
+/**
+ * Reference (prose) pages: table of contents, sections, code blocks, lists, and
+ * tables (issues #17, #24).
+ */
+.reference__toc {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-5);
+  background: var(--surface);
+}
+.reference__toc ul {
+  margin: 0;
+  padding-left: var(--space-5);
+}
+
+.reference__section {
+  margin: 0 0 var(--space-6);
+}
+.reference__section h2 {
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.reference__list {
+  padding-left: var(--space-5);
+}
+.reference__list li {
+  margin: var(--space-1) 0;
+}
+
+/* Inline `code` and block code share the surface-2 treatment. */
+.page--reference code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface-2);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.reference__code {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: auto;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+.reference__code code {
+  background: none;
+  padding: 0;
+  font-family: var(--font-mono);
+}
+
+.reference__table-wrap {
+  overflow-x: auto;
+  margin: 0 0 var(--space-4);
+}
+.reference__table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+}
+.reference__table th,
+.reference__table td {
+  border: 1px solid var(--border);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  vertical-align: top;
+}
+.reference__table th {
+  background: var(--surface);
+}
