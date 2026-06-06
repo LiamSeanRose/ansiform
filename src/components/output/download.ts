@@ -7,13 +7,12 @@
  * navigable as a shareable permalink, and is revoked immediately. No network, no
  * persistence. The file content is byte-identical to what is previewed.
  */
-export function downloadText(content: string, path: string, contentType = 'text/yaml'): void {
-  const blob = new Blob([content], { type: contentType });
+export function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   try {
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = basename(path);
+    anchor.download = basename(filename);
     anchor.rel = 'noopener';
     anchor.style.display = 'none';
     document.body.appendChild(anchor);
@@ -22,6 +21,10 @@ export function downloadText(content: string, path: string, contentType = 'text/
   } finally {
     URL.revokeObjectURL(url);
   }
+}
+
+export function downloadText(content: string, path: string, contentType = 'text/yaml'): void {
+  downloadBlob(new Blob([content], { type: contentType }), path);
 }
 
 /** The file name to save as — the basename of the suggested var-file path. */

@@ -21,8 +21,9 @@ import type { FormValues, ScalarValue } from '../core';
 import type { TaskScope } from '../core/tasks/types';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../components/form';
 import { PreviewPane, renderPreview, type PreviewMessages } from '../core/preview';
-import { downloadText } from '../components/output';
+import { downloadText, downloadBlob } from '../components/output';
 import { composeTree } from '../core/output/compose';
+import { makeZip } from '../core/output/zip';
 import { createSeedRegistry } from '../core/filters/seed';
 import { getTaskModule, listTaskSummaries, taskMessages, type TaskModule } from '../tasks/registry';
 
@@ -154,7 +155,25 @@ export function BuildPage() {
       )}
 
       <section className="build__output" aria-labelledby="build-output-heading">
-        <h2 id="build-output-heading">{t('build.outputHeading')}</h2>
+        <div className="build__output-header">
+          <h2 id="build-output-heading">{t('build.outputHeading')}</h2>
+          {tree.files.length > 0 && (
+            <button
+              type="button"
+              className="build__download-all"
+              onClick={() =>
+                downloadBlob(
+                  new Blob([makeZip(tree.files.map((f) => ({ path: f.path, content: f.content })))], {
+                    type: 'application/zip',
+                  }),
+                  'ansible-vars.zip',
+                )
+              }
+            >
+              {t('output.downloadLabel')} (.zip)
+            </button>
+          )}
+        </div>
         {tree.files.length === 0 ? (
           <p className="muted">{t('build.outputEmpty')}</p>
         ) : (

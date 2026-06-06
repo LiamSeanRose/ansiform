@@ -4,4 +4,4 @@
  */
 export { YamlOutputPanel, type YamlOutputPanelProps, type OutputMessages } from './YamlOutputPanel';
 export { copyText } from './clipboard';
-export { downloadText } from './download';
+export { downloadText, downloadBlob } from './download';
