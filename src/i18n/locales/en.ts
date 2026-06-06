@@ -15,6 +15,7 @@ export const en = {
   'nav.home': 'Home',
   'nav.skipToContent': 'Skip to main content',
   'nav.language': 'Language',
+  'nav.build': 'Build',
 
   'home.title': 'Ansiform',
   'home.lede':
@@ -73,6 +74,24 @@ export const en = {
   'output.copied': 'Copied to clipboard.',
   'output.copyFailed': 'Copy failed — select the text and copy manually.',
   'output.downloadLabel': 'Download',
+
+  // Composition / build page (#26).
+  'build.title': 'Build a var-file set',
+  'build.lede':
+    'Add several tasks, fill each, and assemble a complete group_vars/host_vars file set in one pass — everything stays in your browser.',
+  'build.addLabel': 'Add a task',
+  'build.addButton': 'Add',
+  'build.empty': 'No tasks yet — add one above to start composing.',
+  'build.removeTask': 'Remove this task',
+  'build.scopeLegend': 'Output scope',
+  'build.scopeKindLabel': 'Scope',
+  'build.scopeKindGroup': 'group_vars',
+  'build.scopeKindHost': 'host_vars',
+  'build.scopeNameLabel': 'Name',
+  'build.previewHeading': 'Preview',
+  'build.outputHeading': 'Composed files',
+  'build.outputEmpty': 'Filled tasks appear here as group_vars / host_vars files.',
+  'build.collision': 'Conflicting keys (last value wins — resolve before use): {keys}',
 } as const;
 
 /**

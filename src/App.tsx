@@ -3,6 +3,7 @@ import { useTranslation } from './i18n/useTranslation';
 import { LocaleSwitcher } from './i18n/LocaleSwitcher';
 import { HomePage } from './pages/HomePage';
 import { TaskPage } from './pages/TaskPage';
+import { BuildPage } from './pages/BuildPage';
 import { ReferencePage } from './pages/reference';
 import { NotFoundPage } from './pages/NotFoundPage';
 
@@ -25,6 +26,9 @@ export function App() {
           {t('app.name')}
         </Link>
         <span className="brand-tagline">{t('app.tagline')}</span>
+        <nav className="site-nav" aria-label={t('nav.build')}>
+          <Link to="/build">{t('nav.build')}</Link>
+        </nav>
         <LocaleSwitcher />
       </header>
 
@@ -32,6 +36,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/tasks/:task" element={<TaskPage />} />
+          <Route path="/build" element={<BuildPage />} />
           <Route path="/reference/:page" element={<ReferencePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

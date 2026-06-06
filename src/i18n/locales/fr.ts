@@ -13,6 +13,7 @@ export const fr: Messages = {
   'nav.home': 'Accueil',
   'nav.skipToContent': 'Aller au contenu principal',
   'nav.language': 'Langue',
+  'nav.build': 'Composer',
 
   'home.title': 'Ansiform',
   'home.lede':
@@ -64,4 +65,22 @@ export const fr: Messages = {
   'output.copied': 'Copié dans le presse-papiers.',
   'output.copyFailed': 'Échec de la copie — sélectionnez le texte et copiez-le manuellement.',
   'output.downloadLabel': 'Télécharger',
+
+  'build.title': 'Composer un jeu de variables',
+  'build.lede':
+    'Ajoutez plusieurs tâches, remplissez-les et assemblez un jeu complet de fichiers group_vars/host_vars en une passe — tout reste dans votre navigateur.',
+  'build.addLabel': 'Ajouter une tâche',
+  'build.addButton': 'Ajouter',
+  'build.empty': 'Aucune tâche — ajoutez-en une ci-dessus pour commencer.',
+  'build.removeTask': 'Retirer cette tâche',
+  'build.scopeLegend': 'Portée de sortie',
+  'build.scopeKindLabel': 'Portée',
+  'build.scopeKindGroup': 'group_vars',
+  'build.scopeKindHost': 'host_vars',
+  'build.scopeNameLabel': 'Nom',
+  'build.previewHeading': 'Aperçu',
+  'build.outputHeading': 'Fichiers composés',
+  'build.outputEmpty': 'Les tâches remplies apparaissent ici sous forme de fichiers group_vars / host_vars.',
+  'build.collision':
+    'Clés en conflit (la dernière valeur l’emporte — à résoudre avant utilisation) : {keys}',
 };

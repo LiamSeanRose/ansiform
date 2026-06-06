@@ -75,7 +75,7 @@ function buildFieldMap(
  * fields are emitted; stray keys in `values` are ignored (defensive against
  * leaking anything the form did not present).
  */
-function buildVars(schema: FormSchema, values: FormValues): Record<string, unknown> {
+export function buildVars(schema: FormSchema, values: FormValues): Record<string, unknown> {
   const vars: Record<string, unknown> = {};
   for (const group of schema.groups) {
     Object.assign(vars, buildFieldMap(group.fields, values));
@@ -84,7 +84,7 @@ function buildVars(schema: FormSchema, values: FormValues): Record<string, unkno
 }
 
 /** Suggested var-file path from the scope hint (council §8; full paths in #12). */
-function suggestFilename(scope?: TaskScope): string {
+export function suggestFilename(scope?: TaskScope): string {
   if (!scope) return 'group_vars/all.yml';
   const dir = scope.kind === 'host' ? 'host_vars' : 'group_vars';
   return `${dir}/${scope.name}.yml`;
