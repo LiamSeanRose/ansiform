@@ -14,6 +14,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { FieldValue, FormSchema, FormValues } from '../../core';
 import { FieldControl, type Translate } from './FieldControl';
+import { ListFieldControl } from './ListFieldControl';
 import { initialValues } from './defaults';
 import { fieldOrder, validateForm } from './validation';
 import type { FieldErrors, FormMessages, ValuesChange } from './types';
@@ -129,19 +130,22 @@ export function Form({ schema, t, messages, onChange, onSubmit, initialValues: s
       {schema.groups.map((group, index) => (
         <fieldset className="form__group" key={group.legend ?? index}>
           {group.legend && <legend className="form__legend">{t(group.legend)}</legend>}
-          {group.fields.map((field) => (
-            <FieldControl
-              key={field.name}
-              field={field}
-              value={values[field.name]}
-              error={errors[field.name]}
-              onValueChange={handleValueChange}
-              t={t}
-              messages={messages}
-              idPrefix={idPrefix}
-              inputRef={(el: HTMLElement | null) => registerControl(field.name, el)}
-            />
-          ))}
+          {group.fields.map((field) => {
+            const common = {
+              value: values[field.name],
+              error: errors[field.name],
+              onValueChange: handleValueChange,
+              t,
+              messages,
+              idPrefix,
+              inputRef: (el: HTMLElement | null) => registerControl(field.name, el),
+            };
+            return field.type === 'list' ? (
+              <ListFieldControl key={field.name} field={field} {...common} />
+            ) : (
+              <FieldControl key={field.name} field={field} {...common} />
+            );
+          })}
         </fieldset>
       ))}
 

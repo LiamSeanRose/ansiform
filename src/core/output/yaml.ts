@@ -21,7 +21,7 @@
  * nothing is stored or encoded here.
  */
 import { dump } from 'js-yaml';
-import type { Field, FieldValue, FormSchema, FormValues } from '../types';
+import type { Field, FormSchema, FormValues, RowValues, ScalarField, ScalarValue } from '../types';
 import type { OutputArtifact, OutputContext, OutputSink } from '../adapters';
 import type { TaskScope } from '../tasks/types';
 
@@ -29,15 +29,44 @@ import type { TaskScope } from '../tasks/types';
 export const GROUP_VARS_YAML_ID = 'group-vars-yaml';
 
 /**
- * Whether a field's value counts as "blank" for `default(omit)`.
+ * Whether a scalar field's value counts as "blank" for `default(omit)`.
  *
  * Only `undefined` and the empty string are blank. Numeric `0` and boolean
  * `false` are real, intentional values and must never be omitted.
  */
-function isBlank(field: Field, value: FieldValue): boolean {
+function isBlankScalar(field: ScalarField, value: ScalarValue): boolean {
   if (value === undefined) return true;
   if (field.type === 'boolean' || field.type === 'number') return false;
   return value === '';
+}
+
+/**
+ * Build a key→value map from a set of fields and their values, applying
+ * `default(omit)`. A `list` field becomes a YAML **sequence of per-row mappings**,
+ * each built the same way — so omit-on-blank applies inside every row, and an
+ * empty omit-on-blank list drops its key entirely.
+ */
+function buildFieldMap(
+  fields: readonly Field[],
+  values: FormValues | RowValues,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const field of fields) {
+    const value = values[field.name];
+    if (field.type === 'list') {
+      const rows = Array.isArray(value) ? value : [];
+      const seq = rows.map((row) => buildFieldMap(field.fields, row ?? {}));
+      if (field.omitWhenBlank && seq.length === 0) continue;
+      out[field.name] = seq;
+    } else {
+      const scalar = value as ScalarValue;
+      if (field.omitWhenBlank && isBlankScalar(field, scalar)) continue;
+      // A non-omitted but undefined value becomes an explicit `null`; otherwise
+      // js-yaml's `skipInvalid` would silently drop the key.
+      out[field.name] = scalar === undefined ? null : scalar;
+    }
+  }
+  return out;
 }
 
 /**
@@ -49,13 +78,7 @@ function isBlank(field: Field, value: FieldValue): boolean {
 function buildVars(schema: FormSchema, values: FormValues): Record<string, unknown> {
   const vars: Record<string, unknown> = {};
   for (const group of schema.groups) {
-    for (const field of group.fields) {
-      const value = values[field.name];
-      if (field.omitWhenBlank && isBlank(field, value)) continue;
-      // A non-omitted but undefined value becomes an explicit `null`; otherwise
-      // js-yaml's `skipInvalid` would silently drop the key.
-      vars[field.name] = value === undefined ? null : value;
-    }
+    Object.assign(vars, buildFieldMap(group.fields, values));
   }
   return vars;
 }

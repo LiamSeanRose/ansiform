@@ -58,6 +58,7 @@ const messages: WorkbenchMessages = {
       min: 'min',
       max: 'max',
       notANumber: 'notANumber',
+      incomplete: 'incomplete',
     },
   },
   preview: {

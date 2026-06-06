@@ -19,6 +19,7 @@ const messages: FormMessages = {
     min: '{label} must be at least {min}',
     max: '{label} must be at most {max}',
     notANumber: '{label} must be a number',
+    incomplete: '{label} has rows that need attention',
   },
 };
 

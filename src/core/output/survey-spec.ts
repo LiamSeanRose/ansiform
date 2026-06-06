@@ -101,7 +101,7 @@ function selectQuestion(field: SelectField): SurveyQuestion {
   };
 }
 
-function toQuestion(field: Field): SurveyQuestion {
+function toQuestion(field: Field): SurveyQuestion | null {
   switch (field.type) {
     case 'text':
       return textQuestion(field);
@@ -120,6 +120,10 @@ function toQuestion(field: Field): SurveyQuestion {
         required: required(field),
         default: '',
       };
+    case 'list':
+      // A repeating group has no faithful AWX survey question type — skip it
+      // rather than emit a misleading single field. (List tasks export via YAML.)
+      return null;
   }
 }
 
@@ -131,7 +135,10 @@ function toQuestion(field: Field): SurveyQuestion {
 export function buildSurveySpec(schema: FormSchema): SurveySpec {
   const spec: SurveyQuestion[] = [];
   for (const group of schema.groups) {
-    for (const field of group.fields) spec.push(toQuestion(field));
+    for (const field of group.fields) {
+      const question = toQuestion(field);
+      if (question) spec.push(question);
+    }
   }
   return { name: 'Ansiform survey', description: '', spec };
 }

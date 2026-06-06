@@ -57,6 +57,7 @@ type Expr =
   | { e: 'not'; x: Expr }
   | { e: 'and' | 'or'; l: Expr; r: Expr }
   | { e: 'cmp'; op: string; l: Expr; r: Expr }
+  | { e: 'member'; obj: Expr; name: string }
   | { e: 'filter'; src: Expr; name: string; args: Expr[] };
 
 // ── Template AST ────────────────────────────────────────────────────────────
@@ -173,7 +174,8 @@ type ETok =
   | { k: 'pipe' }
   | { k: 'lp' }
   | { k: 'rp' }
-  | { k: 'comma' };
+  | { k: 'comma' }
+  | { k: 'dot' };
 
 function lexExpr(src: string): ETok[] {
   const toks: ETok[] = [];
@@ -250,6 +252,11 @@ function lexExpr(src: string): ETok[] {
       i++;
       continue;
     }
+    if (c === '.') {
+      toks.push({ k: 'dot' });
+      i++;
+      continue;
+    }
     throw new Error(`unexpected character ${JSON.stringify(c)}`);
   }
   return toks;
@@ -301,8 +308,20 @@ function parseCmp(p: PState): Expr {
   return left;
 }
 
+/** Postfix member access: `obj.name.name…` binds tighter than filters. */
+function parsePostfix(p: PState): Expr {
+  let e = parsePrimary(p);
+  while (p.toks[p.i]?.k === 'dot') {
+    p.i++;
+    const nameTok = p.toks[p.i++];
+    if (!nameTok || nameTok.k !== 'name') throw new Error('expected property name after .');
+    e = { e: 'member', obj: e, name: nameTok.v };
+  }
+  return e;
+}
+
 function parseFilter(p: PState): Expr {
-  let left = parsePrimary(p);
+  let left = parsePostfix(p);
   while (p.toks[p.i]?.k === 'pipe') {
     p.i++;
     const nameTok = p.toks[p.i++];
@@ -569,6 +588,12 @@ export function renderPreview(
       }
       case 'cmp':
         return compare(node.op, evalExpr(node.l, scope), evalExpr(node.r, scope));
+      case 'member': {
+        const obj = evalExpr(node.obj, scope);
+        if (obj === null || obj === undefined) return undefined;
+        if (typeof obj === 'object') return (obj as Record<string, unknown>)[node.name];
+        return undefined;
+      }
       case 'filter': {
         const input = evalExpr(node.src, scope);
         if (!filters.includes(node.name)) filters.push(node.name);

@@ -9,8 +9,11 @@
  * Council refs: §2/§3 (field model, secret as a first-class primitive).
  */
 
-/** Supported form field kinds. `secret` is a first-class primitive (§5). */
-export type FieldType = 'text' | 'number' | 'boolean' | 'select' | 'secret';
+/**
+ * Supported form field kinds. `secret` is a first-class primitive (§5); `list` is
+ * a repeating group of scalar sub-fields (added in v2 for multi-entry tasks).
+ */
+export type FieldType = 'text' | 'number' | 'boolean' | 'select' | 'secret' | 'list';
 
 /** Properties shared by every field. */
 export interface BaseField {
@@ -74,13 +77,35 @@ export interface SecretField extends BaseField {
   type: 'secret';
 }
 
+/** The scalar (single-value) field kinds — what a list row may contain. */
+export type ScalarField = TextField | NumberField | BooleanField | SelectField | SecretField;
+
+/**
+ * List field — a repeating group of scalar sub-fields (v2). Its value is an array
+ * of rows; each row is a `RowValues` map over `fields`. Nesting is intentionally
+ * flat: a list's sub-fields are scalar only (no list-in-list).
+ *
+ * The always-correct YAML path emits a list field as a YAML sequence of mappings,
+ * applying per-row `default(omit)`; the preview iterates it with `{% for %}`.
+ */
+export interface ListField extends BaseField {
+  type: 'list';
+  /** The scalar sub-fields repeated per row. */
+  fields: ScalarField[];
+  /** Rows present initially (and the minimum required). Default 0. */
+  minRows?: number;
+  /** Optional cap on the number of rows. */
+  maxRows?: number;
+  /** Label (or i18n key) for the "add row" button. */
+  addLabel?: string;
+  /** Label (or i18n key) for the per-row "remove" button; may use `{index}`. */
+  removeLabel?: string;
+  /** Singular noun (or i18n key) for one row, e.g. "entry"; may use `{index}`. */
+  itemLabel?: string;
+}
+
 /** Discriminated union of all field kinds (discriminant: `type`). */
-export type Field =
-  | TextField
-  | NumberField
-  | BooleanField
-  | SelectField
-  | SecretField;
+export type Field = ScalarField | ListField;
 
 /** A named group of fields, rendered as a `<fieldset>` section. */
 export interface FieldGroup {
@@ -94,8 +119,18 @@ export interface FormSchema {
   groups: FieldGroup[];
 }
 
-/** Runtime value of a single field. Secrets are strings held only in memory. */
-export type FieldValue = string | number | boolean | undefined;
+/** Runtime value of a scalar field. Secrets are strings held only in memory. */
+export type ScalarValue = string | number | boolean | undefined;
+
+/** One row of a list field: sub-field `name` → scalar value. */
+export type RowValues = Record<string, ScalarValue>;
+
+/**
+ * Runtime value of a single field: a scalar, or — for a `list` field — an array
+ * of rows. (`FieldValue` keeps its original scalar meaning; the `RowValues[]`
+ * arm is the additive v2 extension.)
+ */
+export type FieldValue = ScalarValue | RowValues[];
 
 /** A filled form: field `name` → value. */
 export type FormValues = Record<string, FieldValue>;

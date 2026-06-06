@@ -6,7 +6,23 @@
  * `default` and starts `undefined`. Booleans resolve to a concrete `false` when
  * undeclared so the checkbox control stays controlled from first render.
  */
-import type { FormSchema, FormValues } from '../../core';
+import type { FormSchema, FormValues, RowValues, ScalarField } from '../../core';
+
+/**
+ * Default values for one list row, from its scalar sub-fields. Secrets are never
+ * seeded (§5); booleans resolve to a concrete `false` so the checkbox stays
+ * controlled from first render.
+ */
+export function rowDefaults(fields: ScalarField[]): RowValues {
+  const row: RowValues = {};
+  for (const field of fields) {
+    if (field.type === 'boolean') row[field.name] = field.default ?? false;
+    else if (field.type !== 'secret' && field.default !== undefined) {
+      row[field.name] = field.default;
+    }
+  }
+  return row;
+}
 
 export function initialValues(schema: FormSchema): FormValues {
   const values: FormValues = {};
@@ -23,6 +39,12 @@ export function initialValues(schema: FormSchema): FormValues {
           break;
         case 'secret':
           // Never seed a secret.
+          break;
+        case 'list':
+          // Seed the minimum number of rows (default none) with row defaults.
+          values[field.name] = Array.from({ length: field.minRows ?? 0 }, () =>
+            rowDefaults(field.fields),
+          );
           break;
       }
     }

@@ -70,6 +70,7 @@ export function TaskPage() {
       min: 'form.error.min',
       max: 'form.error.max',
       notANumber: 'form.error.notANumber',
+      incomplete: 'form.error.incomplete',
     },
   };
 

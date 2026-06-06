@@ -16,6 +16,18 @@ function isBlank(value: FieldValue): boolean {
 
 /** Validate a single field's value. Returns the first error, or `undefined`. */
 export function validateField(field: Field, value: FieldValue): FieldError | undefined {
+  // List: required means ≥1 row; otherwise any invalid row marks it incomplete.
+  if (field.type === 'list') {
+    const rows = Array.isArray(value) ? value : [];
+    if (field.required && rows.length === 0) return { code: 'required' };
+    for (const row of rows) {
+      for (const sub of field.fields) {
+        if (validateField(sub, (row ?? {})[sub.name])) return { code: 'incomplete' };
+      }
+    }
+    return undefined;
+  }
+
   // Booleans are always satisfied (a checkbox is never "blank").
   if (field.type === 'boolean') return undefined;
 

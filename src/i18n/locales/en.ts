@@ -48,6 +48,14 @@ export const en = {
   'form.error.min': '{label} must be at least {min}.',
   'form.error.max': '{label} must be at most {max}.',
   'form.error.notANumber': '{label} must be a number.',
+  'form.error.incomplete': '{label} has rows that need attention.',
+  // List / repeating-group controls (v2).
+  'form.list.add': 'Add row',
+  'form.list.remove': 'Remove row {index}',
+  'form.list.row': 'Row {index}',
+  'form.list.added': 'Row added.',
+  'form.list.removed': 'Row {index} removed.',
+  'form.list.empty': 'No rows yet — add one to begin.',
 
   // Device-CLI preview (#5).
   'preview.regionLabel': 'Device CLI preview',

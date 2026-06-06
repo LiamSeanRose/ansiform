@@ -9,8 +9,9 @@
  */
 import type { FieldValue } from '../../core';
 
-/** Why a field failed validation. The component maps this to copy + focus. */
-export type ErrorCode = 'required' | 'pattern' | 'min' | 'max' | 'notANumber';
+/** Why a field failed validation. The component maps this to copy + focus.
+ *  `incomplete` = a list field whose rows need attention (v2). */
+export type ErrorCode = 'required' | 'pattern' | 'min' | 'max' | 'notANumber' | 'incomplete';
 
 /** A single validation failure. `params` feed `{placeholder}` interpolation. */
 export interface FieldError {

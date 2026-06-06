@@ -43,6 +43,13 @@ export const fr: Messages = {
   'form.error.min': '{label} doit être au moins {min}.',
   'form.error.max': '{label} doit être au plus {max}.',
   'form.error.notANumber': '{label} doit être un nombre.',
+  'form.error.incomplete': '{label} comporte des lignes à corriger.',
+  'form.list.add': 'Ajouter une ligne',
+  'form.list.remove': 'Supprimer la ligne {index}',
+  'form.list.row': 'Ligne {index}',
+  'form.list.added': 'Ligne ajoutée.',
+  'form.list.removed': 'Ligne {index} supprimée.',
+  'form.list.empty': 'Aucune ligne — ajoutez-en une pour commencer.',
 
   'preview.regionLabel': 'Aperçu CLI de l’équipement',
   'preview.heading': 'Aperçu en direct (Cisco IOS)',
