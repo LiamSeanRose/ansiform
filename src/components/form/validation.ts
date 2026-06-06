@@ -19,6 +19,14 @@ export function validateField(field: Field, value: FieldValue): FieldError | und
   // Booleans are always satisfied (a checkbox is never "blank").
   if (field.type === 'boolean') return undefined;
 
+  // A list is satisfied by having at least one entry when required; per-entry
+  // sub-field validation is left to the native controls (the YAML is correct
+  // regardless — validation here guards UX, not playbook safety).
+  if (field.type === 'list') {
+    const entries = Array.isArray(value) ? value : [];
+    return field.required && entries.length === 0 ? { code: 'required' } : undefined;
+  }
+
   if (isBlank(value)) {
     return field.required ? { code: 'required' } : undefined;
   }

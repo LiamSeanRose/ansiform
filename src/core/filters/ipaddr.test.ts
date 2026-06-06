@@ -17,6 +17,13 @@ describe('ipaddr (IPv4 subset)', () => {
     expect(ipaddr('192.0.2.1/24', 'host')).toBe('192.0.2.1/24');
   });
 
+  it('derives the hostmask (IOS wildcard) as the netmask inverse', () => {
+    expect(ipaddr('192.0.2.1/24', 'hostmask')).toBe('0.0.0.255');
+    expect(ipaddr('10.0.0.0/30', 'hostmask')).toBe('0.0.0.3');
+    expect(ipaddr('10.0.0.0/8', 'hostmask')).toBe('0.255.255.255');
+    expect(ipaddr('0.0.0.0/0', 'hostmask')).toBe('255.255.255.255');
+  });
+
   it('handles a /30 point-to-point link', () => {
     expect(ipaddr('10.0.0.5/30', 'netmask')).toBe('255.255.255.252');
     expect(ipaddr('10.0.0.5/30', 'network')).toBe('10.0.0.4');

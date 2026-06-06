@@ -33,6 +33,12 @@ export interface FormMessages {
   errorSummaryHeading: string;
   /** Submit button label. */
   submitLabel: string;
+  /** Fallback "add entry" label for a `list` field that declares no `addLabel`. */
+  addEntryLabel: string;
+  /** "Remove this entry" button label for `list` fields. */
+  removeEntryLabel: string;
+  /** Shown inside an empty `list` field before any entry is added. */
+  emptyListLabel: string;
   /** Validation copy keyed by `ErrorCode`. */
   errors: Record<ErrorCode, string>;
 }

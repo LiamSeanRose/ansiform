@@ -13,6 +13,9 @@ const messages: FormMessages = {
   requiredLabel: '(required)',
   errorSummaryHeading: 'There is a problem',
   submitLabel: 'Generate',
+  addEntryLabel: 'Add entry',
+  removeEntryLabel: 'Remove',
+  emptyListLabel: 'No entries yet.',
   errors: {
     required: '{label} is required',
     pattern: '{label} is not valid',

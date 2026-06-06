@@ -42,6 +42,9 @@ export function TaskWorkbench({ task, t }: TaskWorkbenchProps) {
       requiredLabel: t('form.required'),
       errorSummaryHeading: t('form.errorSummaryHeading'),
       submitLabel: t('form.submit'),
+      addEntryLabel: t('form.addEntry'),
+      removeEntryLabel: t('form.removeEntry'),
+      emptyListLabel: t('form.emptyList'),
       // Values are i18n keys the form resolves with `t` (+ {label}/{min}/{max}).
       errors: {
         required: 'form.error.required',

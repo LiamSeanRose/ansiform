@@ -54,6 +54,7 @@ export type Scope = Record<string, unknown>;
 type Expr =
   | { e: 'lit'; v: unknown }
   | { e: 'var'; name: string }
+  | { e: 'attr'; src: Expr; name: string }
   | { e: 'not'; x: Expr }
   | { e: 'and' | 'or'; l: Expr; r: Expr }
   | { e: 'cmp'; op: string; l: Expr; r: Expr }
@@ -173,6 +174,7 @@ type ETok =
   | { k: 'pipe' }
   | { k: 'lp' }
   | { k: 'rp' }
+  | { k: 'dot' }
   | { k: 'comma' };
 
 function lexExpr(src: string): ETok[] {
@@ -250,6 +252,11 @@ function lexExpr(src: string): ETok[] {
       i++;
       continue;
     }
+    if (c === '.') {
+      toks.push({ k: 'dot' });
+      i++;
+      continue;
+    }
     throw new Error(`unexpected character ${JSON.stringify(c)}`);
   }
   return toks;
@@ -301,8 +308,20 @@ function parseCmp(p: PState): Expr {
   return left;
 }
 
+/** Attribute access: `expr.name` (used to read `list` entry sub-fields). */
+function parsePostfix(p: PState): Expr {
+  let e = parsePrimary(p);
+  while (p.toks[p.i]?.k === 'dot') {
+    p.i++;
+    const nameTok = p.toks[p.i++];
+    if (!nameTok || nameTok.k !== 'name') throw new Error('expected attribute name');
+    e = { e: 'attr', src: e, name: nameTok.v };
+  }
+  return e;
+}
+
 function parseFilter(p: PState): Expr {
-  let left = parsePrimary(p);
+  let left = parsePostfix(p);
   while (p.toks[p.i]?.k === 'pipe') {
     p.i++;
     const nameTok = p.toks[p.i++];
@@ -557,6 +576,16 @@ export function renderPreview(
         return Object.prototype.hasOwnProperty.call(scope, node.name)
           ? scope[node.name]
           : undefined;
+      case 'attr': {
+        // Attribute access on a record (e.g. a list entry). Missing keys or a
+        // non-object base resolve to `undefined`, like Jinja's `Undefined`.
+        const base = evalExpr(node.src, scope);
+        if (base && typeof base === 'object' && !Array.isArray(base)) {
+          const rec = base as Record<string, unknown>;
+          return Object.prototype.hasOwnProperty.call(rec, node.name) ? rec[node.name] : undefined;
+        }
+        return undefined;
+      }
       case 'not':
         return !truthy(evalExpr(node.x, scope));
       case 'and': {

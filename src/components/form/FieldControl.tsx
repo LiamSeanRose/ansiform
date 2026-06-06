@@ -7,7 +7,8 @@
  * with `autocomplete="new-password"` and never carries a default (§5).
  */
 import type { ChangeEvent, Ref } from 'react';
-import type { Field, FieldValue } from '../../core';
+import type { Field, FieldValue, FormValues, ListField } from '../../core';
+import { newEntry } from './defaults';
 import type { FieldError, FormMessages } from './types';
 
 /** Minimal translate contract — decoupled from the app's `MessageKey` union so
@@ -42,6 +43,20 @@ export function FieldControl({
   idPrefix,
   inputRef,
 }: FieldControlProps) {
+  // A list field is a repeating fieldset, not a single labelled control.
+  if (field.type === 'list') {
+    return (
+      <ListFieldControl
+        field={field}
+        value={value}
+        onValueChange={onValueChange}
+        t={t}
+        messages={messages}
+        idPrefix={idPrefix}
+      />
+    );
+  }
+
   const fieldId = `${idPrefix}-${field.name}`;
   const helpId = field.help ? `${fieldId}-help` : undefined;
   const errorId = error ? `${fieldId}-error` : undefined;
@@ -195,5 +210,105 @@ function renderControl({ field, value, fieldId, aria, invalid, onValueChange, t,
           ))}
         </select>
       );
+
+    case 'list':
+      // Lists are rendered by ListFieldControl; never reached here.
+      return null;
   }
+}
+
+interface ListFieldControlProps {
+  field: ListField;
+  value: FieldValue;
+  onValueChange: (name: string, value: FieldValue) => void;
+  t: Translate;
+  messages: FormMessages;
+  idPrefix: string;
+}
+
+/**
+ * A repeating group of sub-records. Each entry renders the list's `item`
+ * sub-fields (reusing `FieldControl`) inside its own fieldset, with add/remove
+ * controls. The whole array is emitted through `onValueChange` on every edit, so
+ * the value model stays a plain `FormValues[]` the engine already understands.
+ */
+function ListFieldControl({
+  field,
+  value,
+  onValueChange,
+  t,
+  messages,
+  idPrefix,
+}: ListFieldControlProps) {
+  const entries: FormValues[] = Array.isArray(value) ? value : [];
+  const groupId = `${idPrefix}-${field.name}`;
+  const helpId = field.help ? `${groupId}-help` : undefined;
+  const addLabel = field.addLabel ? t(field.addLabel) : messages.addEntryLabel;
+
+  const updateEntry = (index: number, subName: string, subValue: FieldValue) => {
+    onValueChange(
+      field.name,
+      entries.map((entry, i) => (i === index ? { ...entry, [subName]: subValue } : entry)),
+    );
+  };
+
+  const addEntry = () => {
+    onValueChange(field.name, [...entries, newEntry(field.item)]);
+  };
+
+  const removeEntry = (index: number) => {
+    onValueChange(
+      field.name,
+      entries.filter((_, i) => i !== index),
+    );
+  };
+
+  return (
+    <fieldset className="form-list" aria-describedby={helpId}>
+      <legend className="form-list__legend">
+        {t(field.label)}
+        {field.required && <span className="form-field__required"> {messages.requiredLabel}</span>}
+      </legend>
+      {field.help && (
+        <p className="form-field__help" id={helpId}>
+          {t(field.help)}
+        </p>
+      )}
+
+      {entries.length === 0 ? (
+        <p className="form-list__empty muted">{messages.emptyListLabel}</p>
+      ) : (
+        <ol className="form-list__entries">
+          {entries.map((entry, index) => (
+            <li className="form-list__entry" key={index}>
+              <div className="form-list__entry-fields">
+                {field.item.map((sub) => (
+                  <FieldControl
+                    key={sub.name}
+                    field={sub}
+                    value={entry[sub.name]}
+                    onValueChange={(subName, subValue) => updateEntry(index, subName, subValue)}
+                    t={t}
+                    messages={messages}
+                    idPrefix={`${groupId}-${index}`}
+                  />
+                ))}
+              </div>
+              <button
+                type="button"
+                className="form-list__remove"
+                onClick={() => removeEntry(index)}
+              >
+                {messages.removeEntryLabel}
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
+
+      <button type="button" className="form-list__add" onClick={addEntry}>
+        {addLabel}
+      </button>
+    </fieldset>
+  );
 }

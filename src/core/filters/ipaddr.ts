@@ -9,6 +9,7 @@
  *   ''            → normalized address (preserves any `/prefix`)
  *   'address'     → host address, no prefix
  *   'netmask'     → dotted netmask
+ *   'hostmask'    → dotted hostmask (a.k.a. the IOS wildcard mask)
  *   'network'     → network address
  *   'prefix'      → prefix length, as a number
  *   'broadcast'   → broadcast address
@@ -81,6 +82,10 @@ function query(p: ParsedV4, q: string): string | number {
       return toDotted(p.addr);
     case 'netmask':
       return toDotted(mask);
+    case 'hostmask':
+      // The inverse of the netmask — what IOS calls the wildcard mask, e.g.
+      // 192.0.2.0/24 → 0.0.0.255. Matches Ansible/netaddr's `hostmask` query.
+      return toDotted(~mask >>> 0);
     case 'network':
       return toDotted(network);
     case 'prefix':

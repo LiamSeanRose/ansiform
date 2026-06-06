@@ -4,7 +4,7 @@
  */
 export { Form, type FormProps } from './Form';
 export { FieldControl, type FieldControlProps, type Translate } from './FieldControl';
-export { initialValues } from './defaults';
+export { initialValues, newEntry } from './defaults';
 export { validateField, validateForm, fieldOrder } from './validation';
 export { isSecretField, secretFieldNames, redactSecrets } from './secrets';
 export type {

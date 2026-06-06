@@ -21,7 +21,7 @@
  * nothing is stored or encoded here.
  */
 import { dump } from 'js-yaml';
-import type { Field, FieldValue, FormSchema, FormValues } from '../types';
+import type { Field, FieldValue, FormSchema, FormValues, ListField } from '../types';
 import type { OutputArtifact, OutputContext, OutputSink } from '../adapters';
 import type { TaskScope } from '../tasks/types';
 
@@ -50,6 +50,12 @@ function buildVars(schema: FormSchema, values: FormValues): Record<string, unkno
   const vars: Record<string, unknown> = {};
   for (const group of schema.groups) {
     for (const field of group.fields) {
+      if (field.type === 'list') {
+        const entries = buildList(field, values[field.name]);
+        if (field.omitWhenBlank && entries.length === 0) continue;
+        vars[field.name] = entries;
+        continue;
+      }
       const value = values[field.name];
       if (field.omitWhenBlank && isBlank(field, value)) continue;
       // A non-omitted but undefined value becomes an explicit `null`; otherwise
@@ -58,6 +64,27 @@ function buildVars(schema: FormSchema, values: FormValues): Record<string, unkno
     }
   }
   return vars;
+}
+
+/** Serialize a list field's entries, each a sub-record built from its item fields. */
+function buildList(field: ListField, value: FieldValue): Record<string, unknown>[] {
+  const entries = Array.isArray(value) ? value : [];
+  return entries.map((entry) => buildRecord(field.item, entry));
+}
+
+/** Build one entry's object, honouring each sub-field's omit-on-blank. */
+function buildRecord(fields: Field[], entry: FormValues): Record<string, unknown> {
+  const record: Record<string, unknown> = {};
+  for (const field of fields) {
+    if (field.type === 'list') {
+      record[field.name] = buildList(field, entry[field.name]);
+      continue;
+    }
+    const value = entry[field.name];
+    if (field.omitWhenBlank && isBlank(field, value)) continue;
+    record[field.name] = value === undefined ? null : value;
+  }
+  return record;
 }
 
 /** Suggested var-file path from the scope hint (council §8; full paths in #12). */

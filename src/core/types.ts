@@ -9,8 +9,12 @@
  * Council refs: §2/§3 (field model, secret as a first-class primitive).
  */
 
-/** Supported form field kinds. `secret` is a first-class primitive (§5). */
-export type FieldType = 'text' | 'number' | 'boolean' | 'select' | 'secret';
+/**
+ * Supported form field kinds. `secret` is a first-class primitive (§5); `list`
+ * is a repeating group of sub-fields (one record per entry), the model behind
+ * tasks like ACL entries or NTP/TACACS server lists.
+ */
+export type FieldType = 'text' | 'number' | 'boolean' | 'select' | 'secret' | 'list';
 
 /** Properties shared by every field. */
 export interface BaseField {
@@ -74,13 +78,30 @@ export interface SecretField extends BaseField {
   type: 'secret';
 }
 
+/**
+ * List field — a repeating group (§3). Each entry is a sub-record built from
+ * `item`'s scalar sub-fields, so the value is `FormValues[]`. Used for tasks
+ * with a variable number of entries (ACL rules, NTP/TACACS servers). Nested
+ * lists are not a v1 concern; `item` is expected to be scalar fields.
+ */
+export interface ListField extends BaseField {
+  type: 'list';
+  /** Sub-fields composing one entry (scalars: text/number/boolean/select/secret). */
+  item: Field[];
+  /** Optional seed entries; each is a sub-record keyed by item field name. */
+  default?: FormValues[];
+  /** Label (or i18n key) for the "add entry" control; falls back to chrome copy. */
+  addLabel?: string;
+}
+
 /** Discriminated union of all field kinds (discriminant: `type`). */
 export type Field =
   | TextField
   | NumberField
   | BooleanField
   | SelectField
-  | SecretField;
+  | SecretField
+  | ListField;
 
 /** A named group of fields, rendered as a `<fieldset>` section. */
 export interface FieldGroup {
@@ -94,8 +115,14 @@ export interface FormSchema {
   groups: FieldGroup[];
 }
 
-/** Runtime value of a single field. Secrets are strings held only in memory. */
-export type FieldValue = string | number | boolean | undefined;
+/** Scalar runtime value. Secrets are strings held only in memory. */
+export type ScalarValue = string | number | boolean | undefined;
+
+/**
+ * Runtime value of a single field: a scalar, or — for a `list` field — an array
+ * of sub-records (one per entry).
+ */
+export type FieldValue = ScalarValue | FormValues[];
 
 /** A filled form: field `name` → value. */
 export type FormValues = Record<string, FieldValue>;
