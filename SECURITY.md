@@ -54,17 +54,28 @@ Closing or reloading the tab discards everything.
 ### Secrets are first-class
 
 The `secret` field type is a password input (`type="password"`,
-`autocomplete="new-password"`). Its value is **never** stored, logged, encoded, or
-seeded with a default. Any code path that produces a persistable or loggable
-snapshot of the value model routes it through a redaction helper that **strips
-secret-typed fields entirely** — no masking, so not even the length leaks.
+`autocomplete="new-password"`). Its value is **never** persisted, transmitted,
+URL-encoded, seeded with a default, or written to telemetry/logs. The app keeps no
+durable copy — closing or reloading the tab discards it.
 
-### Ansible Vault: flag and pass through, never decrypt
+One deliberate exception, by design: the value **does** appear in the
+`group_vars`/`host_vars` file you generate — that is the file's whole purpose, and
+the file is yours alone (nothing is uploaded). Protect it the standard Ansible way:
+run `ansible-vault encrypt` on the resulting file. To keep secrets out of
+*internal* diagnostics, any code path that would log or snapshot the value model
+first routes it through a redaction helper that **strips secret-typed fields
+entirely** (no masking, so not even the length leaks).
 
-Ansible Vault ciphertext is treated as opaque. Ansiform will **flag** a value that
-appears to be vault-encrypted and **pass it through unchanged** to the output. It
-**never decrypts** vault data and never asks for a vault password. Decryption is
-explicitly out of scope.
+### Ansible Vault: never decrypt
+
+Ansiform **never decrypts** Ansible Vault data and never asks for a vault
+password — there is no decryption code in the app, by design. A `$ANSIBLE_VAULT…`
+ciphertext you paste is treated as an opaque string and serialized to the output
+unchanged.
+
+*Planned (not yet implemented):* visibly **flagging** a value that appears to be
+vault-encrypted in the form and preview, so it is obvious it is passing through
+un-decrypted. Until that lands, passthrough is simply the default string behavior.
 
 ### Correctness over guessing
 
