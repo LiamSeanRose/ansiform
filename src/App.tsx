@@ -2,6 +2,7 @@ import { Link, Route, Routes } from 'react-router-dom';
 import { useTranslation } from './i18n/useTranslation';
 import { HomePage } from './pages/HomePage';
 import { TaskPage } from './pages/TaskPage';
+import { ReferencePage } from './pages/reference';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 /**
@@ -29,6 +30,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/tasks/:task" element={<TaskPage />} />
+          <Route path="/reference/:page" element={<ReferencePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

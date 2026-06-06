@@ -20,11 +20,16 @@ export const en = {
     'Fill out a friendly form, get valid Ansible group_vars/host_vars — with a live preview of the device config you already read.',
   'home.tasksHeading': 'Tasks',
   'home.tasksEmpty': 'The curated task library is coming soon.',
+  'home.referenceHeading': 'Reference & guides',
 
   'task.backToHome': '← All tasks',
   'task.placeholderHeading': 'Task: {task}',
   'task.placeholderBody':
     'This is a routing placeholder. The form engine and curated tasks are not built yet.',
+
+  // Reference / SEO pages (#17). Page bodies live in src/pages/reference/content.
+  'reference.backToHome': '← Home',
+  'reference.tocLabel': 'On this page',
 
   'notFound.title': 'Page not found',
   'notFound.body': "We couldn't find the page you were looking for.",
