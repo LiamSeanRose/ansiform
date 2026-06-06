@@ -58,6 +58,12 @@ export const en = {
   'workbench.formHeading': 'Configure',
   'workbench.outputHeading': 'Ansible vars (YAML)',
   'workbench.outputPathLabel': 'Suggested file:',
+
+  // Output actions (#12) — copy / download of the group_vars/host_vars YAML.
+  'output.copyLabel': 'Copy',
+  'output.copied': 'Copied to clipboard.',
+  'output.copyFailed': 'Copy failed — select the text and copy manually.',
+  'output.downloadLabel': 'Download',
 } as const;
 
 /** The canonical message catalogue shape every locale must satisfy. */

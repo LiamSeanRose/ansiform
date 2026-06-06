@@ -15,10 +15,11 @@
  * the most visible pane never displays one. Nothing here persists, logs, or
  * transmits the value model.
  */
-import { useId, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { FormValues } from '../../core';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../form';
 import { PreviewPane, renderPreview, type PreviewMessages } from '../../core/preview';
+import { YamlOutputPanel, type OutputMessages } from '../output';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { createSeedRegistry } from '../../core/filters/seed';
 import type { TaskModule } from '../../tasks/registry';
@@ -26,8 +27,7 @@ import type { TaskModule } from '../../tasks/registry';
 /** Externalized workbench chrome; the page builds this from the i18n catalogue. */
 export interface WorkbenchMessages {
   formHeading: string;
-  outputHeading: string;
-  outputPathLabel: string;
+  output: OutputMessages;
   form: FormMessages;
   preview: PreviewMessages;
 }
@@ -45,7 +45,6 @@ const SECRET_MASK = '********';
 
 export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
   const { schema, template, defaultScope } = task.definition;
-  const outputId = useId();
 
   const initial = useMemo(() => initialValues(schema), [schema]);
   const [values, setValues] = useState<FormValues>(initial);
@@ -85,20 +84,7 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
 
       <div className="workbench__pane workbench__output">
         <PreviewPane result={preview} messages={messages.preview} />
-
-        <section className="output" aria-labelledby={outputId}>
-          <h2 className="output__heading" id={outputId}>
-            {messages.outputHeading}
-          </h2>
-          <p className="output__path">
-            <span className="output__path-label">{messages.outputPathLabel}</span>{' '}
-            <code className="output__filename">{artifact.filename}</code>
-          </p>
-          {/* Text node only — the YAML is data, never markup. */}
-          <pre className="output__yaml" tabIndex={0} aria-label={messages.outputHeading}>
-            {artifact.content}
-          </pre>
-        </section>
+        <YamlOutputPanel artifact={artifact} messages={messages.output} />
       </div>
     </div>
   );

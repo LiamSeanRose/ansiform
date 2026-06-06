@@ -40,8 +40,14 @@ const echo: Translate = (key) => key;
 
 const messages: WorkbenchMessages = {
   formHeading: 'Configure',
-  outputHeading: 'Ansible vars (YAML)',
-  outputPathLabel: 'Suggested file:',
+  output: {
+    heading: 'Ansible vars (YAML)',
+    pathLabel: 'Suggested file:',
+    copyLabel: 'Copy',
+    copiedStatus: 'Copied to clipboard.',
+    copyFailedStatus: 'Copy failed.',
+    downloadLabel: 'Download',
+  },
   form: {
     requiredLabel: '(required)',
     errorSummaryHeading: 'Fix these:',

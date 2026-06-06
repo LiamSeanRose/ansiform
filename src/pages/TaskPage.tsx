@@ -75,8 +75,14 @@ export function TaskPage() {
 
   const messages: WorkbenchMessages = {
     formHeading: t('workbench.formHeading'),
-    outputHeading: t('workbench.outputHeading'),
-    outputPathLabel: t('workbench.outputPathLabel'),
+    output: {
+      heading: t('workbench.outputHeading'),
+      pathLabel: t('workbench.outputPathLabel'),
+      copyLabel: t('output.copyLabel'),
+      copiedStatus: t('output.copied'),
+      copyFailedStatus: t('output.copyFailed'),
+      downloadLabel: t('output.downloadLabel'),
+    },
     form,
     preview: {
       regionLabel: t('preview.regionLabel'),
