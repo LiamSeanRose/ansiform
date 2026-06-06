@@ -19,6 +19,7 @@ import { createSeedRegistry } from '../../core/filters/seed';
 import { extractTemplate, MAX_TEMPLATE_LENGTH, renderPreview, type Scope } from '../../core/preview';
 import { hasVaultBlock, looksLikeSecretName, segmentTemplate } from './segment';
 import { EditMode } from './EditMode';
+import { ArgSpecImporter } from './ArgSpecImporter';
 
 // Pure + stable: build the seed filter registry once for the whole page.
 const registry = createSeedRegistry();
@@ -43,6 +44,9 @@ export function TemplateReaderPage() {
   // validation are NOT inferred. Unchecking the gate drops back to read-only.
   const [acked, setAcked] = useState(false);
   const [mode, setMode] = useState<'read' | 'edit'>('read');
+  // What kind of artifact is being pasted: a Jinja2 template (the explainer, the
+  // default) or a declarative `argument_specs` (the exact importer, #32).
+  const [source, setSource] = useState<'template' | 'argspec'>('template');
   const ids = useId();
   const editMode = acked && mode === 'edit';
 
@@ -73,6 +77,32 @@ export function TemplateReaderPage() {
       <p className="reader__beta">{t('reader.beta')}</p>
       <p className="lede">{t('reader.lede')}</p>
 
+      <fieldset className="form__group reader__source">
+        <legend className="form__legend">{t('reader.source.label')}</legend>
+        <label className="reader__source-opt">
+          <input
+            type="radio"
+            name="reader-source"
+            checked={source === 'template'}
+            onChange={() => setSource('template')}
+          />{' '}
+          {t('reader.source.template')}
+        </label>
+        <label className="reader__source-opt">
+          <input
+            type="radio"
+            name="reader-source"
+            checked={source === 'argspec'}
+            onChange={() => setSource('argspec')}
+          />{' '}
+          {t('reader.source.argspec')}
+        </label>
+      </fieldset>
+
+      {source === 'argspec' && <ArgSpecImporter t={t} />}
+
+      {source === 'template' && (
+        <>
       <div className="form-field">
         <label className="form-field__label" htmlFor={`${ids}-paste`}>
           {t('reader.pasteLabel')}
@@ -231,6 +261,8 @@ export function TemplateReaderPage() {
             </div>
           </div>
           )}
+        </>
+      )}
         </>
       )}
     </section>

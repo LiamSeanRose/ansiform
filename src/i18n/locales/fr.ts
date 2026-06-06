@@ -130,4 +130,31 @@ export const fr: Messages = {
   'reader.edit.fieldsLegend': 'Variables extraites (sans type)',
   'reader.edit.submitLabel': 'Actualiser l’aperçu',
   'reader.edit.outputHeading': 'Variables extraites (YAML)',
+
+  // Lecteur de template — sélecteur de source collée (#32).
+  'reader.source.label': 'Que collez-vous ?',
+  'reader.source.template': 'Template Jinja2',
+  'reader.source.argspec': 'argument_specs.yml (exact)',
+
+  // Lecteur de template — importateur argument_specs (#32). Déclaratif → exact.
+  'reader.argspec.intro':
+    'Un argument_specs de rôle déclare le type, l’obligation, la valeur par défaut et les choix de chaque variable — ce formulaire est donc exact, pas une supposition. Il n’y a pas d’aperçu CLI ici : un spec décrit des variables, pas une config rendue.',
+  'reader.argspec.pasteLabel': 'Collez meta/argument_specs.yml',
+  'reader.argspec.pasteHelp':
+    'Le spec déclaré du rôle. Reste en mémoire uniquement — jamais enregistré, partagé ni envoyé.',
+  'reader.argspec.placeholder':
+    'argument_specs:\n  main:\n    options:\n      vlan_id:\n        type: int\n        required: true',
+  'reader.argspec.empty': 'Collez un document argument_specs ci-dessus pour générer un formulaire exact.',
+  'reader.argspec.tooLarge': 'Ce spec dépasse {max} Ko (ou comporte trop d’alias) — réduisez-le et recollez.',
+  'reader.argspec.parseError': 'Ce n’est pas du YAML valide — vérifiez l’indentation et recollez.',
+  'reader.argspec.shapeError':
+    'Aucune option argument_specs trouvée. Attendu : une table argument_specs (ou un point d’entrée unique avec options).',
+  'reader.argspec.entrypoint': 'Point d’entrée : {name}',
+  'reader.argspec.approximated':
+    '{count} option(s) n’ont pas pu être représentées exactement et sont affichées en texte brut — définissez leur structure à la main : {names}',
+  'reader.argspec.noPreview':
+    'Pas d’aperçu CLI — un spec déclare des variables, pas une configuration rendue.',
+  'reader.argspec.formHeading': 'Renseigner les variables déclarées',
+  'reader.argspec.outputHeading': 'Variables du rôle (YAML)',
+  'reader.argspec.submitLabel': 'Valider',
 };

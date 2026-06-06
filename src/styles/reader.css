@@ -137,3 +137,23 @@
   border-left: 4px solid var(--warning-border);
   padding-left: var(--space-4);
 }
+
+/* Paste-source selector (#32): Jinja template vs declarative argument_specs. */
+.reader__source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+.reader__source-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+/* The argument_specs importer is the one exact path — wall it like edit mode. */
+.reader__argspec {
+  border-left: 4px solid var(--accent);
+  padding-left: var(--space-4);
+}

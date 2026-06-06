@@ -139,6 +139,33 @@ export const en = {
   'reader.edit.fieldsLegend': 'Extracted variables (untyped)',
   'reader.edit.submitLabel': 'Refresh preview',
   'reader.edit.outputHeading': 'Extracted vars (YAML)',
+
+  // Template reader — paste-source selector (#32).
+  'reader.source.label': 'What are you pasting?',
+  'reader.source.template': 'Jinja2 template',
+  'reader.source.argspec': 'argument_specs.yml (exact)',
+
+  // Template reader — argument_specs importer (#32). Declarative → exact form.
+  'reader.argspec.intro':
+    'A role argument_specs declares each variable’s type, requiredness, default, and choices — so this form is exact, not a guess. There is no device-CLI preview here: a spec describes variables, not rendered config.',
+  'reader.argspec.pasteLabel': 'Paste meta/argument_specs.yml',
+  'reader.argspec.pasteHelp':
+    'The role’s declared spec. Stays in memory only — never saved, shared, or sent anywhere.',
+  'reader.argspec.placeholder':
+    'argument_specs:\n  main:\n    options:\n      vlan_id:\n        type: int\n        required: true',
+  'reader.argspec.empty': 'Paste an argument_specs document above to build an exact form.',
+  'reader.argspec.tooLarge': 'That spec is larger than {max} KB (or too deeply aliased) — trim it and paste again.',
+  'reader.argspec.parseError': 'That is not valid YAML — check the indentation and paste again.',
+  'reader.argspec.shapeError':
+    'No argument_specs options found. Expected an argument_specs map (or a single entry point with options).',
+  'reader.argspec.entrypoint': 'Entry point: {name}',
+  'reader.argspec.approximated':
+    '{count} option(s) could not be represented exactly and are shown as plain text — set their structure by hand: {names}',
+  'reader.argspec.noPreview':
+    'No device-CLI preview — a spec declares variables, not rendered configuration.',
+  'reader.argspec.formHeading': 'Fill the declared variables',
+  'reader.argspec.outputHeading': 'Role vars (YAML)',
+  'reader.argspec.submitLabel': 'Validate',
 } as const;
 
 /**
