@@ -14,6 +14,7 @@ export const en = {
 
   'nav.home': 'Home',
   'nav.skipToContent': 'Skip to main content',
+  'nav.language': 'Language',
 
   'home.title': 'Ansiform',
   'home.lede':
@@ -66,8 +67,12 @@ export const en = {
   'output.downloadLabel': 'Download',
 } as const;
 
-/** The canonical message catalogue shape every locale must satisfy. */
-export type Messages = typeof en;
+/**
+ * The canonical message catalogue shape every locale must satisfy: the same keys
+ * as `en`, with `string` values (so a locale like `fr` can supply different text
+ * while staying type-enforced to the full key set).
+ */
+export type Messages = Record<keyof typeof en, string>;
 
 /** A valid message key. */
 export type MessageKey = keyof Messages;

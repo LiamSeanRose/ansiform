@@ -1,5 +1,6 @@
 import { Link, Route, Routes } from 'react-router-dom';
 import { useTranslation } from './i18n/useTranslation';
+import { LocaleSwitcher } from './i18n/LocaleSwitcher';
 import { HomePage } from './pages/HomePage';
 import { TaskPage } from './pages/TaskPage';
 import { ReferencePage } from './pages/reference';
@@ -24,6 +25,7 @@ export function App() {
           {t('app.name')}
         </Link>
         <span className="brand-tagline">{t('app.tagline')}</span>
+        <LocaleSwitcher />
       </header>
 
       <main id="main">

@@ -135,5 +135,31 @@ export const task: TaskModule = {
       'task.acl.protocol.udp': 'UDP',
       'task.acl.protocol.icmp': 'ICMP',
     },
+    fr: {
+      'task.acl.legend': 'Entrée de liste d’accès',
+      'task.acl.field.name.label': 'Nom de l’ACL',
+      'task.acl.field.name.help': 'Nom de la liste d’accès étendue, par ex. MGMT-IN.',
+      'task.acl.field.action.label': 'Action',
+      'task.acl.field.action.help': 'Autoriser ou refuser le trafic correspondant.',
+      'task.acl.field.protocol.label': 'Protocole',
+      'task.acl.field.protocol.help':
+        'IP correspond à tout ; TCP/UDP autorisent un port facultatif.',
+      'task.acl.field.source.label': 'Source',
+      'task.acl.field.source.help':
+        'Spécification source : any, host 10.0.0.1 ou 10.0.0.0 0.0.0.255.',
+      'task.acl.field.destination.label': 'Destination',
+      'task.acl.field.destination.help':
+        'Spécification destination : any, host 10.0.0.1 ou 10.0.0.0 0.0.0.255.',
+      'task.acl.field.port.label': 'Port de destination',
+      'task.acl.field.port.help': 'Port TCP/UDP facultatif (par ex. 22). Ignoré pour IP/ICMP.',
+      'task.acl.field.remark.label': 'Remarque',
+      'task.acl.field.remark.help': 'Ligne de remarque facultative. Omise des variables si vide.',
+      'task.acl.action.permit': 'permit',
+      'task.acl.action.deny': 'deny',
+      'task.acl.protocol.ip': 'IP',
+      'task.acl.protocol.tcp': 'TCP',
+      'task.acl.protocol.udp': 'UDP',
+      'task.acl.protocol.icmp': 'ICMP',
+    },
   },
 };

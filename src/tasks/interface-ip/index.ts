@@ -101,5 +101,20 @@ export const task: TaskModule = {
       'task.interface-ip.field.enabled.label': 'Administratively enabled',
       'task.interface-ip.field.enabled.help': 'When off, the interface is shut down.',
     },
+    fr: {
+      'task.interface-ip.legend': 'Interface et adresse IP',
+      'task.interface-ip.field.interface.label': 'Interface',
+      'task.interface-ip.field.interface.help':
+        'L’interface à configurer, par ex. GigabitEthernet0/1.',
+      'task.interface-ip.field.description.label': 'Description',
+      'task.interface-ip.field.description.help':
+        'Description facultative de l’interface. Omise des variables si laissée vide.',
+      'task.interface-ip.field.ip_address.label': 'Adresse IP',
+      'task.interface-ip.field.ip_address.help': 'Adresse IPv4 avec préfixe, par ex. 10.0.0.1/24.',
+      'task.interface-ip.field.mtu.label': 'MTU',
+      'task.interface-ip.field.mtu.help': 'MTU facultatif en octets (68–9216). Omis si vide.',
+      'task.interface-ip.field.enabled.label': 'Activée administrativement',
+      'task.interface-ip.field.enabled.help': 'Si désactivée, l’interface est arrêtée (shutdown).',
+    },
   },
 };

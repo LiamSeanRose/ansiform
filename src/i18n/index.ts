@@ -7,18 +7,26 @@
  * pulled in — that keeps the bundle small and the zero-egress story simple.
  */
 import { en, type Messages, type MessageKey } from './locales/en';
+import { fr } from './locales/fr';
 
-export type Locale = 'en';
+export type Locale = 'en' | 'fr';
 
 export const DEFAULT_LOCALE: Locale = 'en';
 
-/** Locale → catalogue. New locales (e.g. `fr`) are registered here. */
+/** Locale → catalogue. New locales are registered here. */
 export const catalogues: Record<Locale, Messages> = {
   en,
+  fr,
 };
 
 /** Locales available in the UI, in display order. */
-export const SUPPORTED_LOCALES: Locale[] = ['en'];
+export const SUPPORTED_LOCALES: Locale[] = ['en', 'fr'];
+
+/** Endonym (native-language name) for each locale, shown in the switcher. */
+export const LOCALE_LABELS: Record<Locale, string> = {
+  en: 'English',
+  fr: 'Français',
+};
 
 export type Translate = (key: MessageKey, vars?: Record<string, string | number>) => string;
 

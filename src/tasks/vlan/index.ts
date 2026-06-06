@@ -88,5 +88,18 @@ export const task: TaskModule = {
       'task.vlan.field.state.option.active': 'Active',
       'task.vlan.field.state.option.suspend': 'Suspended',
     },
+    fr: {
+      'task.vlan.legend': 'Définition de VLAN',
+      'task.vlan.field.vlan_id.label': 'ID de VLAN',
+      'task.vlan.field.vlan_id.help': 'Numéro de VLAN (1–4094).',
+      'task.vlan.field.name.label': 'Nom',
+      'task.vlan.field.name.help':
+        'Nom de VLAN facultatif — un seul mot, jusqu’à 32 caractères. Omis des variables si laissé vide.',
+      'task.vlan.field.state.label': 'État',
+      'task.vlan.field.state.help':
+        'Les VLAN actifs acheminent le trafic ; les VLAN suspendus sont définis mais ne le font pas. Cisco IOS omet la ligne pour l’état par défaut (actif).',
+      'task.vlan.field.state.option.active': 'Actif',
+      'task.vlan.field.state.option.suspend': 'Suspendu',
+    },
   },
 };

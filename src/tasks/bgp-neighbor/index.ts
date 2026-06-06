@@ -101,5 +101,21 @@ export const task: TaskModule = {
       'task.bgp-neighbor.field.password.help':
         'Optional BGP session password. Never stored or logged; omitted when blank.',
     },
+    fr: {
+      'task.bgp-neighbor.legend': 'Voisin BGP',
+      'task.bgp-neighbor.field.local_as.label': 'AS local',
+      'task.bgp-neighbor.field.local_as.help':
+        'Numéro de système autonome BGP de ce routeur.',
+      'task.bgp-neighbor.field.peer_ip.label': 'IP du voisin',
+      'task.bgp-neighbor.field.peer_ip.help': 'Adresse IPv4 du pair BGP, par ex. 10.0.0.2.',
+      'task.bgp-neighbor.field.remote_as.label': 'AS distant',
+      'task.bgp-neighbor.field.remote_as.help': 'Numéro de système autonome du voisin.',
+      'task.bgp-neighbor.field.description.label': 'Description',
+      'task.bgp-neighbor.field.description.help':
+        'Description facultative du voisin. Omise des variables si laissée vide.',
+      'task.bgp-neighbor.field.password.label': 'Mot de passe MD5',
+      'task.bgp-neighbor.field.password.help':
+        'Mot de passe facultatif de session BGP. Jamais stocké ni journalisé ; omis si vide.',
+    },
   },
 };

@@ -117,5 +117,21 @@ export const task: TaskModule = {
       'task.ospf.field.area.label': 'Area',
       'task.ospf.field.area.help': 'OSPF area number (0 is the backbone area).',
     },
+    fr: {
+      'task.ospf.legend.process': 'Processus OSPF',
+      'task.ospf.legend.network': 'Réseau',
+      'task.ospf.field.process_id.label': 'ID de processus',
+      'task.ospf.field.process_id.help':
+        'ID de processus OSPF, local à l’équipement (1–65535).',
+      'task.ospf.field.router_id.label': 'Identifiant de routeur (Router ID)',
+      'task.ospf.field.router_id.help':
+        'Router ID OSPF facultatif au format IPv4, par ex. 1.1.1.1. Omis des variables si laissé vide.',
+      'task.ospf.field.network.label': 'Réseau',
+      'task.ospf.field.network.help': 'Adresse réseau à annoncer, par ex. 10.0.0.0.',
+      'task.ospf.field.wildcard.label': 'Masque générique (wildcard)',
+      'task.ospf.field.wildcard.help': 'Masque inverse (wildcard), par ex. 0.0.0.255 pour un /24.',
+      'task.ospf.field.area.label': 'Aire',
+      'task.ospf.field.area.help': 'Numéro d’aire OSPF (0 est l’aire de backbone).',
+    },
   },
 };

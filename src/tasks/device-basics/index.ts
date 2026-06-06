@@ -125,5 +125,25 @@ export const task: TaskModule = {
       'task.device-basics.field.tacacs_key.help':
         'Shared secret for the TACACS+ server. Never stored or logged; omitted when blank.',
     },
+    fr: {
+      'task.device-basics.legend.snmp': 'SNMP',
+      'task.device-basics.legend.ntp': 'NTP',
+      'task.device-basics.legend.tacacs': 'TACACS+',
+      'task.device-basics.field.snmp_community.label': 'Communauté SNMP (lecture seule)',
+      'task.device-basics.field.snmp_community.help':
+        'Chaîne de communauté SNMP en lecture seule. Traitée comme un secret — jamais stockée ni journalisée ; omise si vide.',
+      'task.device-basics.field.snmp_location.label': 'Emplacement SNMP',
+      'task.device-basics.field.snmp_location.help':
+        'sysLocation facultatif, par ex. HQ-IDF1. Omis des variables si laissé vide.',
+      'task.device-basics.field.ntp_server.label': 'Serveur NTP',
+      'task.device-basics.field.ntp_server.help':
+        'Adresse IPv4 d’un serveur NTP, par ex. 192.0.2.10. Omise si vide.',
+      'task.device-basics.field.tacacs_server.label': 'Serveur TACACS+',
+      'task.device-basics.field.tacacs_server.help':
+        'Adresse IPv4 d’un serveur TACACS+, par ex. 192.0.2.20. Omise si vide.',
+      'task.device-basics.field.tacacs_key.label': 'Clé TACACS+',
+      'task.device-basics.field.tacacs_key.help':
+        'Secret partagé du serveur TACACS+. Jamais stocké ni journalisé ; omis si vide.',
+    },
   },
 };
