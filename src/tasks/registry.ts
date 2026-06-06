@@ -17,6 +17,11 @@
  */
 import type { Locale } from '../i18n';
 import type { TaskDefinition, TaskSummary } from '../core';
+import { DEFAULT_VENDOR, vendorOf, type Vendor } from '../core/tasks/vendor';
+
+// Re-export the vendor seam (#21) so task authors import everything they need
+// from `../registry`, the same place `TaskModule` lives.
+export { DEFAULT_VENDOR, vendorOf, type Vendor };
 
 /** Flat key → string map for one locale's task-scoped copy. */
 export type TaskMessages = Record<string, string>;
@@ -51,6 +56,7 @@ export function listTaskSummaries(): TaskSummary[] {
       slug: definition.slug,
       title: definition.title,
       description: definition.description,
+      vendor: vendorOf(definition),
     }))
     .sort((a, b) => a.title.localeCompare(b.title));
 }

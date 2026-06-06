@@ -7,6 +7,7 @@
  * produce values of this shape.
  */
 import type { FormSchema } from '../types';
+import type { Vendor } from './vendor';
 
 /** Output scope hint — drives the suggested `group_vars`/`host_vars` path. */
 export interface TaskScope {
@@ -23,6 +24,14 @@ export interface TaskMeta {
   title: string;
   /** `<meta name="description">` — the SEO hook. */
   description: string;
+  /**
+   * Target network OS. Optional and additive (issue #21): when omitted, a task
+   * is treated as the default vendor (`cisco-ios`). Resolve with `vendorOf()`
+   * (`../tasks/vendor`) rather than reading this field directly, so the default
+   * is applied consistently. The `Vendor` union grows when multi-vendor content
+   * lands (#27); until then every curated task is Cisco IOS.
+   */
+  vendor?: Vendor;
 }
 
 /** Lightweight listing entry (no schema/template loaded). */

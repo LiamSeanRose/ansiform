@@ -60,5 +60,11 @@ export const task: TaskModule = {
 - **`omitWhenBlank: true`** on optional fields so a blank value is dropped from the
   vars (`default(omit)` semantics) rather than emitted as empty.
 - **Secrets** use `type: 'secret'`; they are masked in the preview and never seeded.
+- **Vendor (#21):** `TaskMeta`/`TaskDefinition` carry an optional `vendor` field. It
+  is additive — omit it and the task is treated as the default, `cisco-ios`. The
+  `Vendor` union (currently just `'cisco-ios'`) grows when multi-vendor content
+  lands (#27); until then leave `vendor` unset. Resolve a task's vendor with
+  `vendorOf(definition)` (re-exported from `../registry`) rather than reading the
+  field directly, so the default is applied consistently.
 
 See `interface-ip/` for the reference implementation.
