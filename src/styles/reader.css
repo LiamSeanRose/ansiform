@@ -1,0 +1,105 @@
+/**
+ * Template reader / explainer (issue #30). Beta surface, visibly distinct from
+ * the curated workbench; reuses the form/preview/workbench tokens.
+ */
+.reader__beta {
+  display: inline-block;
+  margin: 0 0 var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--warning-text);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  border-radius: var(--radius-sm);
+}
+
+.reader__input {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* Calm, positive banner when the preview is exact (the warning path reuses
+   .preview__notice from the workbench layer). */
+.reader__fidelity--exact {
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--text);
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+}
+
+.reader__count {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+/* Highlighted template — text-node spans coloured by delimiter kind. */
+.reader__template {
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.reader__chip {
+  border-radius: 3px;
+  padding: 0 2px;
+}
+.reader__chip--output {
+  color: var(--accent);
+  background: rgba(56, 189, 248, 0.12);
+}
+.reader__chip--tag {
+  color: var(--warning-text);
+  background: var(--warning-bg);
+}
+.reader__chip--comment {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Filters used + fidelity badges. */
+.reader__filters {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.reader__filters code {
+  font-family: var(--font-mono);
+}
+.reader__badge {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+.reader__badge--exact {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.reader__badge--approximate {
+  color: var(--warning-text);
+  border-color: var(--warning-border);
+}
+.reader__badge--unsupported {
+  color: var(--danger-text);
+  border-color: var(--danger);
+}

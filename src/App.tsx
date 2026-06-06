@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage';
 import { TaskPage } from './pages/TaskPage';
 import { BuildPage } from './pages/BuildPage';
 import { ReferencePage } from './pages/reference';
+import { TemplateReaderPage } from './pages/reader';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 /**
@@ -28,6 +29,7 @@ export function App() {
         <span className="brand-tagline">{t('app.tagline')}</span>
         <nav className="site-nav" aria-label={t('nav.build')}>
           <Link to="/build">{t('nav.build')}</Link>
+          <Link to="/reader">{t('nav.reader')}</Link>
         </nav>
         <LocaleSwitcher />
       </header>
@@ -37,6 +39,7 @@ export function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/tasks/:task" element={<TaskPage />} />
           <Route path="/build" element={<BuildPage />} />
+          <Route path="/reader" element={<TemplateReaderPage />} />
           <Route path="/reference/:page" element={<ReferencePage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

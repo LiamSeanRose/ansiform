@@ -1,0 +1,1 @@
+export { TemplateReaderPage } from './TemplateReaderPage';

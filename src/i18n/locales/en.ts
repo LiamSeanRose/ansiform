@@ -92,6 +92,41 @@ export const en = {
   'build.outputHeading': 'Composed files',
   'build.outputEmpty': 'Filled tasks appear here as group_vars / host_vars files.',
   'build.collision': 'Conflicting keys (last value wins — resolve before use): {keys}',
+
+  // Template reader / explainer (#30) — read-only, beta, walled off from curated.
+  'nav.reader': 'Template reader',
+  'reader.title': 'Template reader',
+  'reader.beta': 'Beta · read-only · reads your pasted template, not a curated task',
+  'reader.lede':
+    'Paste an existing Cisco IOS / Jinja2 template to see what it expects — the variables to fill, the filters it uses, and a live device-CLI preview. Nothing you paste leaves your browser or is stored.',
+  'reader.pasteLabel': 'Paste a template',
+  'reader.pasteHelp':
+    'Jinja2 group_vars/host_vars or a role template. Stays in memory only — never saved, shared, or sent anywhere.',
+  'reader.pastePlaceholder': 'interface {{ interface }}\n ip address {{ ip_address | ipaddr(\'address\') }} {{ ip_address | ipaddr(\'netmask\') }}',
+  'reader.empty': 'Paste a template above to read it.',
+  'reader.tooLarge': 'That template is larger than {max} KB — trim it and paste again.',
+  'reader.templateHeading': 'Template',
+  'reader.variablesHeading': 'Variables to fill',
+  'reader.variablesNone': 'No variables found in this template.',
+  'reader.varSampleHelp': 'Sample value — not validated. Used only to render the preview below.',
+  'reader.secretBadge': 'secret — masked',
+  'reader.filtersHeading': 'Filters used',
+  'reader.filtersNone': 'No filters — values are inserted as-is.',
+  'reader.tier.exact': 'exact',
+  'reader.tier.approximate': 'approximate',
+  'reader.tier.unsupported': 'unsupported',
+  'reader.previewHeading': 'Live preview (Cisco IOS)',
+  'reader.foundCount':
+    'Found {count} variable(s). Variables defined with set, or used only inside loops, may not be listed — review the template itself before relying on this.',
+  'reader.loopVars': 'Loop variables (filled per row, not above): {names}',
+  'reader.vaultNote':
+    'This template contains Vault-encrypted data. It is shown as-is on your screen but never decoded, stored, or evaluated.',
+  'reader.fidelity.exact':
+    'Preview is exact — this template uses only filters Ansiform renders exactly.',
+  'reader.fidelity.approximate':
+    'Preview may differ — the underlying values are still correct. Some filters are approximated here.',
+  'reader.fidelity.unsupported':
+    'Preview may differ — this template uses filters or constructs Ansiform cannot render exactly, so the variable list may be incomplete. Verify against the real template.',
 } as const;
 
 /**

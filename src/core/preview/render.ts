@@ -404,7 +404,17 @@ function afterWord(s: string, word: string): string {
 }
 
 /** Parse a node sequence until a tag whose keyword is in `stops` (uncon­sumed). */
-function parseSeq(ts: TState, stops: string[], diag: Diag): { nodes: Node[]; stop: string | null } {
+/** Hard cap on `{% if %}`/`{% for %}` nesting — guards against a stack overflow
+ * on pathologically deep (possibly hostile) pasted input. Real templates nest a
+ * handful of levels; 64 is far beyond any genuine config template. */
+const MAX_PARSE_DEPTH = 64;
+
+function parseSeq(
+  ts: TState,
+  stops: string[],
+  diag: Diag,
+  depth: number,
+): { nodes: Node[]; stop: string | null } {
   const nodes: Node[] = [];
   while (ts.i < ts.toks.length) {
     const tok = ts.toks[ts.i];
@@ -421,14 +431,22 @@ function parseSeq(ts: TState, stops: string[], diag: Diag): { nodes: Node[]; sto
     // tag
     const kw = firstWord(tok.value);
     if (stops.includes(kw)) return { nodes, stop: kw };
+    if ((kw === 'if' || kw === 'for') && depth >= MAX_PARSE_DEPTH) {
+      // Nesting too deep: bail loudly (text + structural degrade) rather than
+      // recurse further. Never silently wrong, never a crash.
+      diag.structural = true;
+      nodes.push({ t: 'text', v: `{% ${tok.value} %}` });
+      ts.i++;
+      continue;
+    }
     if (kw === 'if') {
       ts.i++;
-      nodes.push(parseIf(ts, tok.value, diag));
+      nodes.push(parseIf(ts, tok.value, diag, depth + 1));
       continue;
     }
     if (kw === 'for') {
       ts.i++;
-      nodes.push(parseFor(ts, tok.value, diag));
+      nodes.push(parseFor(ts, tok.value, diag, depth + 1));
       continue;
     }
     // Unknown tag: render it literally so the divergence is visible, and degrade.
@@ -439,21 +457,21 @@ function parseSeq(ts: TState, stops: string[], diag: Diag): { nodes: Node[]; sto
   return { nodes, stop: null };
 }
 
-function parseIf(ts: TState, tagSrc: string, diag: Diag): Node {
+function parseIf(ts: TState, tagSrc: string, diag: Diag, depth: number): Node {
   const branches: { cond: Expr; body: Node[] }[] = [];
   let cond = parseExpr(afterWord(tagSrc, 'if'), diag);
-  let seq = parseSeq(ts, ['elif', 'else', 'endif'], diag);
+  let seq = parseSeq(ts, ['elif', 'else', 'endif'], diag, depth);
   branches.push({ cond, body: seq.nodes });
   while (seq.stop === 'elif') {
     const elifTok = ts.toks[ts.i++];
     cond = parseExpr(afterWord(elifTok.kind === 'tag' ? elifTok.value : '', 'elif'), diag);
-    seq = parseSeq(ts, ['elif', 'else', 'endif'], diag);
+    seq = parseSeq(ts, ['elif', 'else', 'endif'], diag, depth);
     branches.push({ cond, body: seq.nodes });
   }
   let alt: Node[] | null = null;
   if (seq.stop === 'else') {
     ts.i++;
-    seq = parseSeq(ts, ['endif'], diag);
+    seq = parseSeq(ts, ['endif'], diag, depth);
     alt = seq.nodes;
   }
   if (seq.stop === 'endif') ts.i++;
@@ -461,26 +479,38 @@ function parseIf(ts: TState, tagSrc: string, diag: Diag): Node {
   return { t: 'if', branches, alt };
 }
 
-function parseFor(ts: TState, tagSrc: string, diag: Diag): Node {
+function parseFor(ts: TState, tagSrc: string, diag: Diag, depth: number): Node {
   const m = /^for\s+([A-Za-z_]\w*)\s+in\s+(.+)$/.exec(tagSrc.trim());
   if (!m) {
     diag.structural = true;
-    const seq = parseSeq(ts, ['endfor'], diag);
+    const seq = parseSeq(ts, ['endfor'], diag, depth);
     if (seq.stop === 'endfor') ts.i++;
     return { t: 'for', name: '_', iter: { e: 'lit', v: [] }, body: seq.nodes, alt: null };
   }
   const iter = parseExpr(m[2], diag);
-  let seq = parseSeq(ts, ['else', 'endfor'], diag);
+  let seq = parseSeq(ts, ['else', 'endfor'], diag, depth);
   const body = seq.nodes;
   let alt: Node[] | null = null;
   if (seq.stop === 'else') {
     ts.i++;
-    seq = parseSeq(ts, ['endfor'], diag);
+    seq = parseSeq(ts, ['endfor'], diag, depth);
     alt = seq.nodes;
   }
   if (seq.stop === 'endfor') ts.i++;
   else diag.structural = true;
   return { t: 'for', name: m[1], iter, body, alt };
+}
+
+/**
+ * Tokenize + parse a template into the node AST, filling `diag` with any
+ * structural problems. The single parser shared by both consumers — `renderPreview`
+ * (below) and `extractTemplate` (issue #30) — so the reader can never disagree
+ * with the preview ("one parser, two outputs"). Adds no grammar of its own.
+ */
+function parseTemplate(template: string, diag: Diag): Node[] {
+  const toks = tokenize(template, diag);
+  const ts: TState = { toks, i: 0 };
+  return parseSeq(ts, [], diag, 0).nodes;
 }
 
 // ── Runtime helpers ─────────────────────────────────────────────────────────
@@ -651,10 +681,8 @@ export function renderPreview(
   };
 
   try {
-    const toks = tokenize(template, diag);
-    const ts: TState = { toks, i: 0 };
-    const result = parseSeq(ts, [], diag);
-    text = renderNodes(result.nodes, values);
+    const nodes = parseTemplate(template, diag);
+    text = renderNodes(nodes, values);
   } catch {
     // Defensive: the renderer must never throw. Degrade instead.
     diag.runtime = true;
@@ -664,4 +692,160 @@ export function renderPreview(
     diag.structural || diag.runtime ? 'unsupported' : registry.resolveFidelity(filters);
 
   return { text, fidelity, filters };
+}
+
+// ── Template reader: extraction (issue #30) ──────────────────────────────────
+
+/** A filter referenced by a template, with how faithfully the preview matches. */
+export interface FilterUse {
+  name: string;
+  tier: FidelityTier;
+}
+
+/**
+ * What the read-only template explainer (#30) learns from a pasted template.
+ *
+ * Deliberately *descriptive, never inferential* (council deal-breaker): it lists
+ * the variables and filters the template references and the worst-case preview
+ * fidelity, but it does NOT guess types, validation, or requiredness. `loopVars`
+ * and `hasBlocks` let the UI warn that `{% set %}`/loop variables may not all be
+ * surfaced — so a partial list is shown honestly, never as authoritative.
+ */
+export interface TemplateExtraction {
+  /** Free variable names the operator would fill, first-seen order (loop vars excluded). */
+  variables: string[];
+  /** Distinct filters referenced, first-seen order, each with its fidelity tier. */
+  filters: FilterUse[];
+  /** Names bound by `{% for x in … %}` — surfaced separately, not as fill-ins. */
+  loopVars: string[];
+  /** Worst-case preview fidelity: any structural problem ⇒ `unsupported`. */
+  fidelity: FidelityTier;
+  /** Whether the template uses `{% if %}`/`{% for %}` (⇒ list may be partial). */
+  hasBlocks: boolean;
+  /** A parse problem occurred (unknown tag, unbalanced block, bad expression, too deep). */
+  structural: boolean;
+  /** Input exceeded {@link MAX_TEMPLATE_LENGTH} and was not parsed. */
+  tooLarge: boolean;
+}
+
+/** Largest template the reader will parse — a hard ceiling against hostile input. */
+export const MAX_TEMPLATE_LENGTH = 64 * 1024;
+
+/**
+ * Extract the variables, filters, and fidelity of a pasted template by walking
+ * the SAME AST `renderPreview` uses. Pure, never throws, never evaluates values
+ * (so no pasted value is run). Adds no grammar the renderer can't already parse.
+ */
+export function extractTemplate(template: string, registry: FilterRegistry): TemplateExtraction {
+  if (template.length > MAX_TEMPLATE_LENGTH) {
+    return {
+      variables: [],
+      filters: [],
+      loopVars: [],
+      fidelity: 'unsupported',
+      hasBlocks: false,
+      structural: true,
+      tooLarge: true,
+    };
+  }
+
+  const diag: Diag = { structural: false, runtime: false };
+  const variables: string[] = [];
+  const loopVars: string[] = [];
+  const filterNames: string[] = [];
+  const filters: FilterUse[] = [];
+  let hasBlocks = false;
+
+  const addVar = (name: string, bound: Set<string>) => {
+    if (bound.has(name) || variables.includes(name)) return;
+    variables.push(name);
+  };
+  const addFilter = (name: string) => {
+    if (filterNames.includes(name)) return;
+    filterNames.push(name);
+    const def = registry.get(name);
+    filters.push({ name, tier: def ? def.fidelity : 'unsupported' });
+  };
+  /** Root variable of a `a.b.c` member chain (the thing the operator provides). */
+  const rootVar = (e: Expr): string | null => {
+    let cur = e;
+    while (cur.e === 'member') cur = cur.obj;
+    return cur.e === 'var' ? cur.name : null;
+  };
+
+  const walkExpr = (e: Expr, bound: Set<string>): void => {
+    switch (e.e) {
+      case 'lit':
+        return;
+      case 'var':
+        addVar(e.name, bound);
+        return;
+      case 'not':
+        walkExpr(e.x, bound);
+        return;
+      case 'and':
+      case 'or':
+      case 'cmp':
+        walkExpr(e.l, bound);
+        walkExpr(e.r, bound);
+        return;
+      case 'member': {
+        const root = rootVar(e);
+        if (root !== null) addVar(root, bound);
+        else walkExpr(e.obj, bound);
+        return;
+      }
+      case 'filter':
+        walkExpr(e.src, bound);
+        addFilter(e.name);
+        for (const arg of e.args) walkExpr(arg, bound);
+        return;
+    }
+  };
+
+  const walkNodes = (nodes: Node[], bound: Set<string>): void => {
+    for (const node of nodes) {
+      switch (node.t) {
+        case 'text':
+          break;
+        case 'out':
+          walkExpr(node.expr, bound);
+          break;
+        case 'if':
+          hasBlocks = true;
+          for (const branch of node.branches) {
+            walkExpr(branch.cond, bound);
+            walkNodes(branch.body, bound);
+          }
+          if (node.alt) walkNodes(node.alt, bound);
+          break;
+        case 'for': {
+          hasBlocks = true;
+          walkExpr(node.iter, bound); // iterable is evaluated in the outer scope
+          if (!loopVars.includes(node.name)) loopVars.push(node.name);
+          const inner = new Set(bound);
+          inner.add(node.name);
+          walkNodes(node.body, inner);
+          if (node.alt) walkNodes(node.alt, inner);
+          break;
+        }
+      }
+    }
+  };
+
+  try {
+    walkNodes(parseTemplate(template, diag), new Set());
+  } catch {
+    diag.structural = true;
+  }
+
+  return {
+    variables,
+    filters,
+    loopVars,
+    fidelity: diag.structural ? 'unsupported' : registry.resolveFidelity(filterNames),
+    hasBlocks,
+    structural: diag.structural,
+    tooLarge: false,
+  };
 }

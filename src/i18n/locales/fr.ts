@@ -83,4 +83,39 @@ export const fr: Messages = {
   'build.outputEmpty': 'Les tâches remplies apparaissent ici sous forme de fichiers group_vars / host_vars.',
   'build.collision':
     'Clés en conflit (la dernière valeur l’emporte — à résoudre avant utilisation) : {keys}',
+
+  // Lecteur de template (#30) — lecture seule, bêta, distinct des tâches curées.
+  'nav.reader': 'Lecteur de template',
+  'reader.title': 'Lecteur de template',
+  'reader.beta': 'Bêta · lecture seule · lit le template que vous collez, pas une tâche curée',
+  'reader.lede':
+    'Collez un template Cisco IOS / Jinja2 existant pour voir ce qu’il attend — les variables à renseigner, les filtres utilisés, et un aperçu CLI en direct. Rien de ce que vous collez ne quitte votre navigateur ni n’est conservé.',
+  'reader.pasteLabel': 'Coller un template',
+  'reader.pasteHelp':
+    'group_vars/host_vars Jinja2 ou un template de rôle. Reste en mémoire uniquement — jamais enregistré, partagé ni envoyé.',
+  'reader.pastePlaceholder': 'interface {{ interface }}\n ip address {{ ip_address | ipaddr(\'address\') }} {{ ip_address | ipaddr(\'netmask\') }}',
+  'reader.empty': 'Collez un template ci-dessus pour le lire.',
+  'reader.tooLarge': 'Ce template dépasse {max} Ko — réduisez-le et recollez.',
+  'reader.templateHeading': 'Template',
+  'reader.variablesHeading': 'Variables à renseigner',
+  'reader.variablesNone': 'Aucune variable trouvée dans ce template.',
+  'reader.varSampleHelp': 'Valeur d’exemple — non validée. Sert uniquement à générer l’aperçu ci-dessous.',
+  'reader.secretBadge': 'secret — masqué',
+  'reader.filtersHeading': 'Filtres utilisés',
+  'reader.filtersNone': 'Aucun filtre — les valeurs sont insérées telles quelles.',
+  'reader.tier.exact': 'exact',
+  'reader.tier.approximate': 'approximatif',
+  'reader.tier.unsupported': 'non pris en charge',
+  'reader.previewHeading': 'Aperçu en direct (Cisco IOS)',
+  'reader.foundCount':
+    '{count} variable(s) trouvée(s). Les variables définies avec set, ou utilisées uniquement dans des boucles, peuvent ne pas figurer — vérifiez le template lui-même avant de vous y fier.',
+  'reader.loopVars': 'Variables de boucle (renseignées par ligne, pas ci-dessus) : {names}',
+  'reader.vaultNote':
+    'Ce template contient des données chiffrées par Vault. Elles sont affichées telles quelles à l’écran mais jamais déchiffrées, stockées ni évaluées.',
+  'reader.fidelity.exact':
+    'Aperçu exact — ce template n’utilise que des filtres rendus exactement par Ansiform.',
+  'reader.fidelity.approximate':
+    'L’aperçu peut différer — les valeurs sous-jacentes restent correctes. Certains filtres sont approximés ici.',
+  'reader.fidelity.unsupported':
+    'L’aperçu peut différer — ce template utilise des filtres ou constructions qu’Ansiform ne peut pas rendre exactement ; la liste des variables peut donc être incomplète. Vérifiez avec le template réel.',
 };
