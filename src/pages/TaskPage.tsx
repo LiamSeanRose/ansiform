@@ -99,6 +99,7 @@ export function TaskPage() {
         'cisco-iosxe': t('vendor.cisco-iosxe'),
         'cisco-nxos': t('vendor.cisco-nxos'),
         'arista-eos': t('vendor.arista-eos'),
+        'cisco-asa': t('vendor.cisco-asa'),
       },
     },
   };

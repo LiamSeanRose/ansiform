@@ -78,6 +78,7 @@ export const en = {
   'vendor.cisco-iosxe': 'Cisco IOS-XE',
   'vendor.cisco-nxos': 'Cisco NX-OS',
   'vendor.arista-eos': 'Arista EOS',
+  'vendor.cisco-asa': 'Cisco ASA',
 
   // Output actions (#12) — copy / download of the group_vars/host_vars YAML.
   'output.copyLabel': 'Copy',
@@ -108,7 +109,7 @@ export const en = {
   // Task discovery index (#35) — /tasks, grouped by function + filterable.
   'tasksIndex.title': 'Task library',
   'tasksIndex.lede':
-    'Browse every task by function. Each renders the same form to Cisco IOS, IOS-XE, NX-OS, and Arista EOS — open one to fill it in.',
+    'Browse every task by function, each labelled with the device CLI it renders. Open one to fill in the form and get valid Ansible vars.',
   'tasksIndex.searchLabel': 'Filter tasks',
   'tasksIndex.searchPlaceholder': 'Search by name or keyword…',
   'tasksIndex.resultsCount': '{count} task(s)',
@@ -118,6 +119,7 @@ export const en = {
   'tasksIndex.category.switching': 'VLANs & switching',
   'tasksIndex.category.routing': 'Routing',
   'tasksIndex.category.policy': 'Traffic policy',
+  'tasksIndex.category.firewall': 'Firewall (ASA)',
   'tasksIndex.category.management': 'Management & hardening',
   'tasksIndex.category.other': 'Other',
 

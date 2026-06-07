@@ -68,6 +68,7 @@ export const fr: Messages = {
   'vendor.cisco-iosxe': 'Cisco IOS-XE',
   'vendor.cisco-nxos': 'Cisco NX-OS',
   'vendor.arista-eos': 'Arista EOS',
+  'vendor.cisco-asa': 'Cisco ASA',
 
   'output.copyLabel': 'Copier',
   'output.copied': 'Copié dans le presse-papiers.',
@@ -96,7 +97,7 @@ export const fr: Messages = {
   // Index de découverte des tâches (#35) — /tasks, groupé par fonction + filtrable.
   'tasksIndex.title': 'Bibliothèque de tâches',
   'tasksIndex.lede':
-    'Parcourez chaque tâche par fonction. Chacune génère le même formulaire pour Cisco IOS, IOS-XE, NX-OS et Arista EOS — ouvrez-en une pour la remplir.',
+    'Parcourez chaque tâche par fonction, chacune étiquetée avec le CLI d’équipement qu’elle génère. Ouvrez-en une pour remplir le formulaire et obtenir des variables Ansible valides.',
   'tasksIndex.searchLabel': 'Filtrer les tâches',
   'tasksIndex.searchPlaceholder': 'Rechercher par nom ou mot-clé…',
   'tasksIndex.resultsCount': '{count} tâche(s)',
@@ -106,6 +107,7 @@ export const fr: Messages = {
   'tasksIndex.category.switching': 'VLAN et commutation',
   'tasksIndex.category.routing': 'Routage',
   'tasksIndex.category.policy': 'Politique de trafic',
+  'tasksIndex.category.firewall': 'Pare-feu (ASA)',
   'tasksIndex.category.management': 'Gestion et durcissement',
   'tasksIndex.category.other': 'Autre',
 

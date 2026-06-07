@@ -24,9 +24,17 @@ describe('vendor seam (#21)', () => {
   it('surfaces a concrete vendor on every task summary', () => {
     const summaries = listTaskSummaries();
     expect(summaries.length).toBeGreaterThan(0);
+    const known = ['cisco-ios', 'cisco-iosxe', 'cisco-nxos', 'arista-eos', 'cisco-asa'];
     for (const summary of summaries) {
-      expect(summary.vendor).toBe('cisco-ios');
+      // Never undefined — a summary always resolves a concrete platform (#21).
+      expect(summary.vendor).toBeDefined();
+      expect(known).toContain(summary.vendor);
     }
+    // The library now spans more than one platform: the IOS-family tasks plus the
+    // cisco-asa firewall family (#38).
+    const vendors = new Set(summaries.map((s) => s.vendor));
+    expect(vendors.has('cisco-ios')).toBe(true);
+    expect(vendors.has('cisco-asa')).toBe(true);
   });
 });
 
