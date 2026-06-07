@@ -43,12 +43,29 @@ export interface BaseField {
   dataSource?: 'extracted';
 }
 
+/**
+ * Network-semantic value shapes a text field can be checked against (#86). These
+ * drive **advisory** validation only — a non-matching value is flagged with a
+ * visible warning but is NEVER blocked (the YAML stays exportable), because a
+ * false positive on a value the user knows is right is the worse failure. See
+ * `src/core/validation/network.ts`.
+ */
+export type NetworkFormat = 'ipv4' | 'cidr' | 'ipv6' | 'mac' | 'vlan' | 'asn' | 'ifname';
+
 export interface TextField extends BaseField {
   type: 'text';
   default?: string;
   placeholder?: string;
   /** Optional validation regex (source form, no delimiters). */
   pattern?: string;
+  /**
+   * Optional network-semantic check (#86). Additive and advisory: when set, the
+   * value is checked against the shape (e.g. a real `/0–32` CIDR, VLAN 1–4094,
+   * 4-byte/asdot ASN) and a non-match surfaces a dismissible warning — it never
+   * blocks export. Jinja2 refs (`{{ … }}`), Vault ciphertext, and blank optional
+   * fields are never flagged.
+   */
+  format?: NetworkFormat;
 }
 
 export interface NumberField extends BaseField {

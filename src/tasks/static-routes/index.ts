@@ -56,6 +56,7 @@ const schema: FormSchema = {
               help: 'task.static-routes.field.routes.next_hop.help',
               required: true,
               placeholder: '192.0.2.1',
+              format: 'ipv4',
             },
             {
               type: 'number',

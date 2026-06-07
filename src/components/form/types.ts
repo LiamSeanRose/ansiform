@@ -8,10 +8,25 @@
  * keys (resolved with `t()`), and form chrome arrives via `FormMessages`.
  */
 import type { FieldValue } from '../../core';
+import type { NetworkWarningCode } from '../../core/validation/network';
 
 /** Why a field failed validation. The component maps this to copy + focus.
  *  `incomplete` = a list field whose rows need attention (v2). */
 export type ErrorCode = 'required' | 'pattern' | 'min' | 'max' | 'notANumber' | 'incomplete';
+
+/**
+ * Advisory network-validation copy (#86). Optional and separate from the blocking
+ * `errors` map on purpose: a `format` mismatch is a *warning* — it is shown but
+ * never blocks submit/export, and carries a per-field "treat as text" dismissal.
+ * Passed to the form only by the curated-task surfaces (where `format` is set);
+ * when absent, no warnings render (graceful for the reader's all-text fields).
+ */
+export interface NetworkWarningMessages {
+  /** Advisory copy keyed by warning code. */
+  warnings: Record<NetworkWarningCode, string>;
+  /** Label for the per-field "treat as text" (dismiss) button. */
+  treatAsTextLabel: string;
+}
 
 /** A single validation failure. `params` feed `{placeholder}` interpolation. */
 export interface FieldError {

@@ -49,6 +49,20 @@ export const fr: Messages = {
   'form.error.max': '{label} doit être au plus {max}.',
   'form.error.notANumber': '{label} doit être un nombre.',
   'form.error.incomplete': '{label} comporte des lignes à corriger.',
+  // Avertissements de validation réseau (#86) — affichés mais JAMAIS bloquants ;
+  // le YAML s’exporte quand même. « Traiter comme du texte » ignore l’avertissement.
+  'form.warning.ipv4': 'Cela ne ressemble pas à une adresse IPv4 valide. Le YAML s’exporte quand même.',
+  'form.warning.cidr':
+    'Cela ne ressemble pas à un CIDR valide (par ex. 10.0.0.0/24, /31 pour du point à point). Le YAML s’exporte quand même.',
+  'form.warning.ipv6': 'Cela ne ressemble pas à une adresse IPv6 valide. Le YAML s’exporte quand même.',
+  'form.warning.mac': 'Cela ne ressemble pas à une adresse MAC valide. Le YAML s’exporte quand même.',
+  'form.warning.vlan': 'Un ID de VLAN est normalement compris entre 1 et 4094. Le YAML s’exporte quand même.',
+  'form.warning.vlanReserved':
+    'Les VLAN 1002–1005 sont réservés sur Cisco IOS. Le YAML s’exporte quand même.',
+  'form.warning.asn':
+    'Un ASN va de 1 à 4294967295 (asplain) ou en asdot comme 65000.1. Le YAML s’exporte quand même.',
+  'form.warning.ifname': 'Cela ne ressemble pas à un nom d’interface. Le YAML s’exporte quand même.',
+  'form.warning.treatAsText': 'Traiter comme du texte',
   'form.list.add': 'Ajouter une ligne',
   'form.list.remove': 'Supprimer la ligne {index}',
   'form.list.row': 'Ligne {index}',

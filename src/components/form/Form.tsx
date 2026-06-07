@@ -17,7 +17,7 @@ import { FieldControl, type Translate } from './FieldControl';
 import { ListFieldControl } from './ListFieldControl';
 import { initialValues } from './defaults';
 import { fieldOrder, validateForm } from './validation';
-import type { FieldErrors, FormMessages, ValuesChange } from './types';
+import type { FieldErrors, FormMessages, NetworkWarningMessages, ValuesChange } from './types';
 
 export interface FormProps {
   schema: FormSchema;
@@ -25,6 +25,8 @@ export interface FormProps {
   t: Translate;
   /** Externalized form chrome (required marker, summary heading, errors…). */
   messages: FormMessages;
+  /** Advisory network-validation copy (#86); enables `format` warnings when set. */
+  warningMessages?: NetworkWarningMessages;
   /** Called with the full value model whenever any field changes. */
   onChange?: ValuesChange;
   /** Called with the value model on a successful (valid) submit. */
@@ -33,7 +35,15 @@ export interface FormProps {
   initialValues?: FormValues;
 }
 
-export function Form({ schema, t, messages, onChange, onSubmit, initialValues: seed }: FormProps) {
+export function Form({
+  schema,
+  t,
+  messages,
+  warningMessages,
+  onChange,
+  onSubmit,
+  initialValues: seed,
+}: FormProps) {
   const idPrefix = useId();
   const [values, setValues] = useState<FormValues>(() => seed ?? initialValues(schema));
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -137,6 +147,7 @@ export function Form({ schema, t, messages, onChange, onSubmit, initialValues: s
               onValueChange: handleValueChange,
               t,
               messages,
+              warningMessages,
               idPrefix,
               inputRef: (el: HTMLElement | null) => registerControl(field.name, el),
             };

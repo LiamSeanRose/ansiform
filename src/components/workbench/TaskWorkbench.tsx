@@ -24,7 +24,15 @@
  */
 import { useId, useMemo, useState } from 'react';
 import type { FormValues } from '../../core';
-import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../form';
+import {
+  Form,
+  initialValues,
+  secretFieldNames,
+  type FormMessages,
+  type NetworkWarningMessages,
+  type Translate,
+} from '../form';
+import { networkWarningMessages } from '../form/warning-messages';
 import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../../core/preview';
 import { YamlOutputPanel, SurveyDownloadButton, VarsDiff, type OutputMessages, type VarsDiffMessages } from '../output';
 import { buildVars, groupVarsYamlSink } from '../../core/output/yaml';
@@ -82,6 +90,8 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
   const approximate = vendorTemplateApproximate(task.definition, vendor);
 
   const initial = useMemo(() => initialValues(schema), [schema]);
+  // Advisory network-validation copy (#86) — enables `format` warnings on fields.
+  const warnings = useMemo<NetworkWarningMessages>(() => networkWarningMessages(t), [t]);
   const [values, setValues] = useState<FormValues>(initial);
   const secrets = useMemo(() => secretFieldNames(schema), [schema]);
   const secretNames = useMemo(() => [...secrets], [secrets]);
@@ -155,6 +165,7 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
           schema={schema}
           t={t}
           messages={messages.form}
+          warningMessages={warnings}
           initialValues={initial}
           onChange={setValues}
         />

@@ -13,5 +13,6 @@ export type {
   FieldError,
   FieldErrors,
   FormMessages,
+  NetworkWarningMessages,
   ValuesChange,
 } from './types';

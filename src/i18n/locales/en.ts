@@ -54,6 +54,19 @@ export const en = {
   'form.error.max': '{label} must be at most {max}.',
   'form.error.notANumber': '{label} must be a number.',
   'form.error.incomplete': '{label} has rows that need attention.',
+  // Advisory network-validation warnings (#86) — shown but NEVER blocking; the
+  // YAML still exports. "Treat as text" dismisses one for the current value.
+  'form.warning.ipv4': "This doesn't look like a valid IPv4 address. The YAML still exports.",
+  'form.warning.cidr':
+    "This doesn't look like a valid CIDR (e.g. 10.0.0.0/24, /31 for point-to-point). The YAML still exports.",
+  'form.warning.ipv6': "This doesn't look like a valid IPv6 address. The YAML still exports.",
+  'form.warning.mac': "This doesn't look like a valid MAC address. The YAML still exports.",
+  'form.warning.vlan': 'A VLAN ID is normally 1–4094. The YAML still exports.',
+  'form.warning.vlanReserved': 'VLANs 1002–1005 are reserved on Cisco IOS. The YAML still exports.',
+  'form.warning.asn':
+    'An ASN is 1–4294967295 (asplain) or asdot like 65000.1. The YAML still exports.',
+  'form.warning.ifname': "This doesn't look like an interface name. The YAML still exports.",
+  'form.warning.treatAsText': 'Treat as text',
   // List / repeating-group controls (v2).
   'form.list.add': 'Add row',
   'form.list.remove': 'Remove row {index}',

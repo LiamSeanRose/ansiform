@@ -6,9 +6,10 @@
  * also joined into `aria-describedby`. The `secret` type is a password input
  * with `autocomplete="new-password"` and never carries a default (§5).
  */
-import type { ChangeEvent, Ref } from 'react';
+import { useState, type ChangeEvent, type Ref } from 'react';
 import type { Field, FieldValue } from '../../core';
-import type { FieldError, FormMessages } from './types';
+import { validateNetworkFormat } from '../../core/validation/network';
+import type { FieldError, FormMessages, NetworkWarningMessages } from './types';
 
 /** Minimal translate contract — decoupled from the app's `MessageKey` union so
  *  this module stays self-contained. Field labels/help are i18n keys. */
@@ -21,15 +22,21 @@ export interface FieldControlProps {
   onValueChange: (name: string, value: FieldValue) => void;
   t: Translate;
   messages: FormMessages;
+  /**
+   * Advisory network-validation copy (#86). Optional: when provided and a text
+   * field declares a `format`, a non-matching value shows a dismissible warning.
+   * Absent ⇒ no warnings render (the reader's all-text fields opt out for free).
+   */
+  warningMessages?: NetworkWarningMessages;
   /** Namespacing prefix so ids are unique when multiple forms share a page. */
   idPrefix: string;
   /** Attached to the control so the error summary can move focus to it. */
   inputRef?: Ref<HTMLElement>;
 }
 
-function describedBy(helpId: string | undefined, errorId: string | undefined): string | undefined {
-  const ids = [helpId, errorId].filter(Boolean);
-  return ids.length ? ids.join(' ') : undefined;
+function describedBy(...ids: (string | undefined)[]): string | undefined {
+  const present = ids.filter(Boolean);
+  return present.length ? present.join(' ') : undefined;
 }
 
 export function FieldControl({
@@ -39,13 +46,27 @@ export function FieldControl({
   onValueChange,
   t,
   messages,
+  warningMessages,
   idPrefix,
   inputRef,
 }: FieldControlProps) {
+  // "Treat as text" dismissal (#86): remembers the exact value the user waved
+  // through, so editing to a new value re-checks. Ephemeral — never persisted.
+  const [dismissedValue, setDismissedValue] = useState<string | null>(null);
+
   const fieldId = `${idPrefix}-${field.name}`;
+  const rawStr = typeof value === 'string' ? value : '';
+  // Advisory only: a format mismatch warns, never sets aria-invalid and never
+  // blocks submit/export. Only fires when copy is supplied and the field opted in.
+  const warning =
+    warningMessages && field.type === 'text' && field.format && dismissedValue !== rawStr
+      ? validateNetworkFormat(field.format, rawStr)
+      : undefined;
+
   const helpId = field.help ? `${fieldId}-help` : undefined;
   const errorId = error ? `${fieldId}-error` : undefined;
-  const aria = describedBy(helpId, errorId);
+  const warningId = warning ? `${fieldId}-warning` : undefined;
+  const aria = describedBy(helpId, errorId, warningId);
   const invalid = error ? true : undefined;
   const label = t(field.label);
 
@@ -67,6 +88,22 @@ export function FieldControl({
       {t(messages.errors[error.code], { label, ...error.params })}
     </span>
   ) : null;
+
+  // Advisory warning (#86): visible, dismissible, never blocks. Joined into
+  // aria-describedby so it is announced, but does NOT set aria-invalid.
+  const warningNode =
+    warning && warningMessages ? (
+      <span className="form-field__warning" id={warningId}>
+        {warningMessages.warnings[warning.code]}{' '}
+        <button
+          type="button"
+          className="form-field__warning-dismiss"
+          onClick={() => setDismissedValue(rawStr)}
+        >
+          {warningMessages.treatAsTextLabel}
+        </button>
+      </span>
+    ) : null;
 
   const control = renderControl({
     field,
@@ -97,6 +134,7 @@ export function FieldControl({
       {!isCheckbox && control}
       {help}
       {errorNode}
+      {warningNode}
     </div>
   );
 }

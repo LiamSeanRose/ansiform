@@ -25,6 +25,7 @@ const schema: FormSchema = {
           help: 'task.interface-ip.field.interface.help',
           required: true,
           placeholder: 'GigabitEthernet0/1',
+          format: 'ifname',
         },
         {
           type: 'text',
@@ -41,6 +42,7 @@ const schema: FormSchema = {
           help: 'task.interface-ip.field.ip_address.help',
           required: true,
           placeholder: '10.0.0.1/24',
+          format: 'cidr',
         },
         {
           type: 'number',

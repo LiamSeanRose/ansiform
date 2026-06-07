@@ -23,6 +23,7 @@ import type { MessageKey } from '../i18n';
 import type { FormSchema, FormValues, ScalarValue } from '../core';
 import type { TaskScope } from '../core/tasks/types';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../components/form';
+import { networkWarningMessages } from '../components/form/warning-messages';
 import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../core/preview';
 import { downloadText, downloadBlob, copyText, SurveyDownloadButton, VarsDiff, RunRecipe, type VarsDiffMessages, type RunRecipeMessages } from '../components/output';
 import { parseSharedTasks, buildShareQuery } from '../core/build/share-link';
@@ -399,6 +400,9 @@ function InstanceCard({
 
   const secrets = useMemo(() => secretFieldNames(schema), [schema]);
   const initial = useMemo(() => initialValues(schema), [schema]);
+  // Advisory network-validation copy (#86) for this instance's form fields.
+  // Cheap (a handful of t() calls); built inline since `tt` changes each render.
+  const warnings = networkWarningMessages(tt);
 
   const preview = useMemo(() => {
     let scope: FormValues = instance.values;
@@ -456,6 +460,7 @@ function InstanceCard({
           schema={schema}
           t={tt}
           messages={formMessages}
+          warningMessages={warnings}
           initialValues={initial}
           onChange={onValues}
         />

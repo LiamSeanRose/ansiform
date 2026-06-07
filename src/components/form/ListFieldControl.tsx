@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Ref } from 'react';
 import type { FieldValue, ListField, RowValues, ScalarValue } from '../../core';
 import { FieldControl, type Translate } from './FieldControl';
-import type { FieldError, FormMessages } from './types';
+import type { FieldError, FormMessages, NetworkWarningMessages } from './types';
 import { validateField } from './validation';
 import { rowDefaults } from './defaults';
 
@@ -23,6 +23,8 @@ export interface ListFieldControlProps {
   onValueChange: (name: string, value: FieldValue) => void;
   t: Translate;
   messages: FormMessages;
+  /** Advisory network-validation copy (#86); threaded to each row sub-field. */
+  warningMessages?: NetworkWarningMessages;
   idPrefix: string;
   /** Attached to the add button so the error summary can move focus here. */
   inputRef?: Ref<HTMLElement>;
@@ -37,6 +39,7 @@ export function ListFieldControl({
   onValueChange,
   t,
   messages,
+  warningMessages,
   idPrefix,
   inputRef,
 }: ListFieldControlProps) {
@@ -129,6 +132,7 @@ export function ListFieldControl({
                 onValueChange={(subName, v) => updateCell(index, subName, v)}
                 t={t}
                 messages={messages}
+                warningMessages={warningMessages}
                 idPrefix={`${idPrefix}-${field.name}-${index}`}
               />
             ))}
