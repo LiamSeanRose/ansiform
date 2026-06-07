@@ -187,5 +187,185 @@ export const reference: ReferenceModule = {
         },
       ],
     },
+    fr: {
+      slug: 'ansible-jinja2-filters-cheatsheet',
+      title: 'Aide-mémoire des filtres Jinja2 pour Ansible',
+      description:
+        'Un aide-mémoire pratique des filtres Jinja2 les plus utilisés dans Ansible : valeurs par défaut, chaînes, listes, dictionnaires, réseau (ipaddr) et encodage — avec exemples.',
+      lede: 'Les filtres transforment une valeur dans une expression Jinja2 via la syntaxe pipe `{{ value | filter }}`. Dans Ansible, ils s’exécutent à l’exécution du playbook, sur vos variables — c’est pourquoi Ansiform garde les filtres hors du YAML qu’il génère et ne reproduit dans l’aperçu en direct que ceux qu’il peut rendre exactement.',
+      sections: [
+        {
+          id: 'basics',
+          heading: 'Comment fonctionne un filtre',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Un filtre prend la valeur à sa gauche et renvoie une nouvelle valeur. Les filtres s’enchaînent de gauche à droite, et la plupart prennent des arguments :',
+            },
+            {
+              kind: 'code',
+              text: "{{ interface_name | default('GigabitEthernet0/1') | upper }}",
+            },
+            {
+              kind: 'p',
+              text: 'Les filtres ne modifient jamais vos variables ; ils ne font que façonner le rendu d’une valeur dans un template. La même expression est évaluée par Ansible lors de l’exécution du play.',
+            },
+          ],
+        },
+        {
+          id: 'defaults',
+          heading: 'Valeurs par défaut et omission de clés',
+          blocks: [
+            {
+              kind: 'table',
+              columns: ['Filtre', 'Exemple', 'Résultat'],
+              rows: [
+                ['default', '{{ mtu | default(1500) }}', '1500 quand `mtu` est indéfini'],
+                [
+                  'default(omit)',
+                  '{{ description | default(omit) }}',
+                  'supprime entièrement la clé si indéfinie',
+                ],
+                [
+                  'default(value, true)',
+                  "{{ name | default('core', true) }}",
+                  "utilise 'core' quand `name` est indéfini *ou* vide",
+                ],
+                ['mandatory', '{{ vlan_id | mandatory }}', 'échoue le play si `vlan_id` est indéfini'],
+              ],
+            },
+            {
+              kind: 'p',
+              text: 'Le motif `default(omit)` est la façon dont Ansible laisse un argument non défini — Ansiform applique la même règle « omettre si vide » quand il écrit vos `group_vars`/`host_vars`.',
+            },
+          ],
+        },
+        {
+          id: 'strings',
+          heading: 'Filtres de chaîne',
+          blocks: [
+            {
+              kind: 'table',
+              columns: ['Filtre', 'Exemple', 'Résultat'],
+              rows: [
+                ['upper / lower', "{{ 'Gi0/1' | upper }}", 'GI0/1'],
+                ['capitalize', "{{ 'core' | capitalize }}", 'Core'],
+                ['replace', "{{ 'core_sw' | replace('_', '-') }}", 'core-sw'],
+                [
+                  'regex_replace',
+                  "{{ 'Gi0/1' | regex_replace('^Gi', 'GigabitEthernet') }}",
+                  'GigabitEthernet0/1',
+                ],
+                ['regex_search', "{{ '15.2(4)' | regex_search('[0-9.]+') }}", '15.2'],
+                ['trim', "{{ '  vlan  ' | trim }}", 'vlan'],
+                ['split', "{{ '10,20,30' | split(',') }}", "['10', '20', '30']"],
+              ],
+            },
+          ],
+        },
+        {
+          id: 'lists',
+          heading: 'Filtres de liste',
+          blocks: [
+            {
+              kind: 'table',
+              columns: ['Filtre', 'Exemple', 'Résultat'],
+              rows: [
+                ['join', "{{ ['a', 'b'] | join(', ') }}", 'a, b'],
+                ['length', '{{ peers | length }}', 'nombre d’éléments'],
+                ['unique', '{{ [1, 1, 2] | unique }}', '[1, 2]'],
+                ['sort', '{{ [3, 1, 2] | sort }}', '[1, 2, 3]'],
+                ['flatten', '{{ [[1], [2]] | flatten }}', '[1, 2]'],
+                [
+                  'map(attribute=…)',
+                  "{{ ints | map(attribute='name') | list }}",
+                  "['Gi0/1', 'Gi0/2']",
+                ],
+                ['select / reject', "{{ nums | select('>', 0) | list }}", 'éléments réussissant le test'],
+              ],
+            },
+          ],
+        },
+        {
+          id: 'dicts',
+          heading: 'Filtres de dictionnaire',
+          blocks: [
+            {
+              kind: 'table',
+              columns: ['Filtre', 'Exemple', 'Résultat'],
+              rows: [
+                [
+                  'dict2items',
+                  "{{ {'a': 1} | dict2items }}",
+                  "[{'key': 'a', 'value': 1}]",
+                ],
+                ['items2dict', '{{ pairs | items2dict }}', 'reconstruit un dict à partir d’éléments clé/valeur'],
+                ['combine', '{{ base | combine(overrides) }}', 'fusionne deux dicts (la droite l’emporte)'],
+              ],
+            },
+          ],
+        },
+        {
+          id: 'networking',
+          heading: 'Filtres réseau (ipaddr)',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Les filtres réseau vivent dans la collection `ansible.utils` — installez-la (ainsi que `netaddr`) avant de les utiliser. Ils sont précieux pour dériver l’adressage à partir d’un seul CIDR.',
+            },
+            {
+              kind: 'table',
+              columns: ['Filtre', 'Exemple', 'Résultat'],
+              rows: [
+                ["ipaddr('address')", "{{ '192.0.2.5/24' | ansible.utils.ipaddr('address') }}", '192.0.2.5'],
+                ["ipaddr('network')", "{{ '192.0.2.5/24' | ansible.utils.ipaddr('network') }}", '192.0.2.0'],
+                [
+                  "ipaddr('netmask')",
+                  "{{ '192.0.2.0/24' | ansible.utils.ipaddr('netmask') }}",
+                  '255.255.255.0',
+                ],
+                ["ipaddr('prefix')", "{{ '192.0.2.0/24' | ansible.utils.ipaddr('prefix') }}", '24'],
+                ['ipv4 / ipv6', '{{ addr | ansible.utils.ipv4 }}', 'ne garde que les valeurs IPv4 (ou IPv6)'],
+              ],
+            },
+          ],
+        },
+        {
+          id: 'encoding',
+          heading: 'Encodage et hachage',
+          blocks: [
+            {
+              kind: 'table',
+              columns: ['Filtre', 'Exemple', 'Résultat'],
+              rows: [
+                ['to_json / to_nice_json', '{{ data | to_nice_json }}', 'JSON formaté'],
+                ['to_yaml / to_nice_yaml', '{{ data | to_nice_yaml }}', 'texte YAML'],
+                ['b64encode / b64decode', "{{ 'cisco' | b64encode }}", 'Y2lzY28='],
+                ["hash('sha1')", "{{ 'x' | hash('sha1') }}", 'un condensé hexadécimal'],
+                [
+                  "password_hash('sha512')",
+                  "{{ secret | password_hash('sha512') }}",
+                  'un hash crypt (nécessite passlib sur le contrôleur)',
+                ],
+              ],
+            },
+          ],
+        },
+        {
+          id: 'ansiform-fidelity',
+          heading: 'Comment Ansiform prévisualise les filtres',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Ansiform n’exécute jamais les filtres sur vos données — votre sortie YAML contient les valeurs brutes, ce qui est toujours correct. L’aperçu CLI en direct reproduit les filtres qu’il peut rendre fidèlement (par exemple `default`, `upper` et `ipaddr`).',
+            },
+            {
+              kind: 'p',
+              text: 'Là où un filtre ne peut pas être reproduit exactement (ceux sensibles au formatage comme `to_nice_yaml`, ou ceux propres à l’exécution comme `password_hash`), l’aperçu se dégrade visiblement avec un avertissement — « l’aperçu peut différer — la sortie YAML reste valide » — plutôt que d’afficher un résultat faux en silence.',
+            },
+          ],
+        },
+      ],
+    },
   },
 };

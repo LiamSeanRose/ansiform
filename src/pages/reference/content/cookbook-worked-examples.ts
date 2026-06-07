@@ -112,5 +112,110 @@ export const reference: ReferenceModule = {
         },
       ],
     },
+    fr: {
+      slug: 'cookbook-worked-examples',
+      title: 'Recettes : du formulaire aux variables, puis au playbook',
+      description:
+        'Exemples de bout en bout — remplissez un formulaire Ansiform, obtenez des group_vars/host_vars corrects, et référencez-les depuis un playbook. Tâches simples et jeu composé.',
+      lede: 'Ansiform produit les saisies de votre automatisation : vous remplissez un formulaire convivial, il vous donne des variables Ansible correctes (avec un aperçu CLI fiable), et vous conservez le YAML. Ces tutoriels montrent toute la boucle — formulaire → variables → playbook — pour une tâche simple, une tâche à l’échelle d’un groupe, et un jeu de fichiers composé.',
+      sections: [
+        {
+          id: 'workflow',
+          heading: 'Le workflow',
+          blocks: [
+            {
+              kind: 'list',
+              items: [
+                'Ouvrez une tâche (toutes sont listées sur `/tasks`) et remplissez le formulaire. Le panneau de droite prévisualise la CLI de l’équipement à mesure que vous tapez.',
+                'Copiez le YAML `group_vars`/`host_vars`, ou téléchargez-le — le chemin de fichier suggéré s’affiche au-dessus de la sortie.',
+                'Déposez le fichier dans votre inventaire, puis référencez les variables depuis un playbook (exemples ci-dessous).',
+                'Rien de ce que vous tapez ne quitte le navigateur ; le YAML est toujours correct, et l’aperçu se signale lorsqu’il ne peut qu’approcher le résultat.',
+              ],
+            },
+          ],
+        },
+        {
+          id: 'host-vars',
+          heading: 'Exemple 1 — une adresse d’interface (host_vars)',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Ouvrez la tâche `interface-ip`, mettez l’interface à `GigabitEthernet0/1`, l’adresse à `10.0.0.1/24`, le MTU à `1500`, et laissez-la activée. Le panneau de sortie suggère `host_vars/switch1.yml` :',
+            },
+            {
+              kind: 'code',
+              text: 'interface: GigabitEthernet0/1\nip_address: 10.0.0.1/24\nmtu: 1500\nenabled: true',
+            },
+            {
+              kind: 'p',
+              text: 'Enregistrez cela sous `host_vars/switch1.yml` dans votre inventaire, puis référencez-le depuis un playbook. L’IP est scindée en adresse et masque exactement comme l’aperçu en direct le montrait :',
+            },
+            {
+              kind: 'code',
+              text: "- hosts: switches\n  gather_facts: false\n  tasks:\n    - name: Configure the interface\n      cisco.ios.ios_config:\n        parents: \"interface {{ interface }}\"\n        lines:\n          - \"ip address {{ ip_address | ansible.utils.ipaddr('address') }} {{ ip_address | ansible.utils.ipaddr('netmask') }}\"\n          - \"mtu {{ mtu }}\"\n          - \"{{ 'no shutdown' if enabled else 'shutdown' }}\"",
+            },
+          ],
+        },
+        {
+          id: 'group-vars',
+          heading: 'Exemple 2 — hôtes syslog pour un groupe (group_vars)',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Certains réglages relèvent d’un groupe entier plutôt que d’un seul équipement. Ouvrez la tâche `syslog`, mettez le niveau de trap à `informational` et l’interface source à `Loopback0`, puis ajoutez quelques hôtes. La sortie suggère `group_vars/all.yml` :',
+            },
+            {
+              kind: 'code',
+              text: 'trap_level: informational\nsource_interface: Loopback0\nhosts:\n  - host: 192.0.2.50\n    transport: udp\n  - host: 192.0.2.51\n    vrf: Mgmt-intf\n    transport: tcp',
+            },
+            {
+              kind: 'p',
+              text: 'Une boucle dans le playbook transforme la liste en une ligne par hôte :',
+            },
+            {
+              kind: 'code',
+              text: '- name: Configure syslog destinations\n  cisco.ios.ios_config:\n    lines:\n      - "logging source-interface {{ source_interface }}"\n      - "logging trap {{ trap_level }}"\n- name: Add each syslog host\n  cisco.ios.ios_config:\n    lines: "logging host {{ item.host }} transport {{ item.transport }}"\n  loop: "{{ hosts }}"',
+            },
+          ],
+        },
+        {
+          id: 'compose',
+          heading: 'Exemple 3 — composer un jeu complet de fichiers de variables (/build)',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Les vrais changements touchent plusieurs tâches à la fois. La page Build (`/build`) est un plateau de tâches : ajoutez plusieurs tâches, remplissez chacune, choisissez une portée (groupe ou hôte) par tâche, et elle assemble un jeu multi-fichiers complet en une seule passe.',
+            },
+            {
+              kind: 'list',
+              items: [
+                'Ajoutez `interface-ip` avec la portée hôte `switch1`, et `syslog` avec la portée groupe `all`.',
+                'Chaque tâche garde son propre aperçu ; les clés en conflit entre tâches sont signalées par leur nom — jamais fusionnées en silence.',
+                'Téléchargez le jeu en `.zip` et décompressez-le dans votre inventaire : vous obtenez `host_vars/switch1.yml` et `group_vars/all.yml` ensemble.',
+              ],
+            },
+            {
+              kind: 'p',
+              text: 'Le résultat est une arborescence `group_vars`/`host_vars` correcte et prête à valider — pas un playbook fusionné ni exécutable. Vous apportez le playbook ; Ansiform apporte des variables fiables.',
+            },
+          ],
+        },
+        {
+          id: 'tips',
+          heading: 'Des conseils valables partout',
+          blocks: [
+            {
+              kind: 'list',
+              items: [
+                'La sortie YAML est toujours correcte — les filtres s’exécutent à l’exécution du playbook, pas sur vos variables. Seul l’*aperçu* peut être approximatif, et il le dit quand c’est le cas.',
+                'Changez la cible d’aperçu pour voir la CLI d’une autre plateforme (Cisco IOS / IOS-XE / IOS-XR / NX-OS / ASA, Arista EOS, Juniper Junos, Cradlepoint NCOS). Les variables restent identiques ; seule la configuration rendue change.',
+                'Les champs secrets sont des champs mot de passe — jamais stockés, journalisés, encodés ni partagés. Gardez les secrets hors des `group_vars` validés en utilisant Vault ou un lookup dans le playbook.',
+                'Vous avez déjà un template ? Collez-le dans le lecteur (`/reader`) pour voir les variables qu’il attend avant de construire le formulaire à la main.',
+              ],
+            },
+          ],
+        },
+      ],
+    },
   },
 };

@@ -77,5 +77,75 @@ export const reference: ReferenceModule = {
         },
       ],
     },
+    fr: {
+      slug: 'ansible-network-automation-without-awx',
+      title: 'Automatisation réseau avec Ansible sans AWX ni contrôleur',
+      description:
+        'Pas besoin d’AWX, de Tower ni d’un contrôleur pour automatiser vos équipements réseau avec Ansible. Comment fonctionne le workflow en ligne de commande, où s’insèrent les fichiers, et quand un contrôleur aide.',
+      lede: 'AWX et Ansible Automation Platform sont utiles, mais pas obligatoires pour exécuter Ansible. Pour beaucoup d’équipes réseau, le chemin le plus rapide est la ligne de commande accompagnée d’un jeu soigné de fichiers de variables — aucun serveur à monter, aucune base de données, aucune interface web où se connecter.',
+      sections: [
+        {
+          id: 'no-controller',
+          heading: 'Pas besoin de contrôleur pour exécuter un playbook',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Ansible est un outil en ligne de commande ordinaire. Avec un inventaire et un playbook, `ansible-playbook` se connecte à vos équipements et applique la configuration — exactement le même moteur qu’un contrôleur pilote en coulisses. Un contrôleur ajoute par-dessus la planification, le RBAC, les surveys et un journal d’audit ; il n’ajoute pas l’automatisation elle-même.',
+            },
+          ],
+        },
+        {
+          id: 'cli-workflow',
+          heading: 'Le workflow en ligne de commande',
+          blocks: [
+            {
+              kind: 'list',
+              items: [
+                'Un inventaire listant vos équipements et groupes (un fichier INI ou YAML).',
+                '`group_vars/` et `host_vars/` contenant les variables par groupe et par hôte.',
+                'Un playbook (souvent avec un rôle réseau du fournisseur ou les modules `cli_config` / resource) qui lit ces variables.',
+                'Une exécution : `ansible-playbook -i inventory site.yml`.',
+              ],
+            },
+            {
+              kind: 'p',
+              text: 'Tout est constitué de fichiers dans un dépôt git. Relisez la configuration dans une pull request, exécutez-la depuis un portable ou un job de CI, et vous obtenez un workflow complet et auditable sans aucune infrastructure supplémentaire.',
+            },
+          ],
+        },
+        {
+          id: 'where-forms-fit',
+          heading: 'Où s’insère un formulaire',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Ce que l’on n’aime pas dans ce workflow, c’est écrire le YAML à la main et douter de ce que l’équipement va réellement faire. C’est la lacune que comble Ansiform : remplissez un formulaire convivial, obtenez des `group_vars`/`host_vars` corrects à l’octet près et observez un aperçu en direct de la CLI que les variables produiront. Tout s’exécute dans votre navigateur — rien n’est téléversé — il se place donc devant le workflow CLI ci-dessus sans le modifier.',
+            },
+            {
+              kind: 'p',
+              text: 'Ouvrez la bibliothèque de tâches depuis l’en-tête pour générer un fichier de variables, puis validez-le à côté de votre inventaire.',
+            },
+          ],
+        },
+        {
+          id: 'when-awx',
+          heading: 'Quand un contrôleur reste justifié',
+          blocks: [
+            {
+              kind: 'list',
+              items: [
+                'Vous avez besoin d’un contrôle d’accès par rôles et d’une piste d’audit pour une équipe.',
+                'Vous voulez des exécutions planifiées ou un survey en libre-service pour que des non-experts lancent des tâches.',
+                'Vous centralisez les identifiants et les approbations.',
+              ],
+            },
+            {
+              kind: 'p',
+              text: 'Si vous exploitez AWX ou AAP, vous pouvez tout de même construire vos variables ici et exporter une spec de Survey AWX depuis une tâche — voir le guide sur l’alternative aux Surveys AWX. L’essentiel : le contrôleur est un choix, pas un prérequis.',
+            },
+          ],
+        },
+      ],
+    },
   },
 };

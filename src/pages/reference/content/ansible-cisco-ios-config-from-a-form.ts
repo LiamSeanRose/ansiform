@@ -65,5 +65,64 @@ export const reference: ReferenceModule = {
         },
       ],
     },
+    fr: {
+      slug: 'ansible-cisco-ios-config-from-a-form',
+      title: 'Générer la configuration Cisco IOS pour Ansible depuis un formulaire',
+      description:
+        'Transformez des tâches Cisco IOS — interfaces, OSPF, BGP, ACL, VRF — en group_vars/host_vars Ansible valides, avec un aperçu CLI IOS en direct. Aucun YAML écrit à la main.',
+      lede: 'Si vous gérez Cisco IOS ou IOS-XE avec Ansible, les variables sont le point délicat : une indentation égarée ou le mauvais filtre, et l’exécution fait autre chose que prévu. Ansiform transforme chaque tâche en formulaire, écrit les `group_vars`/`host_vars` à votre place et affiche la CLI IOS exacte que ces variables produisent — le tout dans votre navigateur.',
+      sections: [
+        {
+          id: 'the-idea',
+          heading: 'Un formulaire en entrée, des variables correctes en sortie',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Chaque tâche est un petit formulaire adossé à un schéma prêt à l’emploi. Vous remplissez des champs — une interface, une IP, une aire OSPF — et obtenez un YAML correct à l’octet près plus un aperçu en direct de la configuration de l’équipement. Le YAML est toujours correct ; l’aperçu est le signal de confiance qui montre ce que verra l’équipement avant même d’exécuter un playbook.',
+            },
+          ],
+        },
+        {
+          id: 'what-you-can-build',
+          heading: 'Ce que vous pouvez construire pour IOS',
+          blocks: [
+            {
+              kind: 'list',
+              items: [
+                'Interfaces et adressage IP — `interface`, `ip address`, MTU, état administratif.',
+                'Routage — OSPF, voisins BGP, routes statiques et définitions de VRF.',
+                'Redondance de premier saut — groupes HSRP et VRRP.',
+                'Politique — ACL étendues, prefix-lists et route-maps.',
+                'Bases et durcissement de l’équipement — hostname, serveurs AAA, NTP, syslog, SNMPv3, SSH, bannières.',
+              ],
+            },
+          ],
+        },
+        {
+          id: 'preview',
+          heading: 'Un aperçu exact, pas une approximation',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Les tâches IOS s’affichent en fidélité exacte : l’aperçu utilise les mêmes requêtes `ipaddr` qu’Ansible, donc `10.0.0.1/24` devient `ip address 10.0.0.1 255.255.255.0` à l’écran exactement comme sur l’équipement. Là où un aperçu ne peut pas être exact, il le signale — un avertissement visible, jamais un rendu faux en silence.',
+            },
+            {
+              kind: 'code',
+              text: 'interface GigabitEthernet0/1\n description Uplink to core\n ip address 10.0.0.1 255.255.255.0\n no shutdown',
+            },
+          ],
+        },
+        {
+          id: 'get-started',
+          heading: 'Pour commencer',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Ouvrez la bibliothèque de tâches depuis l’en-tête et choisissez une tâche IOS — le badge de chaque carte indique les plateformes qu’elle rend. Choisissez une portée `group_vars` ou `host_vars`, remplissez le formulaire et téléchargez le fichier (ou exportez une spec de Survey AWX). La même tâche IOS prévisualise souvent aussi IOS-XE, NX-OS et Arista EOS, si bien qu’un seul formulaire couvre plusieurs plateformes.',
+            },
+          ],
+        },
+      ],
+    },
   },
 };

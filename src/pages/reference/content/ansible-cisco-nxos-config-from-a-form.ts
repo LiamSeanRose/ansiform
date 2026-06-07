@@ -65,5 +65,64 @@ export const reference: ReferenceModule = {
         },
       ],
     },
+    fr: {
+      slug: 'ansible-cisco-nxos-config-from-a-form',
+      title: 'Générer la configuration Cisco NX-OS pour Ansible depuis un formulaire',
+      description:
+        'Construisez des group_vars/host_vars Cisco NX-OS depuis un formulaire convivial avec un aperçu CLI NX-OS en direct — interfaces, OSPF, prefix-lists, route-maps, VRF et plus.',
+      lede: 'NX-OS partage l’essentiel de son modèle de configuration avec IOS, mais pas tout — `vrf context` au lieu de `vrf definition`, des ACL nommées sans le mot-clé `extended`, des address-families écrites `ipv4 unicast`. Ansiform connaît ces différences : la même tâche prévisualise la bonne CLI NX-OS et écrit des variables Ansible correctes dans les deux cas.',
+      sections: [
+        {
+          id: 'the-idea',
+          heading: 'Un formulaire, une sortie NX-OS',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Les variables dont Ansible a besoin sont indépendantes du fournisseur — une IP reste une IP — donc un seul schéma de tâche sert NX-OS comme il sert IOS. Ce qui change, c’est la CLI prévisualisée. Choisissez NX-OS comme cible d’aperçu sur une tâche et le panneau de configuration se réaffiche en syntaxe NX-OS, tandis que les `group_vars`/`host_vars` téléchargés restent corrects à l’octet près.',
+            },
+          ],
+        },
+        {
+          id: 'whats-different',
+          heading: 'Ce que NX-OS fait différemment',
+          blocks: [
+            {
+              kind: 'table',
+              columns: ['Fonction', 'IOS', 'NX-OS'],
+              rows: [
+                ['VRF', '`vrf definition NAME`', '`vrf context NAME`'],
+                ['Address family', '`address-family ipv4`', '`address-family ipv4 unicast`'],
+                ['ACL nommée', '`ip access-list extended NAME`', '`ip access-list NAME`'],
+                ['Prefix-list / route-map', 'même syntaxe', 'même syntaxe'],
+              ],
+            },
+            {
+              kind: 'p',
+              text: 'Certaines fonctions (BGP, OSPF, HSRP) sont conditionnées par une `feature` sur NX-OS et configurées dans des sous-modes structurellement différents d’IOS ; ces aperçus sont signalés lorsqu’ils ne sont pas une correspondance vérifiée et validée.',
+            },
+          ],
+        },
+        {
+          id: 'fidelity',
+          heading: 'Honnête sur la fidélité',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Là où un aperçu NX-OS est une correspondance vérifiée et exacte de la CLI — prefix-lists, route-maps, ACL nommées — il s’affiche en fidélité exacte. Là où cette relecture n’a pas eu lieu, l’aperçu affiche un avertissement visible « l’aperçu peut différer » plutôt que de laisser croire à une certitude. Dans les deux cas, la sortie YAML est le même fichier correct ; seul l’aperçu porte la réserve.',
+            },
+          ],
+        },
+        {
+          id: 'get-started',
+          heading: 'Pour commencer',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Ouvrez la bibliothèque de tâches depuis l’en-tête et choisissez une tâche dont le badge mentionne Cisco NX-OS. Basculez la cible d’aperçu sur NX-OS, remplissez le formulaire et téléchargez vos `group_vars`/`host_vars`. Assemblez plusieurs tâches en un seul jeu de fichiers de variables sur la page Build quand vous configurez un équipement complet.',
+            },
+          ],
+        },
+      ],
+    },
   },
 };

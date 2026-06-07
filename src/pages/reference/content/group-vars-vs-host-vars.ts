@@ -92,5 +92,90 @@ export const reference: ReferenceModule = {
         },
       ],
     },
+    fr: {
+      slug: 'group-vars-vs-host-vars',
+      title: 'group_vars vs host_vars dans Ansible : quand utiliser chacun',
+      description:
+        'group_vars définit une valeur pour tout un groupe d’inventaire ; host_vars la surcharge pour un hôte. Leurs différences, comment la précédence règle les conflits, et l’organisation des fichiers.',
+      lede: 'Les `group_vars` et les `host_vars` contiennent tous deux des variables d’inventaire, et ce sont de simples fichiers YAML qu’Ansible charge automatiquement. La différence est la portée : l’un s’applique à un groupe d’hôtes, l’autre à un seul hôte — et en cas de désaccord, host_vars l’emporte.',
+      sections: [
+        {
+          id: 'what-they-are',
+          heading: 'Ce qu’est chacun',
+          blocks: [
+            {
+              kind: 'p',
+              text: '`group_vars/<group>.yml` définit des variables pour chaque hôte d’un groupe d’inventaire — par exemple un groupe `core-switches` ou le groupe intégré `all`. `host_vars/<host>.yml` définit des variables pour un hôte précis. Ansible les découvre automatiquement par nom de répertoire ; vous n’avez jamais à les importer.',
+            },
+            {
+              kind: 'p',
+              text: 'Les deux se trouvent à côté de votre inventaire (ou de votre playbook). Un fichier sous `group_vars/` est indexé par nom de groupe ; un fichier sous `host_vars/` est indexé par le nom d’inventaire de l’hôte.',
+            },
+          ],
+        },
+        {
+          id: 'precedence',
+          heading: 'Lequel l’emporte',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Quand la même variable est définie aux deux endroits, `host_vars` a la priorité sur `group_vars`, car la portée hôte est plus spécifique que la portée groupe. Entre groupes, un groupe enfant surcharge son parent, et `all` est le groupe le plus large (priorité la plus basse). Rien n’est fusionné par défaut — la valeur de priorité supérieure remplace purement et simplement la valeur inférieure.',
+            },
+            {
+              kind: 'p',
+              text: 'C’est précisément cet ordre qui permet de superposer la configuration : une valeur par défaut sensée pour tout le groupe, surchargée par équipement seulement là où un équipement diffère.',
+            },
+          ],
+        },
+        {
+          id: 'layout',
+          heading: 'L’organisation des fichiers en un coup d’œil',
+          blocks: [
+            {
+              kind: 'table',
+              columns: ['Chemin', 'S’applique à', 'Usage typique'],
+              rows: [
+                ['`group_vars/all.yml`', 'chaque hôte', 'valeurs par défaut de l’organisation (DNS, NTP, syslog)'],
+                ['`group_vars/<group>.yml`', 'hôtes de ce groupe', 'réglages par rôle ou par site'],
+                ['`host_vars/<host>.yml`', 'un seul hôte', 'valeurs par équipement (adresse IP, hostname)'],
+              ],
+            },
+          ],
+        },
+        {
+          id: 'when',
+          heading: 'Quand utiliser l’un ou l’autre',
+          blocks: [
+            {
+              kind: 'list',
+              items: [
+                'Utilisez `group_vars` pour tout ce qui est partagé par un ensemble d’équipements — un serveur syslog, un pool NTP, une ACL standard. Modifiez-le une fois et chaque membre suit.',
+                'Utilisez `host_vars` pour les valeurs propres à un équipement — son IP de gestion, son router-id OSPF, son hostname.',
+                'En cas de doute, commencez large : placez-le dans `group_vars` et ne promouvez une clé vers `host_vars` que lorsqu’un hôte a réellement besoin d’une valeur différente.',
+                'Évitez de définir la même clé aux deux endroits sauf si vous voulez que l’hôte surcharge le groupe — c’est la duplication qui rend la précédence surprenante.',
+              ],
+            },
+          ],
+        },
+        {
+          id: 'example',
+          heading: 'Un petit exemple',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Valeur par défaut du groupe pour chaque switch de cœur, avec un hôte qui surcharge le MTU :',
+            },
+            {
+              kind: 'code',
+              text: '# group_vars/core-switches.yml\nmtu: 1500\nntp_server: 10.0.0.1\n\n# host_vars/switch1.yml\nmtu: 9216   # this host runs jumbo frames; overrides the group',
+            },
+            {
+              kind: 'p',
+              text: 'Ansiform écrit exactement ces fichiers. Choisissez une portée `group_vars` ou `host_vars` pour chaque tâche, remplissez le formulaire et téléchargez le résultat — ouvrez la bibliothèque de tâches depuis l’en-tête pour commencer. Pour l’ordre complet entre toutes les sources, voir le guide sur la précédence des variables.',
+            },
+          ],
+        },
+      ],
+    },
   },
 };
