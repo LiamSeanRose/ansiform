@@ -38,6 +38,7 @@ export const CATEGORIES: { id: string; slugs: string[] }[] = [
       'asa-nat',
       'asa-management',
       'asa-vpn',
+      'junos-srx-policy',
     ],
   },
   {
