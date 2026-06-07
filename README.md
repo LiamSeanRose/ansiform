@@ -101,37 +101,39 @@ and live preview. Coverage spans interfaces and IP addressing, VLANs, routing
 route-maps), and the management plane (SNMPv3, NTP, syslog, AAA, SSH hardening,
 banners, device basics).
 
-**Multi-vendor.** Every task renders the same form to **Cisco IOS, IOS-XE,
-NX-OS, and Arista EOS** behind one schema — pick the preview target and the
-device-CLI preview switches, while the YAML output stays vendor-independent and
-correct. Where a vendor's CLI hasn't been line-for-line verified, the preview
-says so ("preview may differ") rather than showing a silently-wrong result.
+**Multi-vendor — eight platforms.** Cisco IOS, IOS-XE, IOS-XR, NX-OS, and ASA,
+plus Arista EOS, Juniper Junos, and Cradlepoint NCOS. Line-CLI platforms overlay
+onto the shared task schemas — pick the preview target and the device-CLI preview
+switches, while the YAML output stays vendor-independent and correct. Device
+classes with a genuinely different config model — Cisco ASA (firewall) and
+Cradlepoint NCOS (cellular/edge) — ship as their own task families. Where a
+vendor's CLI hasn't been line-for-line verified (the Junos `set` form, some
+NX-OS/EOS overlays), the preview says so ("preview may differ") rather than
+showing a silently-wrong result.
 
-Beyond single tasks, **Build** (`/build`) composes several tasks into a complete
-multi-file `group_vars`/`host_vars` set with visible collision warnings and a
-one-click `.zip`, and **Reader** (`/reader`, beta) explains an existing
-Cisco/Jinja2 template — the variables it expects, the filters it uses, and a live
-preview — entirely in your browser.
+Browse the whole library at **`/tasks`** — a searchable index grouped by function,
+each task labelled with the device CLI it renders. Beyond single tasks, **Build**
+(`/build`) composes several into a complete multi-file `group_vars`/`host_vars`
+set with visible collision warnings and a one-click `.zip`; every task can also
+export an **AWX/AAP survey spec** (`.json`) alongside its vars — a local file,
+never a server round-trip — so a form maps straight into an AWX/AAP workflow.
+**Reader** (`/reader`) explains an existing Cisco/Jinja2 template — the
+variables it expects, the filters it uses, and a live preview — entirely in your
+browser.
 
 ## Roadmap
 
-Near-term, in priority order:
+The v1–v3 milestones have all shipped (see the [changelog](./CHANGELOG.md)): the
+form/preview engine, the curated task library, composition, multi-vendor previews
+with line-verified fidelity, the searchable task index, AWX/AAP survey export, and
+the template reader.
 
-1. **Preview-fidelity completion** — promote the remaining NX-OS / EOS previews
-   from "approximate" to line-verified exact, locked by per-vendor tests.
-2. **AWX/AAP survey-spec export** — download a survey spec alongside the var
-   files (a local file, never a server round-trip), so a form maps straight into
-   an AWX/AAP workflow.
-3. **Task discovery** — a searchable index across the task library and a clearer
-   graduation path out of the Reader beta.
-
-Junos (its `set`/JSON config diverges from the line-CLI model), bring-your-own
-arbitrary templates, runnable-playbook output, and any backend remain explicitly
-deferred — the zero-egress, vars-only contract comes first.
-
-> **Status:** pre-1.0 and under active development. The form/preview engine,
-> output engine, composition, multi-vendor previews, and a broad curated task
-> library are in place across Cisco IOS / IOS-XE / NX-OS / EOS.
+Additional line-CLI vendors are added on demand the same way — one preview
+template per task, behind the existing schema. Explicitly **out of scope**, because
+they would break the zero-egress, vars-only contract that comes first:
+bring-your-own arbitrary template parsing, runnable-playbook output, Vault
+decryption (vaulted values are flagged and passed through, never decrypted), and
+any backend.
 
 ## Contributing
 
