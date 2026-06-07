@@ -24,6 +24,7 @@ import { dump } from 'js-yaml';
 import type { Field, FormSchema, FormValues, RowValues, ScalarField, ScalarValue } from '../types';
 import type { OutputArtifact, OutputContext, OutputSink } from '../adapters';
 import type { TaskScope } from '../tasks/types';
+import { VAULT_SCHEMA } from '../yaml/vault-tag';
 
 /** Stable id for this sink (referenced by the output picker in #12). */
 export const GROUP_VARS_YAML_ID = 'group-vars-yaml';
@@ -100,6 +101,9 @@ export function suggestFilename(scope?: TaskScope): string {
  *  - `noRefs: true` — never emit YAML anchors/aliases; vars files are plain.
  *  - `sortKeys: false` — preserve schema (form) order.
  *  - `quotingType: "'"` / `forceQuotes: false` — single-quote only when needed.
+ *  - `schema: VAULT_SCHEMA` — re-emit any captured `!vault` value byte-exact under
+ *    its tag (#84); never decrypted. The form sink never produces one, but the
+ *    diff/merge path (#82) round-trips values from a pasted file through here.
  */
 export function toYaml(vars: Record<string, unknown>): string {
   return dump(vars, {
@@ -109,6 +113,7 @@ export function toYaml(vars: Record<string, unknown>): string {
     sortKeys: false,
     quotingType: "'",
     forceQuotes: false,
+    schema: VAULT_SCHEMA,
   });
 }
 

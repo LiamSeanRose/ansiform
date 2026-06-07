@@ -21,6 +21,7 @@
  * (a YAML alias bomb) before it can be expanded.
  */
 import { load } from 'js-yaml';
+import { VAULT_SCHEMA } from '../../core/yaml/vault-tag';
 import type {
   BooleanField,
   Field,
@@ -239,7 +240,9 @@ export function parseArgumentSpecs(src: string): ArgSpecResult {
 
   let doc: unknown;
   try {
-    doc = load(src);
+    // VAULT_SCHEMA so a stray `!vault` value parses (passthrough, never decrypted)
+    // rather than throwing on the unknown tag (#84).
+    doc = load(src, { schema: VAULT_SCHEMA });
   } catch {
     return { ok: false, error: 'parse', approximated: [] };
   }

@@ -33,6 +33,15 @@ describe('parseVarsYaml', () => {
     const anchors = Array.from({ length: 70 }, (_, i) => `a${i}: &a${i} x`).join('\n');
     expect(parseVarsYaml(anchors).error).toBe('tooLarge');
   });
+
+  it('parses a file holding a !vault value instead of erroring on the tag (#84)', () => {
+    const src = 'plain: hi\ndb_password: !vault |\n  $ANSIBLE_VAULT;1.1;AES256\n  66386439\n';
+    const parse = parseVarsYaml(src);
+    expect(parse.ok).toBe(true);
+    expect(parse.vars.plain).toBe('hi');
+    // The vault value is captured (passthrough), never decrypted.
+    expect(parse.vars.db_password).toBeDefined();
+  });
 });
 
 describe('diffVars', () => {
@@ -135,5 +144,14 @@ describe('diffVars', () => {
     expect(same.unchanged).toEqual(['acls']);
     const diff = diffVars(existing, { acls: [{ seq: 20, action: 'deny' }] });
     expect(diff.changed).toEqual(['acls']);
+  });
+
+  it('diffs cleanly against a file that holds a !vault value (#84)', () => {
+    const existing = 'db_password: !vault |\n  $ANSIBLE_VAULT;1.1;AES256\n  66386439\nhostname: r1\n';
+    const r = diffVars(existing, { hostname: 'r2' });
+    expect(r.ok).toBe(true);
+    expect(r.changed).toEqual(['hostname']);
+    // The vault key is the file's own — not a generated key — so it is left alone.
+    expect(r.entries.map((e) => e.key)).toEqual(['hostname']);
   });
 });

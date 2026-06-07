@@ -26,6 +26,7 @@
  */
 import { dump, load } from 'js-yaml';
 import { toYaml } from './yaml';
+import { VAULT_SCHEMA } from '../yaml/vault-tag';
 
 /** Largest existing file the diff will parse — a hard ceiling against hostile input. */
 export const MAX_VARS_LENGTH = 64 * 1024;
@@ -132,6 +133,9 @@ function renderSnippet(value: unknown): string {
     sortKeys: false,
     quotingType: "'",
     forceQuotes: false,
+    // A pasted file may hold `!vault` values; render them under their tag rather
+    // than leaking the wrapper object (#84). Still never decrypted.
+    schema: VAULT_SCHEMA,
   }).trimEnd();
 }
 
@@ -148,7 +152,9 @@ export function parseVarsYaml(src: string): VarsParse {
 
   let doc: unknown;
   try {
-    doc = load(src);
+    // VAULT_SCHEMA so a file holding `!vault` values parses (passthrough, never
+    // decrypted) instead of throwing on the unknown tag (#84).
+    doc = load(src, { schema: VAULT_SCHEMA });
   } catch {
     return { ok: false, error: 'parse', vars: {} };
   }
