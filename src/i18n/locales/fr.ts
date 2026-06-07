@@ -118,7 +118,7 @@ export const fr: Messages = {
   // Lecteur de template (#30) — lecture seule, bêta, distinct des tâches curées.
   'nav.reader': 'Lecteur de template',
   'reader.title': 'Lecteur de template',
-  'reader.beta': 'Bêta · lecture seule · lit le template que vous collez, pas une tâche curée',
+  'reader.scopeNote': 'Lecture seule · lit le template que vous collez, pas une tâche curée',
   'reader.lede':
     'Collez un template Cisco IOS / Jinja2 existant pour voir ce qu’il attend — les variables à renseigner, les filtres utilisés, et un aperçu CLI en direct. Rien de ce que vous collez ne quitte votre navigateur ni n’est conservé.',
   'reader.pasteLabel': 'Coller un template',
@@ -169,7 +169,7 @@ export const fr: Messages = {
 
   // Lecteur de template — importateur argument_specs (#32). Déclaratif → exact.
   'reader.argspec.intro':
-    'Un argument_specs de rôle déclare le type, l’obligation, la valeur par défaut et les choix de chaque variable — ce formulaire est donc exact, pas une supposition. Il n’y a pas d’aperçu CLI ici : un spec décrit des variables, pas une config rendue.',
+    'Un argument_specs de rôle déclare le type, l’obligation, la valeur par défaut et les choix de chaque variable — ce formulaire est donc exact, pas une supposition : chaque champ reflète le contrat déclaré du rôle, sans rien déduire. Il n’y a pas d’aperçu CLI ici : un spec décrit des variables, pas une config rendue.',
   'reader.argspec.pasteLabel': 'Collez meta/argument_specs.yml',
   'reader.argspec.pasteHelp':
     'Le spec déclaré du rôle. Reste en mémoire uniquement — jamais enregistré, partagé ni envoyé.',

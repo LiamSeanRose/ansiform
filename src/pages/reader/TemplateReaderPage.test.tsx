@@ -34,8 +34,8 @@ describe('TemplateReaderPage (#30)', () => {
     const { container } = view;
     expect(container.querySelector('h1')?.textContent).toBe('Template reader');
     expect(container.querySelector('textarea')).not.toBeNull();
-    // Beta / walled-off marker is present.
-    expect(container.querySelector('.reader__beta')).not.toBeNull();
+    // Scope note (walled-off-from-curated marker) is present.
+    expect(container.querySelector('.reader__scope-note')).not.toBeNull();
     // No variable inputs before anything is pasted.
     expect(container.querySelectorAll('.reader__template').length).toBe(0);
   });

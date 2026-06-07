@@ -2,16 +2,13 @@
  * Template reader / explainer (issue #30). Beta surface, visibly distinct from
  * the curated workbench; reuses the form/preview/workbench tokens.
  */
-.reader__beta {
+/* Scope note: a quiet caption clarifying the reader works on the template you
+   paste, not a curated task. Graduated from the former beta badge (#42). */
+.reader__scope-note {
   display: inline-block;
   margin: 0 0 var(--space-3);
-  padding: var(--space-1) var(--space-3);
   font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--warning-text);
-  background: var(--warning-bg);
-  border: 1px solid var(--warning-border);
-  border-radius: var(--radius-sm);
+  color: var(--muted);
 }
 
 .reader__input {

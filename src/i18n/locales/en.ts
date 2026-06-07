@@ -127,10 +127,10 @@ export const en = {
   'tasksIndex.category.management': 'Management & hardening',
   'tasksIndex.category.other': 'Other',
 
-  // Template reader / explainer (#30) — read-only, beta, walled off from curated.
+  // Template reader / explainer (#30) — read-only, walled off from curated tasks.
   'nav.reader': 'Template reader',
   'reader.title': 'Template reader',
-  'reader.beta': 'Beta · read-only · reads your pasted template, not a curated task',
+  'reader.scopeNote': 'Read-only · reads the template you paste, not a curated task',
   'reader.lede':
     'Paste an existing Cisco IOS / Jinja2 template to see what it expects — the variables to fill, the filters it uses, and a live device-CLI preview. Nothing you paste leaves your browser or is stored.',
   'reader.pasteLabel': 'Paste a template',
@@ -181,7 +181,7 @@ export const en = {
 
   // Template reader — argument_specs importer (#32). Declarative → exact form.
   'reader.argspec.intro':
-    'A role argument_specs declares each variable’s type, requiredness, default, and choices — so this form is exact, not a guess. There is no device-CLI preview here: a spec describes variables, not rendered config.',
+    'A role argument_specs declares each variable’s type, requiredness, default, and choices — so this form is exact, not a guess: every field mirrors the role’s declared contract, with nothing inferred. There is no device-CLI preview here: a spec describes variables, not rendered config.',
   'reader.argspec.pasteLabel': 'Paste meta/argument_specs.yml',
   'reader.argspec.pasteHelp':
     'The role’s declared spec. Stays in memory only — never saved, shared, or sent anywhere.',

@@ -74,7 +74,7 @@ export function TemplateReaderPage() {
         <Link to="/">{t('reader.title')}</Link>
       </p>
       <h1 id="reader-title">{t('reader.title')}</h1>
-      <p className="reader__beta">{t('reader.beta')}</p>
+      <p className="reader__scope-note">{t('reader.scopeNote')}</p>
       <p className="lede">{t('reader.lede')}</p>
 
       <fieldset className="form__group reader__source">
