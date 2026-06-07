@@ -155,7 +155,7 @@ export const en = {
   'reader.tier.exact': 'exact',
   'reader.tier.approximate': 'approximate',
   'reader.tier.unsupported': 'unsupported',
-  'reader.previewHeading': 'Live preview (Cisco IOS)',
+  'reader.previewHeading': 'Live preview ({vendor})',
   'reader.foundCount':
     'Found {count} variable(s). Variables defined with set, or used only inside loops, may not be listed — review the template itself before relying on this.',
   'reader.loopVars': 'Loop variables (filled per row, not above): {names}',

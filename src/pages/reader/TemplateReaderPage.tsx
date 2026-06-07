@@ -14,8 +14,16 @@
  */
 import { Fragment, useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from '../../i18n/useTranslation';
+import type { MessageKey } from '../../i18n';
 import { createSeedRegistry } from '../../core/filters/seed';
-import { extractTemplate, MAX_TEMPLATE_LENGTH, renderPreview, type Scope } from '../../core/preview';
+import {
+  extractTemplate,
+  MAX_TEMPLATE_LENGTH,
+  renderPreview,
+  withFidelityFloor,
+  type Scope,
+} from '../../core/preview';
+import type { Vendor } from '../../core/tasks/vendor';
 import { hasVaultBlock, looksLikeSecretName, segmentTemplate } from './segment';
 import { EditMode } from './EditMode';
 import { ArgSpecImporter } from './ArgSpecImporter';
@@ -35,6 +43,23 @@ const FIDELITY_KEY = {
   unsupported: 'reader.fidelity.unsupported',
 } as const;
 
+// Preview-target platforms the reader can label its render for (#70). Mirrors the
+// Vendor union. The reader renders a pasted template literally, so the selector's
+// job is to label the preview honestly (it was hard-coded "Cisco IOS") — and the
+// non-line-CLI platforms, whose curated tasks carry an approximate fidelityFloor
+// (#40), clamp the preview down so a non-IOS render never claims exact.
+const PREVIEW_VENDORS: readonly Vendor[] = [
+  'cisco-ios',
+  'cisco-iosxe',
+  'cisco-nxos',
+  'arista-eos',
+  'cisco-asa',
+  'cisco-iosxr',
+  'juniper-junos',
+  'cradlepoint-ncos',
+];
+const FLOORED_VENDORS: ReadonlySet<Vendor> = new Set<Vendor>(['juniper-junos', 'cradlepoint-ncos']);
+
 export function TemplateReaderPage() {
   const { t } = useTranslation();
   const [template, setTemplate] = useState('');
@@ -46,6 +71,8 @@ export function TemplateReaderPage() {
   // What kind of artifact is being pasted: a Jinja2 template (the explainer, the
   // default) or a declarative `argument_specs` (the exact importer, #32).
   const [source, setSource] = useState<'template' | 'argspec'>('template');
+  // Preview target (#70): labels the render and applies the non-line-CLI floor.
+  const [previewVendor, setPreviewVendor] = useState<Vendor>('cisco-ios');
   const ids = useId();
   const editMode = acked && mode === 'edit';
 
@@ -61,11 +88,17 @@ export function TemplateReaderPage() {
   const segments = useMemo(() => segmentTemplate(template), [template]);
   const preview = useMemo(() => {
     const scope: Scope = { ...sample };
-    return renderPreview(template, scope, registry);
-  }, [template, sample]);
+    const result = renderPreview(template, scope, registry);
+    // Honest non-IOS fidelity (#70): a non-line-CLI target can't claim exact for an
+    // arbitrary pasted template, so clamp it the way the curated tasks do.
+    return FLOORED_VENDORS.has(previewVendor) ? withFidelityFloor(result, 'approximate') : result;
+  }, [template, sample, previewVendor]);
 
   const hasContent = template.trim().length > 0;
   const pasteHelpId = `${ids}-help`;
+  const previewHeading = t('reader.previewHeading', {
+    vendor: t(`vendor.${previewVendor}` as MessageKey),
+  });
 
   return (
     <section className="page page--task" aria-labelledby="reader-title">
@@ -245,8 +278,22 @@ export function TemplateReaderPage() {
                 </pre>
               </section>
 
-              <section aria-label={t('reader.previewHeading')}>
-                <h2 className="workbench__heading">{t('reader.previewHeading')}</h2>
+              <section aria-label={previewHeading}>
+                <div className="workbench__vendor">
+                  <label htmlFor={`${ids}-vendor`}>{t('workbench.vendorSelectLabel')}</label>
+                  <select
+                    id={`${ids}-vendor`}
+                    value={previewVendor}
+                    onChange={(e) => setPreviewVendor(e.target.value as Vendor)}
+                  >
+                    {PREVIEW_VENDORS.map((v) => (
+                      <option key={v} value={v}>
+                        {t(`vendor.${v}` as MessageKey)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <h2 className="workbench__heading">{previewHeading}</h2>
                 {preview.fidelity !== 'exact' && (
                   <p className="preview__notice">{t('reader.fidelity.approximate')}</p>
                 )}

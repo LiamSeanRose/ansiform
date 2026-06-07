@@ -22,6 +22,18 @@ function paste(el: HTMLTextAreaElement, value: string) {
   act(() => el.dispatchEvent(new Event('input', { bubbles: true })));
 }
 
+/** Drive a controlled <select> the way React expects (native setter). */
+function selectValue(el: HTMLSelectElement, value: string) {
+  const desc = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+  desc?.set?.call(el, value);
+  act(() => el.dispatchEvent(new Event('change', { bubbles: true })));
+}
+
+const previewHeading = (container: HTMLElement) =>
+  [...container.querySelectorAll('h2.workbench__heading')].find((h) =>
+    h.textContent?.startsWith('Live preview'),
+  )?.textContent;
+
 let view: Mounted | undefined;
 afterEach(() => {
   view?.unmount();
@@ -80,5 +92,32 @@ describe('TemplateReaderPage (#30)', () => {
     // Unsupported → the warning notice (not the exact banner) is shown.
     expect(container.querySelector('.preview__notice')).not.toBeNull();
     expect(container.querySelector('.reader__badge--unsupported')).not.toBeNull();
+  });
+
+  it('offers a preview-target selector defaulting to Cisco IOS (#70)', () => {
+    view = render();
+    const { container } = view;
+    paste(container.querySelector('textarea')!, "interface {{ interface }} {{ ip | ipaddr('address') }}");
+    const sel = container.querySelector<HTMLSelectElement>('.workbench__vendor select');
+    expect(sel).not.toBeNull();
+    expect(sel!.value).toBe('cisco-ios');
+    // No longer hard-labelled — it reflects the selected platform.
+    expect(previewHeading(container)).toBe('Live preview (Cisco IOS)');
+    // Exact filters under the IOS default → no preview-degrade notice.
+    expect(container.querySelector('.preview__notice')).toBeNull();
+  });
+
+  it('relabels and floors a non-line-CLI target to approximate (#70)', () => {
+    view = render();
+    const { container } = view;
+    paste(container.querySelector('textarea')!, "interface {{ interface }} {{ ip | ipaddr('address') }}");
+    const sel = container.querySelector<HTMLSelectElement>('.workbench__vendor select')!;
+    expect(container.querySelector('.preview__notice')).toBeNull();
+
+    selectValue(sel, 'juniper-junos');
+    expect(previewHeading(container)).toBe('Live preview (Juniper Junos)');
+    // A non-line-CLI target can't claim exact for a pasted template — the
+    // "preview may differ" notice appears even though the filters are exact.
+    expect(container.querySelector('.preview__notice')).not.toBeNull();
   });
 });
