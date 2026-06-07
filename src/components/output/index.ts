@@ -7,5 +7,6 @@ export {
   SurveyDownloadButton,
   type SurveyDownloadButtonProps,
 } from './SurveyDownloadButton';
+export { VaultHandoff, type VaultHandoffProps, type VaultHandoffMessages } from './VaultHandoff';
 export { copyText } from './clipboard';
 export { downloadText, downloadBlob } from './download';

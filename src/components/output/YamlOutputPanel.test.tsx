@@ -80,6 +80,45 @@ describe('YamlOutputPanel', () => {
     expect(el.querySelector('.output__status')!.textContent).toBe('Copied to clipboard.');
   });
 
+  it('shows the vault hand-off only when there are secret names AND vault copy (#80)', () => {
+    const vault = {
+      heading: 'Encrypt your secrets',
+      intro: 'never enters this tool',
+      copyLabel: 'Copy',
+      copyAllLabel: 'Copy all',
+      copiedStatus: 'Command copied.',
+      copyFailedStatus: 'Copy failed.',
+    };
+
+    // No secrets → no hand-off, even with vault copy present.
+    const none = render(
+      <YamlOutputPanel artifact={artifact} messages={{ ...messages, vault }} secretNames={[]} />,
+    );
+    expect(none.querySelector('.vault-handoff')).toBeNull();
+    act(() => root?.unmount());
+    container?.remove();
+
+    // Secrets present but no vault copy → still no hand-off (additive/opt-in).
+    const noCopy = render(
+      <YamlOutputPanel artifact={artifact} messages={messages} secretNames={['enable_secret']} />,
+    );
+    expect(noCopy.querySelector('.vault-handoff')).toBeNull();
+    act(() => root?.unmount());
+    container?.remove();
+
+    // Both present → the command for each secret is taught.
+    const shown = render(
+      <YamlOutputPanel
+        artifact={artifact}
+        messages={{ ...messages, vault }}
+        secretNames={['enable_secret']}
+      />,
+    );
+    expect(shown.querySelector('.vault-handoff__command')!.textContent).toBe(
+      "ansible-vault encrypt_string --name 'enable_secret'",
+    );
+  });
+
   it('downloads the artifact via a Blob (never persisted/URL-encoded)', () => {
     const created: Blob[] = [];
     vi.stubGlobal('URL', {

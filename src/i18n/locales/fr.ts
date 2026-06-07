@@ -82,6 +82,13 @@ export const fr: Messages = {
   'output.copyFailed': 'Échec de la copie — sélectionnez le texte et copiez-le manuellement.',
   'output.downloadLabel': 'Télécharger',
   'output.awxSurveySpec.label': 'Enquête AWX (.json)',
+  'output.vault.heading': 'Chiffrez vos secrets avec Ansible Vault',
+  'output.vault.intro':
+    'Exécutez ces commandes là où Ansible s’exécute pour chiffrer chaque secret. Chaque commande demande la valeur — saisissez-la, puis appuyez sur Entrée et Ctrl-D. La valeur est saisie dans votre terminal et n’entre jamais dans cet outil.',
+  'output.vault.copyLabel': 'Copier',
+  'output.vault.copyAllLabel': 'Tout copier',
+  'output.vault.copied': 'Commande copiée — la valeur reste saisie dans votre terminal.',
+  'output.vault.copyFailed': 'Échec de la copie — sélectionnez la commande et copiez-la manuellement.',
 
   'build.title': 'Composer un jeu de variables',
   'build.lede':

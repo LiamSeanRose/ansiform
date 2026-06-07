@@ -15,6 +15,8 @@ import { useId, useState } from 'react';
 import type { OutputArtifact } from '../../core';
 import { copyText } from './clipboard';
 import { downloadText } from './download';
+import { VaultHandoff, type VaultHandoffMessages } from './VaultHandoff';
+import { buildVaultCommands } from '../../core/output/vault-commands';
 
 /** Externalized output-panel copy; the page builds this from the i18n catalogue. */
 export interface OutputMessages {
@@ -24,14 +26,22 @@ export interface OutputMessages {
   copiedStatus: string;
   copyFailedStatus: string;
   downloadLabel: string;
+  /** Vault hand-off copy (#80). When omitted, the hand-off is never shown. */
+  vault?: VaultHandoffMessages;
 }
 
 export interface YamlOutputPanelProps {
   artifact: OutputArtifact;
   messages: OutputMessages;
+  /**
+   * Secret-field key names in the active schema (#80) — names only, never values.
+   * When non-empty *and* `messages.vault` is provided, the vault hand-off panel
+   * teaches the `ansible-vault encrypt_string` command for each one.
+   */
+  secretNames?: readonly string[];
 }
 
-export function YamlOutputPanel({ artifact, messages }: YamlOutputPanelProps) {
+export function YamlOutputPanel({ artifact, messages, secretNames }: YamlOutputPanelProps) {
   const headingId = useId();
   const [status, setStatus] = useState('');
 
@@ -73,6 +83,10 @@ export function YamlOutputPanel({ artifact, messages }: YamlOutputPanelProps) {
       <p className="output__status" role="status" aria-live="polite">
         {status}
       </p>
+
+      {messages.vault && secretNames && secretNames.length > 0 && (
+        <VaultHandoff commands={buildVaultCommands(secretNames)} messages={messages.vault} />
+      )}
     </section>
   );
 }

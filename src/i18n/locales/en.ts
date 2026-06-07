@@ -94,6 +94,14 @@ export const en = {
   'output.downloadLabel': 'Download',
   // AWX/AAP survey-spec export (#33) — a local file, never a server round-trip.
   'output.awxSurveySpec.label': 'AWX survey (.json)',
+  // Vault hand-off (#80) — teach the encrypt_string command for each secret key.
+  'output.vault.heading': 'Encrypt your secrets with Ansible Vault',
+  'output.vault.intro':
+    'Run these where Ansible runs to vault each secret. Each command prompts for the value — type it, then press Enter and Ctrl-D. The value is typed at your shell and never enters this tool.',
+  'output.vault.copyLabel': 'Copy',
+  'output.vault.copyAllLabel': 'Copy all',
+  'output.vault.copied': 'Command copied — the value is still typed at your shell.',
+  'output.vault.copyFailed': 'Copy failed — select the command and copy manually.',
 
   // Composition / build page (#26).
   'build.title': 'Build a var-file set',

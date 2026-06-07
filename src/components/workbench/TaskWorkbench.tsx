@@ -82,6 +82,26 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
   const initial = useMemo(() => initialValues(schema), [schema]);
   const [values, setValues] = useState<FormValues>(initial);
   const secrets = useMemo(() => secretFieldNames(schema), [schema]);
+  const secretNames = useMemo(() => [...secrets], [secrets]);
+
+  // Vault hand-off (#80): when the task has secret fields, hand the output panel
+  // the secret key names + its copy so it can teach the `encrypt_string` command
+  // for each. Copy is resolved here via the task translator (it falls back to the
+  // global catalogue), so the panel stays a dumb presentational component.
+  const outputMessages = useMemo<OutputMessages>(() => {
+    if (secrets.size === 0) return messages.output;
+    return {
+      ...messages.output,
+      vault: {
+        heading: t('output.vault.heading'),
+        intro: t('output.vault.intro'),
+        copyLabel: t('output.vault.copyLabel'),
+        copyAllLabel: t('output.vault.copyAllLabel'),
+        copiedStatus: t('output.vault.copied'),
+        copyFailedStatus: t('output.vault.copyFailed'),
+      },
+    };
+  }, [messages.output, secrets, t]);
 
   // Always-correct YAML, derived from the raw value model. Vendor-independent.
   const artifact = useMemo(
@@ -152,7 +172,7 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
           </div>
         )}
         <PreviewPane result={preview} messages={previewMessages} />
-        <YamlOutputPanel artifact={artifact} messages={messages.output} />
+        <YamlOutputPanel artifact={artifact} messages={outputMessages} secretNames={secretNames} />
         {surveySpec.spec.length > 0 && (
           <div className="workbench__survey">
             <SurveyDownloadButton spec={surveySpec} label={messages.surveyLabel} />
