@@ -143,6 +143,10 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS SNMPv3 configuration — security groups and the users bound to them with auth and priv pass-phrases — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE shares the SNMPv3 group/user CLI verbatim (exact). NX-OS/EOS differ
+    // in the role/group model and are intentionally NOT offered here rather than
+    // shipped as a guess.
+    templates: { 'cisco-iosxe': template },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

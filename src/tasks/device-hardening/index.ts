@@ -102,6 +102,10 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a generic Cisco IOS hardening baseline — common management-plane safeguards, each shown as the exact configuration line it emits — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE accepts this hardening baseline verbatim — an explicit per-vendor
+    // correctness claim (exact), not an inference. NX-OS/EOS use a different
+    // hardening model and are intentionally NOT offered here rather than guessed.
+    templates: { 'cisco-iosxe': template },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

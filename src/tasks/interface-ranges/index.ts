@@ -100,6 +100,10 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS interface range configuration — a repeating list of port ranges with description, switchport mode, access VLAN, and admin state — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE renders identical interface-range/switchport CLI (exact). NX-OS/EOS
+    // differ in range and switchport syntax and are intentionally NOT offered
+    // here rather than shipped as a guess.
+    templates: { 'cisco-iosxe': template },
     defaultScope: { kind: 'host', name: 'switch1' },
   },
   messages: {

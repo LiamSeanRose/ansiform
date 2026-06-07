@@ -94,6 +94,17 @@ const template = [
   '{% endif %}{% endif %}',
 ].join('\n');
 
+// Arista EOS: SNMP/NTP lines match IOS (community uses lowercase `ro`), but
+// TACACS+ is a flat `tacacs-server host` line rather than a named block. Shipped
+// APPROXIMATE — not verified against EOS.
+const templateEos = [
+  '{% if snmp_community %}snmp-server community {{ snmp_community }} ro',
+  '{% endif %}{% if snmp_location %}snmp-server location {{ snmp_location }}',
+  '{% endif %}{% if ntp_server %}ntp server {{ ntp_server }}',
+  '{% endif %}{% if tacacs_server %}tacacs-server host {{ tacacs_server }}{% if tacacs_key %} key {{ tacacs_key }}{% endif %}',
+  '{% endif %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'device-basics',
@@ -102,6 +113,12 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and Cisco IOS management-plane basics — SNMP community and location, NTP server, and a TACACS+ server with key — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE shares this management-plane CLI verbatim (exact). EOS differs in
+    // the TACACS+ form and is flagged approximate so the preview degrades.
+    templates: {
+      'cisco-iosxe': template,
+      'arista-eos': { template: templateEos, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

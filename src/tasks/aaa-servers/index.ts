@@ -82,6 +82,22 @@ const template = [
   '{% endif %}{% endfor %}',
 ].join('\n');
 
+// NX-OS: TACACS+ is feature-gated and configured as flat `tacacs-server host`
+// lines (keyed by host, so the per-server name is not used). Shipped APPROXIMATE
+// — not verified against a live switch; the preview shows the degrade banner.
+const templateNxos = [
+  '{% if new_model %}feature tacacs+',
+  '{% endif %}{% for s in servers %}tacacs-server host {{ s.address }}{% if s.key %} key {{ s.key }}{% endif %}',
+  '{% endfor %}',
+].join('\n');
+
+// Arista EOS: AAA is always on (no `aaa new-model`); servers are flat
+// `tacacs-server host` lines. Shipped APPROXIMATE — not verified against EOS.
+const templateEos = [
+  '{% for s in servers %}tacacs-server host {{ s.address }}{% if s.key %} key {{ s.key }}{% endif %}',
+  '{% endfor %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'aaa-servers',
@@ -90,6 +106,14 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS TACACS+ server configuration — aaa new-model and a repeating list of TACACS+ servers with address and shared key — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE shares the named-server TACACS+ CLI verbatim — an explicit
+    // per-vendor correctness claim (exact), not an inference. NX-OS/EOS render a
+    // different model and are flagged approximate so the preview degrades.
+    templates: {
+      'cisco-iosxe': template,
+      'cisco-nxos': { template: templateNxos, fidelity: 'approximate' },
+      'arista-eos': { template: templateEos, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {
