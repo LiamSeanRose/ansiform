@@ -31,6 +31,11 @@ function setSelect(el: HTMLSelectElement, value: string) {
   act(() => el.dispatchEvent(new Event('change', { bubbles: true })));
 }
 
+function setInput(el: HTMLInputElement, value: string) {
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(el, value);
+  act(() => el.dispatchEvent(new Event('input', { bubbles: true })));
+}
+
 function addTask(el: HTMLElement, slug: string) {
   setSelect(el.querySelector('.build__picker select')!, slug);
   act(() => el.querySelector<HTMLButtonElement>('.build__add')!.click());
@@ -98,6 +103,46 @@ describe('BuildPage (composition session)', () => {
     expect(created).toHaveLength(1);
     expect(created[0]).toBeInstanceOf(Blob);
     expect(created[0].type).toBe('text/yaml');
+  });
+
+  it('emits an inventory skeleton once a non-all scope is named (#81)', () => {
+    const el = mount();
+    addTask(el, 'device-hardening');
+    // Default scope is group_vars/all — implicit, so nothing to place yet.
+    expect(el.textContent).not.toContain('hosts.ini');
+    // Retarget the instance to a host.
+    setSelect(el.querySelector('.build__scope select')!, 'host');
+    setInput(el.querySelector('.build__scope input')!, 'router1');
+    const paths = [...el.querySelectorAll('.build__file-path')].map((p) => p.textContent);
+    expect(paths).toContain('hosts.ini');
+    const inv = [...el.querySelectorAll('.build__yaml')].find(
+      (p) => p.getAttribute('aria-label') === 'hosts.ini',
+    );
+    expect(inv!.textContent).toContain('router1');
+  });
+
+  it('includes the inventory file as a plain-text Blob download (#81)', () => {
+    const created: Blob[] = [];
+    vi.stubGlobal('URL', {
+      ...URL,
+      createObjectURL: vi.fn((b: Blob) => {
+        created.push(b);
+        return 'blob:mock';
+      }),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
+
+    const el = mount();
+    addTask(el, 'device-hardening');
+    setSelect(el.querySelector('.build__scope select')!, 'host');
+    setInput(el.querySelector('.build__scope input')!, 'router1');
+    const invBtn = [...el.querySelectorAll<HTMLButtonElement>('.build__download-all')].find((b) =>
+      b.textContent!.includes('inventory'),
+    );
+    act(() => invBtn!.click());
+    expect(created).toHaveLength(1);
+    expect(created[0].type).toBe('text/plain');
   });
 
   it('removes a task from the session', () => {

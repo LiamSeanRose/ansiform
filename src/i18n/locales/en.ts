@@ -116,6 +116,11 @@ export const en = {
   // (#44). Each contains its button's visible label so it satisfies "label in name".
   'build.removeTaskNamed': 'Remove this task: {title}',
   'build.downloadFileNamed': 'Download {path}',
+  // Inventory skeleton (#81) — the group/host structure that makes the var files
+  // take effect. A scaffold: group membership is left for the user to fill in.
+  'build.downloadInventory': 'Download inventory (hosts.ini)',
+  'build.inventoryNote':
+    'Scaffold to match the files above — add each group’s member hosts before use. The “all” group is implicit and needs no entry.',
 
   // Task discovery index (#35) — /tasks, grouped by function + filterable.
   'tasksIndex.title': 'Task library',

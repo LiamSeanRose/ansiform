@@ -102,6 +102,11 @@ export const fr: Messages = {
     'Clés en conflit (la dernière valeur l’emporte — à résoudre avant utilisation) : {keys}',
   'build.removeTaskNamed': 'Retirer cette tâche : {title}',
   'build.downloadFileNamed': 'Télécharger {path}',
+  // Squelette d’inventaire (#81) — la structure groupes/hôtes qui active les
+  // fichiers de variables. Un canevas : l’appartenance des hôtes reste à compléter.
+  'build.downloadInventory': 'Télécharger l’inventaire (hosts.ini)',
+  'build.inventoryNote':
+    'Canevas correspondant aux fichiers ci-dessus — ajoutez les hôtes membres de chaque groupe avant utilisation. Le groupe « all » est implicite et ne nécessite aucune entrée.',
 
   // Index de découverte des tâches (#35) — /tasks, groupé par fonction + filtrable.
   'tasksIndex.title': 'Bibliothèque de tâches',

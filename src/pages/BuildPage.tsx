@@ -22,6 +22,7 @@ import { Form, initialValues, secretFieldNames, type FormMessages, type Translat
 import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../core/preview';
 import { downloadText, downloadBlob, SurveyDownloadButton } from '../components/output';
 import { composeTree } from '../core/output/compose';
+import { buildInventory, INVENTORY_FILENAME } from '../core/output/inventory';
 import { buildCombinedSurveySpec } from '../core/output/survey-spec';
 import { makeZip } from '../core/output/zip';
 import { createSeedRegistry } from '../core/filters/seed';
@@ -97,6 +98,14 @@ export function BuildPage() {
     return composeTree(composable);
   }, [instances]);
 
+  // Inventory skeleton (#81): the group/host structure that makes the composed
+  // var files take effect. Derived from the same instances the tree is, so the
+  // scaffold matches the files exactly. Empty string ⇒ nothing to place.
+  const inventory = useMemo(
+    () => buildInventory(instances.filter((inst) => getTaskModule(inst.slug)).map((inst) => inst.scope)),
+    [instances],
+  );
+
   // One AWX/AAP survey spec spanning the composed set (#33), schema-only.
   const surveySpec = useMemo(
     () =>
@@ -169,16 +178,22 @@ export function BuildPage() {
             <button
               type="button"
               className="build__download-all"
-              onClick={() =>
-                downloadBlob(
-                  new Blob([makeZip(tree.files.map((f) => ({ path: f.path, content: f.content })))], {
-                    type: 'application/zip',
-                  }),
-                  'ansible-vars.zip',
-                )
-              }
+              onClick={() => {
+                const entries = tree.files.map((f) => ({ path: f.path, content: f.content }));
+                if (inventory) entries.push({ path: INVENTORY_FILENAME, content: inventory });
+                downloadBlob(new Blob([makeZip(entries)], { type: 'application/zip' }), 'ansible-vars.zip');
+              }}
             >
               {t('output.downloadLabel')} (.zip)
+            </button>
+          )}
+          {inventory && (
+            <button
+              type="button"
+              className="build__download-all"
+              onClick={() => downloadText(inventory, INVENTORY_FILENAME, 'text/plain')}
+            >
+              {t('build.downloadInventory')}
             </button>
           )}
           {surveySpec.spec.length > 0 && (
@@ -215,6 +230,25 @@ export function BuildPage() {
               </pre>
             </div>
           ))
+        )}
+        {inventory && (
+          <div className="build__file">
+            <div className="build__file-header">
+              <code className="build__file-path">{INVENTORY_FILENAME}</code>{' '}
+              <button
+                type="button"
+                className="build__download"
+                onClick={() => downloadText(inventory, INVENTORY_FILENAME, 'text/plain')}
+                aria-label={t('build.downloadFileNamed', { path: INVENTORY_FILENAME })}
+              >
+                {t('output.downloadLabel')}
+              </button>
+            </div>
+            <p className="build__inventory-note muted">{t('build.inventoryNote')}</p>
+            <pre className="build__yaml" tabIndex={0} aria-label={INVENTORY_FILENAME}>
+              {inventory}
+            </pre>
+          </div>
         )}
       </section>
     </section>
