@@ -107,6 +107,8 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS authenticated NTP configuration — MD5 authentication keys and the NTP servers that reference them — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE renders identical NTP CLI (#27): an explicit per-vendor claim.
+    templates: { 'cisco-iosxe': template },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

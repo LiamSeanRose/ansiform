@@ -72,6 +72,8 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS VLAN configuration — set the VLAN ID, name, and state — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE renders identical VLAN CLI (#27): an explicit per-vendor claim.
+    templates: { 'cisco-iosxe': template },
     defaultScope: { kind: 'group', name: 'switches' },
   },
   messages: {

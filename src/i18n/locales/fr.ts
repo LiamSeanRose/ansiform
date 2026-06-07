@@ -53,13 +53,19 @@ export const fr: Messages = {
   'form.list.empty': 'Aucune ligne — ajoutez-en une pour commencer.',
 
   'preview.regionLabel': 'Aperçu CLI de l’équipement',
-  'preview.heading': 'Aperçu en direct (Cisco IOS)',
+  'preview.heading': 'Aperçu en direct ({vendor})',
   'preview.degradedNotice': 'L’aperçu peut différer — la sortie YAML reste valide.',
   'preview.empty': 'Remplissez le formulaire pour voir la configuration de l’équipement.',
 
   'workbench.formHeading': 'Configurer',
   'workbench.outputHeading': 'Variables Ansible (YAML)',
   'workbench.outputPathLabel': 'Fichier suggéré :',
+
+  'workbench.vendorSelectLabel': 'Cible de l’aperçu',
+  'vendor.cisco-ios': 'Cisco IOS',
+  'vendor.cisco-iosxe': 'Cisco IOS-XE',
+  'vendor.cisco-nxos': 'Cisco NX-OS',
+  'vendor.arista-eos': 'Arista EOS',
 
   'output.copyLabel': 'Copier',
   'output.copied': 'Copié dans le presse-papiers.',

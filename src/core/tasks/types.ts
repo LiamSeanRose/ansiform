@@ -7,7 +7,7 @@
  * produce values of this shape.
  */
 import type { FormSchema } from '../types';
-import type { Vendor } from './vendor';
+import type { Vendor, VendorTemplateEntry } from './vendor';
 
 /** Output scope hint — drives the suggested `group_vars`/`host_vars` path. */
 export interface TaskScope {
@@ -49,6 +49,17 @@ export interface TaskDefinition extends TaskMeta {
    * which may be approximate where a filter is not `exact`.
    */
   template: string;
+  /**
+   * Per-vendor preview overrides (issue #27). Additive: the same `schema` and the
+   * same always-correct YAML vars serve every vendor; only the rendered CLI
+   * differs. The base `template` above is the default vendor's preview
+   * (`vendorOf(this)`, usually `cisco-ios`); each key here adds or overrides
+   * another vendor's preview. A value may be a bare template string (asserted
+   * `exact`) or a `VendorTemplate` carrying a fidelity flag for un-reviewed CLI.
+   * Resolve with `taskVendors`/`templateForVendor` (`./vendor`) — never read this
+   * map directly, so the base-template fallback stays consistent.
+   */
+  templates?: Partial<Record<Vendor, VendorTemplateEntry>>;
   /** Default output scope (e.g. group `all`). */
   defaultScope?: TaskScope;
 }

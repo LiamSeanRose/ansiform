@@ -91,6 +91,15 @@ export function TaskPage() {
       degradedNotice: t('preview.degradedNotice'),
       empty: t('preview.empty'),
     },
+    vendor: {
+      selectLabel: t('workbench.vendorSelectLabel'),
+      labels: {
+        'cisco-ios': t('vendor.cisco-ios'),
+        'cisco-iosxe': t('vendor.cisco-iosxe'),
+        'cisco-nxos': t('vendor.cisco-nxos'),
+        'arista-eos': t('vendor.arista-eos'),
+      },
+    },
   };
 
   return (

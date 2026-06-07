@@ -28,6 +28,12 @@ function setValue(el: HTMLInputElement, value: string) {
   act(() => el.dispatchEvent(new Event('input', { bubbles: true })));
 }
 
+function setSelect(el: HTMLSelectElement, value: string) {
+  const proto = Object.getPrototypeOf(el) as object;
+  Object.getOwnPropertyDescriptor(proto, 'value')?.set?.call(el, value);
+  act(() => el.dispatchEvent(new Event('change', { bubbles: true })));
+}
+
 afterEach(() => {
   act(() => root?.unmount());
   container?.remove();
@@ -63,9 +69,18 @@ const messages: WorkbenchMessages = {
   },
   preview: {
     regionLabel: 'Device CLI preview',
-    heading: 'Live preview',
+    heading: 'Live preview ({vendor})',
     degradedNotice: 'preview may differ',
     empty: 'empty',
+  },
+  vendor: {
+    selectLabel: 'Preview target',
+    labels: {
+      'cisco-ios': 'Cisco IOS',
+      'cisco-iosxe': 'Cisco IOS-XE',
+      'cisco-nxos': 'Cisco NX-OS',
+      'arista-eos': 'Arista EOS',
+    },
   },
 };
 
@@ -130,5 +145,32 @@ describe('TaskWorkbench', () => {
     // The YAML deliverable still carries the real secret value.
     const yaml = el.querySelector('.output__yaml')!.textContent!;
     expect(yaml).toContain('key: hunter2');
+  });
+
+  it('offers a preview-target selector for multi-vendor tasks and relabels the heading', () => {
+    // interface-ip declares a cisco-iosxe override (the #27 proof).
+    const el = render(<TaskWorkbench task={interfaceIp} t={echo} messages={messages} />);
+    const select = el.querySelector<HTMLSelectElement>('.workbench__vendor select')!;
+    expect(select).not.toBeNull();
+    expect([...select.options].map((o) => o.value)).toEqual(['cisco-ios', 'cisco-iosxe']);
+
+    // Heading reflects the default vendor, then relabels on switch.
+    expect(el.querySelector('.preview__heading')!.textContent).toBe('Live preview (Cisco IOS)');
+    setSelect(select, 'cisco-iosxe');
+    expect(el.querySelector('.preview__heading')!.textContent).toBe(
+      'Live preview (Cisco IOS-XE)',
+    );
+    // The IOS-XE proof renders the identical CLI (same template).
+    expect(el.querySelector('.preview__cli')!.textContent).toContain('no shutdown');
+  });
+
+  it('shows no vendor selector for a single-vendor task', () => {
+    const singleVendor: TaskModule = {
+      ...interfaceIp,
+      definition: { ...interfaceIp.definition, templates: undefined },
+    };
+    const el = render(<TaskWorkbench task={singleVendor} t={echo} messages={messages} />);
+    expect(el.querySelector('.workbench__vendor')).toBeNull();
+    expect(el.querySelector('.preview__heading')!.textContent).toBe('Live preview (Cisco IOS)');
   });
 });

@@ -83,6 +83,9 @@ export const task: TaskModule = {
       'Generate Ansible host_vars and a Cisco IOS interface configuration — set the interface, IPv4 address, MTU, and admin state — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE renders identical interface CLI (#27): an explicit per-vendor claim,
+    // not an inference. Same schema, same vars — only the preview label changes.
+    templates: { 'cisco-iosxe': template },
     defaultScope: { kind: 'host', name: 'switch1' },
   },
   messages: {

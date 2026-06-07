@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_VENDOR, listTaskSummaries, vendorOf } from './registry';
+import {
+  taskVendors,
+  templateForVendor,
+  vendorTemplateApproximate,
+} from '../core/tasks/vendor';
 import { task as interfaceIp } from './interface-ip';
 
 describe('vendor seam (#21)', () => {
@@ -22,5 +27,51 @@ describe('vendor seam (#21)', () => {
     for (const summary of summaries) {
       expect(summary.vendor).toBe('cisco-ios');
     }
+  });
+});
+
+describe('per-vendor preview overlay (#27)', () => {
+  it('lists the base vendor first, then declared overrides', () => {
+    expect(taskVendors(interfaceIp.definition)).toEqual(['cisco-ios', 'cisco-iosxe']);
+  });
+
+  it('returns a single-element list (no selector) for a base-only task', () => {
+    expect(taskVendors({ template: 'x' })).toEqual(['cisco-ios']);
+  });
+
+  it('never lists the base vendor twice even if it appears in templates', () => {
+    const def = { template: 'base', templates: { 'cisco-ios': 'dup' } } as const;
+    expect(taskVendors(def)).toEqual(['cisco-ios']);
+  });
+
+  it('resolves the override template, falling back to the base template', () => {
+    const def = { template: 'BASE', templates: { 'cisco-nxos': 'NXOS' } } as const;
+    expect(templateForVendor(def, 'cisco-ios')).toBe('BASE');
+    expect(templateForVendor(def, 'cisco-nxos')).toBe('NXOS');
+    // A vendor with no override falls back to base (the workbench never offers it).
+    expect(templateForVendor(def, 'arista-eos')).toBe('BASE');
+  });
+
+  it('reads the fidelity flag: bare strings are exact, flagged objects approximate', () => {
+    const def = {
+      template: 'BASE',
+      templates: {
+        'cisco-iosxe': 'XE', // bare string → exact
+        'cisco-nxos': { template: 'NXOS', fidelity: 'approximate' as const },
+        'arista-eos': { template: 'EOS' }, // object without flag → exact
+      },
+    } as const;
+    expect(vendorTemplateApproximate(def, 'cisco-ios')).toBe(false);
+    expect(vendorTemplateApproximate(def, 'cisco-iosxe')).toBe(false);
+    expect(vendorTemplateApproximate(def, 'cisco-nxos')).toBe(true);
+    expect(vendorTemplateApproximate(def, 'arista-eos')).toBe(false);
+  });
+
+  it('treats the IOS-XE proof tasks as an exact, same-CLI claim', () => {
+    // interface-ip declares cisco-iosxe reusing the base template verbatim.
+    expect(templateForVendor(interfaceIp.definition, 'cisco-iosxe')).toBe(
+      interfaceIp.definition.template,
+    );
+    expect(vendorTemplateApproximate(interfaceIp.definition, 'cisco-iosxe')).toBe(false);
   });
 });

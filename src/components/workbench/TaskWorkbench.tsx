@@ -11,17 +11,31 @@
  *  - the **device CLI preview** by rendering the task template through the seed
  *    filter registry (#3); fidelity degrades visibly when a filter isn't exact.
  *
+ * Multi-vendor (#27): when a task declares per-vendor preview templates, a
+ * vendor selector swaps which template renders. The schema and the YAML vars are
+ * vendor-independent — only the previewed CLI changes — so switching vendor never
+ * touches the always-correct output. A vendor template the author flagged
+ * `approximate` clamps the preview fidelity down so an un-reviewed render shows
+ * the degrade notice and is never mistaken for ground truth.
+ *
  * Secrets (§5): secret-typed values are masked before they reach the preview, so
  * the most visible pane never displays one. Nothing here persists, logs, or
  * transmits the value model.
  */
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import type { FormValues } from '../../core';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../form';
 import { PreviewPane, renderPreview, type PreviewMessages } from '../../core/preview';
 import { YamlOutputPanel, type OutputMessages } from '../output';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { createSeedRegistry } from '../../core/filters/seed';
+import {
+  taskVendors,
+  templateForVendor,
+  vendorOf,
+  vendorTemplateApproximate,
+  type Vendor,
+} from '../../core/tasks/vendor';
 import type { TaskModule } from '../../tasks/registry';
 
 /** Externalized workbench chrome; the page builds this from the i18n catalogue. */
@@ -30,6 +44,13 @@ export interface WorkbenchMessages {
   output: OutputMessages;
   form: FormMessages;
   preview: PreviewMessages;
+  /** Preview-target selector copy (multi-vendor, #27). */
+  vendor: {
+    /** Accessible label for the vendor `<select>`. */
+    selectLabel: string;
+    /** Display name per vendor, used in the selector and the preview heading. */
+    labels: Record<Vendor, string>;
+  };
 }
 
 export interface TaskWorkbenchProps {
@@ -44,13 +65,22 @@ const registry = createSeedRegistry();
 const SECRET_MASK = '********';
 
 export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
-  const { schema, template, defaultScope } = task.definition;
+  const { schema, defaultScope } = task.definition;
+  const selectId = useId();
+
+  // The vendors this task can preview, base vendor first. A single-vendor task
+  // yields one entry and shows no selector.
+  const vendors = useMemo(() => taskVendors(task.definition), [task.definition]);
+  const [vendor, setVendor] = useState<Vendor>(() => vendorOf(task.definition));
+
+  const template = templateForVendor(task.definition, vendor);
+  const approximate = vendorTemplateApproximate(task.definition, vendor);
 
   const initial = useMemo(() => initialValues(schema), [schema]);
   const [values, setValues] = useState<FormValues>(initial);
   const secrets = useMemo(() => secretFieldNames(schema), [schema]);
 
-  // Always-correct YAML, derived from the raw value model.
+  // Always-correct YAML, derived from the raw value model. Vendor-independent.
   const artifact = useMemo(
     () => groupVarsYamlSink.render({ schema, values, scope: defaultScope }),
     [schema, values, defaultScope],
@@ -66,8 +96,22 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
         if (v !== undefined && v !== '') scope[name] = SECRET_MASK;
       }
     }
-    return renderPreview(template, scope, registry);
-  }, [template, values, secrets]);
+    const result = renderPreview(template, scope, registry);
+    // Honesty clamp (#27): an un-reviewed vendor template can never claim exact.
+    if (approximate && result.fidelity === 'exact') {
+      return { ...result, fidelity: 'approximate' as const };
+    }
+    return result;
+  }, [template, values, secrets, approximate]);
+
+  // Per-vendor preview heading: the `{vendor}` slot resolves to the active label.
+  const previewMessages = useMemo<PreviewMessages>(() => {
+    if (!messages.preview.heading) return messages.preview;
+    return {
+      ...messages.preview,
+      heading: messages.preview.heading.replace('{vendor}', messages.vendor.labels[vendor]),
+    };
+  }, [messages.preview, messages.vendor.labels, vendor]);
 
   return (
     <div className="workbench">
@@ -83,7 +127,23 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
       </section>
 
       <div className="workbench__pane workbench__output">
-        <PreviewPane result={preview} messages={messages.preview} />
+        {vendors.length > 1 && (
+          <div className="workbench__vendor">
+            <label htmlFor={selectId}>{messages.vendor.selectLabel}</label>
+            <select
+              id={selectId}
+              value={vendor}
+              onChange={(e) => setVendor(e.target.value as Vendor)}
+            >
+              {vendors.map((v) => (
+                <option key={v} value={v}>
+                  {messages.vendor.labels[v]}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        <PreviewPane result={preview} messages={previewMessages} />
         <YamlOutputPanel artifact={artifact} messages={messages.output} />
       </div>
     </div>

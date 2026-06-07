@@ -17,11 +17,18 @@
  */
 import type { Locale } from '../i18n';
 import type { TaskDefinition, TaskSummary } from '../core';
-import { DEFAULT_VENDOR, vendorOf, type Vendor } from '../core/tasks/vendor';
+import {
+  DEFAULT_VENDOR,
+  vendorOf,
+  type Vendor,
+  type VendorTemplate,
+  type VendorTemplateEntry,
+} from '../core/tasks/vendor';
 
-// Re-export the vendor seam (#21) so task authors import everything they need
-// from `../registry`, the same place `TaskModule` lives.
-export { DEFAULT_VENDOR, vendorOf, type Vendor };
+// Re-export the vendor seam (#21, #27) so task authors import everything they
+// need from `../registry`, the same place `TaskModule` lives. `VendorTemplate`
+// is the object form for a per-vendor preview that needs a fidelity flag.
+export { DEFAULT_VENDOR, vendorOf, type Vendor, type VendorTemplate, type VendorTemplateEntry };
 
 /** Flat key → string map for one locale's task-scoped copy. */
 export type TaskMessages = Record<string, string>;

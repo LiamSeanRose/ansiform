@@ -58,9 +58,9 @@ export const en = {
   'form.list.removed': 'Row {index} removed.',
   'form.list.empty': 'No rows yet — add one to begin.',
 
-  // Device-CLI preview (#5).
+  // Device-CLI preview (#5). `{vendor}` resolves to the active preview target.
   'preview.regionLabel': 'Device CLI preview',
-  'preview.heading': 'Live preview (Cisco IOS)',
+  'preview.heading': 'Live preview ({vendor})',
   'preview.degradedNotice': 'Preview may differ — the YAML output is still valid.',
   'preview.empty': 'Fill in the form to see the device configuration.',
 
@@ -68,6 +68,14 @@ export const en = {
   'workbench.formHeading': 'Configure',
   'workbench.outputHeading': 'Ansible vars (YAML)',
   'workbench.outputPathLabel': 'Suggested file:',
+
+  // Per-vendor preview selector (#27). The vars are vendor-independent; only the
+  // previewed device CLI changes.
+  'workbench.vendorSelectLabel': 'Preview target',
+  'vendor.cisco-ios': 'Cisco IOS',
+  'vendor.cisco-iosxe': 'Cisco IOS-XE',
+  'vendor.cisco-nxos': 'Cisco NX-OS',
+  'vendor.arista-eos': 'Arista EOS',
 
   // Output actions (#12) — copy / download of the group_vars/host_vars YAML.
   'output.copyLabel': 'Copy',
