@@ -5,20 +5,26 @@
 .form__group {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: var(--space-4) var(--space-5) var(--space-5);
+  padding: var(--space-5);
   margin: 0 0 var(--space-4);
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--surface) 78%, var(--bg)));
+  box-shadow: var(--ring-inset);
 }
 .form__legend {
   padding: 0 var(--space-2);
-  font-weight: 600;
+  margin-left: calc(-1 * var(--space-2));
+  font-weight: 700;
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .form-field {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 .form-field:last-child {
   margin-bottom: 0;
@@ -30,70 +36,121 @@
 }
 .form-field__label {
   font-weight: 600;
+  font-size: var(--text-sm);
 }
 .form-field--boolean .form-field__label {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   font-weight: 500;
+  cursor: pointer;
 }
 .form-field__checkbox {
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1.2rem;
+  height: 1.2rem;
   accent-color: var(--accent);
+  cursor: pointer;
 }
 .form-field__required {
-  color: var(--muted);
+  color: var(--faint);
   font-weight: 400;
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
 }
 .form-field__help {
   color: var(--muted);
   font-size: var(--text-sm);
   margin: 0;
+  line-height: 1.5;
 }
 .form-field__error {
   color: var(--danger-text);
   font-size: var(--text-sm);
+  font-weight: 500;
   margin: 0;
 }
+.form-field__error::before {
+  content: '⚠ ';
+}
+
+/* Shared control surface for text/number/select/textarea. */
 .form-field__control {
   width: 100%;
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg);
+  padding: var(--space-3) var(--space-3);
+  background: var(--surface-2);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   font: inherit;
+  box-shadow: var(--ring-inset);
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+.form-field__control::placeholder {
+  color: var(--faint);
 }
 .form-field__control:hover {
-  border-color: var(--muted);
+  border-color: var(--faint);
+}
+.form-field__control:focus,
+.form-field__control:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-2);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .form-field__control[aria-invalid='true'] {
   border-color: var(--danger);
+}
+.form-field__control[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px var(--danger-bg);
+}
+/* Native select arrow tinted to match. */
+select.form-field__control {
+  cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% + 1px),
+    calc(100% - 13px) calc(50% + 1px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: var(--space-6);
 }
 
 /* Error summary (focus target after a failed submit). */
 .form__error-summary {
   border: 1px solid var(--danger);
+  border-left-width: 4px;
   border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
-  margin: 0 0 var(--space-4);
+  padding: var(--space-4);
+  margin: 0 0 var(--space-5);
   background: var(--danger-bg);
+  animation: rise var(--dur) var(--ease) both;
+}
+.form__error-summary:focus-visible {
+  outline-offset: 4px;
 }
 .form__error-summary-heading {
   margin: 0 0 var(--space-2);
   font-size: var(--text-base);
+  color: var(--danger-text);
 }
 .form__error-summary-list {
   margin: 0;
   padding-left: var(--space-5);
+}
+.form__error-summary-list li {
+  margin: var(--space-1) 0;
 }
 .form__error-summary-link {
   background: none;
   border: none;
   color: var(--danger-text);
   text-decoration: underline;
+  text-underline-offset: 0.16em;
   cursor: pointer;
   font: inherit;
   padding: 0;
@@ -102,62 +159,85 @@
 .form__actions {
   display: flex;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
 }
 .form__submit {
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-6);
   font: inherit;
   font-weight: 600;
   color: var(--on-accent);
-  background: var(--accent);
+  background: linear-gradient(180deg, var(--accent), var(--accent-strong));
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  box-shadow: var(--shadow-glow);
+  transition:
+    transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur) var(--ease);
 }
 .form__submit:hover {
-  background: var(--accent-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px var(--accent-glow), 0 12px 36px -10px var(--accent-glow);
+}
+.form__submit:active {
+  transform: translateY(0);
 }
 
-/* Repeating-group (list) field (#20). */
+/* ---- Repeating-group (list) field (#20) --------------------------------- */
 .list-field {
   gap: var(--space-3);
 }
 .list-field__empty {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  padding: var(--space-3);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
 }
 .list-field__row {
   position: relative;
   border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius-md);
   padding: var(--space-4);
   margin: 0 0 var(--space-3);
-  background: var(--bg);
+  background: var(--surface-2);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 .list-field__row-label {
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  font-weight: 700;
   color: var(--muted);
 }
 .list-field__add,
 .list-field__remove {
   align-self: flex-start;
-  padding: var(--space-1) var(--space-3);
+  padding: var(--space-2) var(--space-4);
   font: inherit;
   font-size: var(--text-sm);
+  font-weight: 600;
   color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+.list-field__add::before {
+  content: '+ ';
 }
 .list-field__add:hover,
 .list-field__remove:hover {
   border-color: var(--accent);
+  background: var(--surface);
 }
 .list-field__add[disabled] {
   opacity: 0.5;
@@ -169,6 +249,7 @@
 }
 .list-field__remove:hover {
   border-color: var(--danger);
+  color: var(--danger-text);
 }
 .list-field__status {
   font-size: var(--text-sm);
