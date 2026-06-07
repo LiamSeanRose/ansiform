@@ -24,7 +24,10 @@ const CATEGORIES: { id: string; slugs: string[] }[] = [
   { id: 'routing', slugs: ['ospf', 'bgp-neighbor', 'static-routes', 'hsrp', 'vrrp'] },
   { id: 'policy', slugs: ['acl', 'prefix-lists', 'route-maps'] },
   { id: 'firewall', slugs: ['asa-interface', 'asa-acl', 'asa-access-group', 'asa-nat'] },
-  { id: 'edge', slugs: ['cradlepoint-lan', 'cradlepoint-static-route', 'cradlepoint-wan'] },
+  {
+    id: 'edge',
+    slugs: ['cradlepoint-lan', 'cradlepoint-static-route', 'cradlepoint-wan', 'cradlepoint-firewall'],
+  },
   {
     id: 'management',
     slugs: [
