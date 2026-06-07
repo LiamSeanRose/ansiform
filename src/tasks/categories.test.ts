@@ -1,12 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { CATEGORIES, GROUP_ORDER, categoryOf, relatedSlugs } from './categories';
-import { getTaskModule } from './registry';
+import { getTaskModule, listTaskSummaries } from './registry';
 
 describe('task categories (#35, #62)', () => {
   it('every categorized slug is a registered task (no typos / stale entries)', () => {
     for (const cat of CATEGORIES)
       for (const slug of cat.slugs)
         expect(getTaskModule(slug), `${cat.id}: ${slug}`).toBeDefined();
+  });
+
+  it('every registered task is categorized — none falls into "other" (#67)', () => {
+    const uncategorized = listTaskSummaries()
+      .map((s) => s.slug)
+      .filter((slug) => categoryOf(slug) === 'other');
+    expect(uncategorized, `uncategorized tasks: ${uncategorized.join(', ')}`).toEqual([]);
   });
 
   it('categoryOf maps known tasks and falls back to other', () => {
