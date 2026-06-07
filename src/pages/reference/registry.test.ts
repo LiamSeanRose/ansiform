@@ -10,6 +10,7 @@ const KNOWN = [
   'ansible-ipaddr-filter',
   'ansible-cisco-ios-config-from-a-form',
   'ansible-cisco-nxos-config-from-a-form',
+  'cookbook-worked-examples',
 ];
 
 describe('reference registry', () => {
