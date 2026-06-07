@@ -32,7 +32,12 @@ describe('vendor seam (#21)', () => {
 
 describe('per-vendor preview overlay (#27)', () => {
   it('lists the base vendor first, then declared overrides', () => {
-    expect(taskVendors(interfaceIp.definition)).toEqual(['cisco-ios', 'cisco-iosxe']);
+    expect(taskVendors(interfaceIp.definition)).toEqual([
+      'cisco-ios',
+      'cisco-iosxe',
+      'cisco-nxos',
+      'arista-eos',
+    ]);
   });
 
   it('returns a single-element list (no selector) for a base-only task', () => {
@@ -73,5 +78,14 @@ describe('per-vendor preview overlay (#27)', () => {
       interfaceIp.definition.template,
     );
     expect(vendorTemplateApproximate(interfaceIp.definition, 'cisco-iosxe')).toBe(false);
+  });
+
+  it('flags the divergent NX-OS/EOS interface previews as approximate', () => {
+    // interface-ip ships a prefix-length template for NX-OS/EOS, not the IOS one.
+    expect(templateForVendor(interfaceIp.definition, 'cisco-nxos')).not.toBe(
+      interfaceIp.definition.template,
+    );
+    expect(vendorTemplateApproximate(interfaceIp.definition, 'cisco-nxos')).toBe(true);
+    expect(vendorTemplateApproximate(interfaceIp.definition, 'arista-eos')).toBe(true);
   });
 });

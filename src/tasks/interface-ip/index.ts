@@ -75,6 +75,20 @@ const template = [
   '{% endif %}',
 ].join('\n');
 
+// NX-OS and Arista EOS take the prefix-length form (`ip address 10.0.0.1/24`)
+// instead of IOS's address + mask. That address line is the well-known divergence;
+// routed-port defaults (e.g. `no switchport` on some platforms) are NOT modelled,
+// so these ship `fidelity: 'approximate'` — a visible degrade, never a false exact.
+const slashTemplate = [
+  'interface {{ interface }}',
+  '{% if description %} description {{ description }}',
+  '{% endif %} ip address {{ ip_address }}',
+  '{% if mtu %} mtu {{ mtu }}',
+  '{% endif %}{% if enabled %} no shutdown',
+  '{% else %} shutdown',
+  '{% endif %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'interface-ip',
@@ -84,8 +98,13 @@ export const task: TaskModule = {
     schema,
     template,
     // IOS-XE renders identical interface CLI (#27): an explicit per-vendor claim,
-    // not an inference. Same schema, same vars — only the preview label changes.
-    templates: { 'cisco-iosxe': template },
+    // not an inference. NX-OS/EOS diverge (prefix-length IP) and are flagged
+    // approximate. Same schema, same vars — only the previewed CLI changes.
+    templates: {
+      'cisco-iosxe': template,
+      'cisco-nxos': { template: slashTemplate, fidelity: 'approximate' },
+      'arista-eos': { template: slashTemplate, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'host', name: 'switch1' },
   },
   messages: {

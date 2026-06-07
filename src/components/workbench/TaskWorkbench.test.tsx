@@ -152,7 +152,12 @@ describe('TaskWorkbench', () => {
     const el = render(<TaskWorkbench task={interfaceIp} t={echo} messages={messages} />);
     const select = el.querySelector<HTMLSelectElement>('.workbench__vendor select')!;
     expect(select).not.toBeNull();
-    expect([...select.options].map((o) => o.value)).toEqual(['cisco-ios', 'cisco-iosxe']);
+    expect([...select.options].map((o) => o.value)).toEqual([
+      'cisco-ios',
+      'cisco-iosxe',
+      'cisco-nxos',
+      'arista-eos',
+    ]);
 
     // Heading reflects the default vendor, then relabels on switch.
     expect(el.querySelector('.preview__heading')!.textContent).toBe('Live preview (Cisco IOS)');
@@ -160,8 +165,18 @@ describe('TaskWorkbench', () => {
     expect(el.querySelector('.preview__heading')!.textContent).toBe(
       'Live preview (Cisco IOS-XE)',
     );
-    // The IOS-XE proof renders the identical CLI (same template).
+    // The IOS-XE proof renders the identical CLI (same template), exact (no notice).
     expect(el.querySelector('.preview__cli')!.textContent).toContain('no shutdown');
+    expect(el.querySelector('.preview__notice')).toBeNull();
+  });
+
+  it('clamps fidelity to approximate for a divergent vendor preview', () => {
+    const el = render(<TaskWorkbench task={interfaceIp} t={echo} messages={messages} />);
+    const select = el.querySelector<HTMLSelectElement>('.workbench__vendor select')!;
+    // NX-OS ships an approximate template — the degrade notice must appear.
+    setSelect(select, 'cisco-nxos');
+    expect(el.querySelector('.preview__heading')!.textContent).toBe('Live preview (Cisco NX-OS)');
+    expect(el.querySelector('.preview__notice')).not.toBeNull();
   });
 
   it('shows no vendor selector for a single-vendor task', () => {

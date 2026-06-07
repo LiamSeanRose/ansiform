@@ -1,5 +1,5 @@
-# Dependencies
-node_modules/
+# Dependencies (match the directory and any worktree symlink of the same name)
+node_modules
 
 # Build output
 dist/
