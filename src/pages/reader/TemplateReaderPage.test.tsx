@@ -120,4 +120,18 @@ describe('TemplateReaderPage (#30)', () => {
     // "preview may differ" notice appears even though the filters are exact.
     expect(container.querySelector('.preview__notice')).not.toBeNull();
   });
+
+  it('auto-flags a pasted set-form template as approximate, even on IOS (#71)', () => {
+    view = render();
+    const { container } = view;
+    paste(
+      container.querySelector('textarea')!,
+      'set system host-name {{ hostname }}\nset system ntp server {{ ntp }}',
+    );
+    // Default target is Cisco IOS, yet the set-form paste is flagged with its own
+    // note (no manual platform switch needed).
+    const notice = container.querySelector('.preview__notice');
+    expect(notice).not.toBeNull();
+    expect(notice!.textContent).toContain('set-form');
+  });
 });

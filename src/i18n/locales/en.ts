@@ -157,6 +157,8 @@ export const en = {
   'reader.tier.approximate': 'approximate',
   'reader.tier.unsupported': 'unsupported',
   'reader.previewHeading': 'Live preview ({vendor})',
+  'reader.setFormNote':
+    'This looks like a set-form template (Junos, VyOS, or Cradlepoint NCOS). The preview is approximate — choose the matching platform above.',
   'reader.foundCount':
     'Found {count} variable(s). Variables defined with set, or used only inside loops, may not be listed — review the template itself before relying on this.',
   'reader.loopVars': 'Loop variables (filled per row, not above): {names}',

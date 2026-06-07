@@ -24,7 +24,7 @@ import {
   type Scope,
 } from '../../core/preview';
 import type { Vendor } from '../../core/tasks/vendor';
-import { hasVaultBlock, looksLikeSecretName, segmentTemplate } from './segment';
+import { hasVaultBlock, looksLikeSecretName, looksLikeSetForm, segmentTemplate } from './segment';
 import { EditMode } from './EditMode';
 import { ArgSpecImporter } from './ArgSpecImporter';
 
@@ -86,13 +86,16 @@ export function TemplateReaderPage() {
 
   const extraction = useMemo(() => extractTemplate(template, registry), [template]);
   const segments = useMemo(() => segmentTemplate(template), [template]);
+  // Auto-detect a flat `set …` paste (Junos / VyOS / Cradlepoint), #71.
+  const setForm = useMemo(() => looksLikeSetForm(template), [template]);
   const preview = useMemo(() => {
     const scope: Scope = { ...sample };
     const result = renderPreview(template, scope, registry);
-    // Honest non-IOS fidelity (#70): a non-line-CLI target can't claim exact for an
-    // arbitrary pasted template, so clamp it the way the curated tasks do.
-    return FLOORED_VENDORS.has(previewVendor) ? withFidelityFloor(result, 'approximate') : result;
-  }, [template, sample, previewVendor]);
+    // Honest non-IOS fidelity: a non-line-CLI target (#70) or a detected set-form
+    // paste (#71) can't claim exact, so clamp it the way the curated tasks do.
+    const floor = setForm || FLOORED_VENDORS.has(previewVendor);
+    return floor ? withFidelityFloor(result, 'approximate') : result;
+  }, [template, sample, previewVendor, setForm]);
 
   const hasContent = template.trim().length > 0;
   const pasteHelpId = `${ids}-help`;
@@ -294,8 +297,12 @@ export function TemplateReaderPage() {
                   </select>
                 </div>
                 <h2 className="workbench__heading">{previewHeading}</h2>
-                {preview.fidelity !== 'exact' && (
-                  <p className="preview__notice">{t('reader.fidelity.approximate')}</p>
+                {setForm ? (
+                  <p className="preview__notice">{t('reader.setFormNote')}</p>
+                ) : (
+                  preview.fidelity !== 'exact' && (
+                    <p className="preview__notice">{t('reader.fidelity.approximate')}</p>
+                  )
                 )}
                 <pre className="preview__cli" tabIndex={0} aria-live="polite">
                   {preview.text}

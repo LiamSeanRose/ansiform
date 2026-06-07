@@ -143,6 +143,8 @@ export const fr: Messages = {
   'reader.tier.approximate': 'approximatif',
   'reader.tier.unsupported': 'non pris en charge',
   'reader.previewHeading': 'Aperçu en direct ({vendor})',
+  'reader.setFormNote':
+    'Cela ressemble à un template au format « set » (Junos, VyOS ou Cradlepoint NCOS). L’aperçu est approximatif — choisissez la plateforme correspondante ci-dessus.',
   'reader.foundCount':
     '{count} variable(s) trouvée(s). Les variables définies avec set, ou utilisées uniquement dans des boucles, peuvent ne pas figurer — vérifiez le template lui-même avant de vous y fier.',
   'reader.loopVars': 'Variables de boucle (renseignées par ligne, pas ci-dessus) : {names}',

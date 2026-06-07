@@ -58,3 +58,33 @@ export function looksLikeSecretName(name: string): boolean {
 export function hasVaultBlock(src: string): boolean {
   return src.includes('!vault');
 }
+
+/**
+ * Heuristic (#71): does the template look like the flat `set …` configuration
+ * form used by Junos, VyOS, and Cradlepoint NCOS, rather than indented line CLI
+ * (Cisco IOS)? Set-form commands sit at column 0 — `set system host-name …`,
+ * `set lan/0/ip_address …` — so a leading `{% … %}` loop tag is stripped first,
+ * then we look for `set ` at the start. This deliberately does NOT match an IOS
+ * route-map's *indented* `set` clauses (` set local-preference …`), keeping the
+ * two styles apart. Two or more column-0 `set` commands, and at least half the
+ * command lines, is taken as set-form (conservative, to avoid false positives).
+ */
+export function looksLikeSetForm(src: string): boolean {
+  let setLines = 0;
+  let commandLines = 0;
+  for (const raw of src.split('\n')) {
+    if (raw.trim() === '') continue;
+    // Strip leading {% … %} / {# … #} tags so `{% for %}set …` reads as column 0;
+    // leading whitespace is preserved, so an indented line stays indented.
+    let s = raw;
+    let prev: string;
+    do {
+      prev = s;
+      s = s.replace(/^\{%[^%]*%\}/, '').replace(/^\{#[^#]*#\}/, '');
+    } while (s !== prev);
+    if (s.trim() === '') continue; // line was only tags
+    commandLines++;
+    if (s.startsWith('set ')) setLines++;
+  }
+  return setLines >= 2 && setLines * 2 >= commandLines;
+}
