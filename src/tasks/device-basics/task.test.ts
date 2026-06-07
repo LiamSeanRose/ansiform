@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues } from '../../core';
@@ -129,6 +130,25 @@ describe('device-basics task', () => {
 
     it('flags a malformed NTP server via the field pattern', () => {
       expect(validateForm(schema, { ntp_server: 'nope' }).ntp_server?.code).toBe('pattern');
+    });
+  });
+
+  // #34: EOS promoted to verified-exact (lowercase `ro`, flat TACACS+ host) and locked.
+  describe('per-vendor preview (#34)', () => {
+    const def = task.definition;
+
+    it('EOS is exact: lowercase ro community and a flat tacacs-server host line', () => {
+      expect(vendorTemplateApproximate(def, 'arista-eos')).toBe(false);
+      const out = renderPreview(templateForVendor(def, 'arista-eos'), full, registry);
+      expect(out.fidelity).toBe('exact');
+      expect(out.text).toBe(
+        [
+          'snmp-server community public ro',
+          'snmp-server location HQ-IDF1',
+          'ntp server 192.0.2.10',
+          'tacacs-server host 192.0.2.20 key tac-s3cret',
+        ].join('\n'),
+      );
     });
   });
 });
