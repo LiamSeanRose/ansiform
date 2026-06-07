@@ -20,7 +20,7 @@ import type { MessageKey } from '../i18n';
 import type { FormSchema, FormValues, ScalarValue } from '../core';
 import type { TaskScope } from '../core/tasks/types';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../components/form';
-import { PreviewPane, renderPreview, type PreviewMessages } from '../core/preview';
+import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../core/preview';
 import { downloadText, downloadBlob, SurveyDownloadButton } from '../components/output';
 import { composeTree } from '../core/output/compose';
 import { buildCombinedSurveySpec } from '../core/output/survey-spec';
@@ -274,8 +274,13 @@ function InstanceCard({
         if (v !== undefined && v !== '') scope[name] = SECRET_MASK as ScalarValue;
       }
     }
-    return renderPreview(template, scope, registry);
-  }, [template, instance.values, secrets]);
+    // Honesty floor (#40): a task that declares one (e.g. a non-line-CLI platform)
+    // never claims exact here either — the build tray degrades like the workbench.
+    return withFidelityFloor(
+      renderPreview(template, scope, registry),
+      mod.definition.fidelityFloor,
+    );
+  }, [template, instance.values, secrets, mod.definition.fidelityFloor]);
 
   return (
     <div className="build__instance">

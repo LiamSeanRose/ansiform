@@ -24,7 +24,15 @@ describe('vendor seam (#21)', () => {
   it('surfaces a concrete vendor on every task summary', () => {
     const summaries = listTaskSummaries();
     expect(summaries.length).toBeGreaterThan(0);
-    const known = ['cisco-ios', 'cisco-iosxe', 'cisco-nxos', 'arista-eos', 'cisco-asa'];
+    const known = [
+      'cisco-ios',
+      'cisco-iosxe',
+      'cisco-nxos',
+      'arista-eos',
+      'cisco-asa',
+      'cisco-iosxr',
+      'cradlepoint-ncos',
+    ];
     for (const summary of summaries) {
       // Never undefined — a summary always resolves a concrete platform (#21).
       expect(summary.vendor).toBeDefined();

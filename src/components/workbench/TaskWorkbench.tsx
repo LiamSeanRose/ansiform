@@ -25,7 +25,7 @@
 import { useId, useMemo, useState } from 'react';
 import type { FormValues } from '../../core';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../form';
-import { PreviewPane, renderPreview, type PreviewMessages } from '../../core/preview';
+import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../../core/preview';
 import { YamlOutputPanel, SurveyDownloadButton, type OutputMessages } from '../output';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { buildSurveySpec } from '../../core/output/survey-spec';
@@ -104,12 +104,13 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
       }
     }
     const result = renderPreview(template, scope, registry);
-    // Honesty clamp (#27): an un-reviewed vendor template can never claim exact.
-    if (approximate && result.fidelity === 'exact') {
-      return { ...result, fidelity: 'approximate' as const };
-    }
-    return result;
-  }, [template, values, secrets, approximate]);
+    // Honesty clamp: an un-reviewed vendor override (#27) or a task-level fidelity
+    // floor (#40, e.g. a non-line-CLI platform) can never let the preview claim
+    // exact. Both collapse to the same at-worst-`approximate` floor.
+    const floor =
+      approximate || task.definition.fidelityFloor === 'approximate' ? 'approximate' : undefined;
+    return withFidelityFloor(result, floor);
+  }, [template, values, secrets, approximate, task.definition.fidelityFloor]);
 
   // Per-vendor preview heading: the `{vendor}` slot resolves to the active label.
   const previewMessages = useMemo<PreviewMessages>(() => {

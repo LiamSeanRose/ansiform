@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderPreview } from './render';
+import { renderPreview, withFidelityFloor, type PreviewResult } from './render';
 import { createFilterRegistry, type FilterDefinition } from '../filters/registry';
 import { createSeedRegistry } from '../filters/seed';
 
@@ -208,5 +208,29 @@ describe('renderPreview', () => {
       const out = renderPreview('{{ ip | ipaddr("teredo") }}', { ip: '10.0.0.1' }, seed);
       expect(out.fidelity).toBe('unsupported');
     });
+  });
+});
+
+describe('withFidelityFloor (#40)', () => {
+  const make = (fidelity: PreviewResult['fidelity']): PreviewResult => ({
+    text: 'set lan/0/name Primary',
+    fidelity,
+    filters: [],
+  });
+
+  it('clamps an exact render down to approximate when the floor is set', () => {
+    const out = withFidelityFloor(make('exact'), 'approximate');
+    expect(out.fidelity).toBe('approximate');
+    expect(out.text).toBe('set lan/0/name Primary'); // text untouched
+  });
+
+  it('leaves an already-degraded render unchanged', () => {
+    expect(withFidelityFloor(make('approximate'), 'approximate').fidelity).toBe('approximate');
+    // `unsupported` is below the floor, so it is not lifted.
+    expect(withFidelityFloor(make('unsupported'), 'approximate').fidelity).toBe('unsupported');
+  });
+
+  it('is a no-op when no floor is declared', () => {
+    expect(withFidelityFloor(make('exact'), undefined).fidelity).toBe('exact');
   });
 });

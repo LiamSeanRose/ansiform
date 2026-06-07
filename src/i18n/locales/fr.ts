@@ -70,6 +70,7 @@ export const fr: Messages = {
   'vendor.arista-eos': 'Arista EOS',
   'vendor.cisco-asa': 'Cisco ASA',
   'vendor.cisco-iosxr': 'Cisco IOS-XR',
+  'vendor.cradlepoint-ncos': 'Cradlepoint NCOS',
 
   'output.copyLabel': 'Copier',
   'output.copied': 'Copié dans le presse-papiers.',
@@ -109,6 +110,7 @@ export const fr: Messages = {
   'tasksIndex.category.routing': 'Routage',
   'tasksIndex.category.policy': 'Politique de trafic',
   'tasksIndex.category.firewall': 'Pare-feu (ASA)',
+  'tasksIndex.category.edge': 'Cellulaire et edge (Cradlepoint)',
   'tasksIndex.category.management': 'Gestion et durcissement',
   'tasksIndex.category.other': 'Autre',
 

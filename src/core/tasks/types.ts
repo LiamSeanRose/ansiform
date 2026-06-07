@@ -60,6 +60,20 @@ export interface TaskDefinition extends TaskMeta {
    * map directly, so the base-template fallback stays consistent.
    */
   templates?: Partial<Record<Vendor, VendorTemplateEntry>>;
+  /**
+   * Preview honesty floor (#36 design / #40). When set, the rendered preview's
+   * fidelity is clamped DOWN to at-worst `approximate`, regardless of the filter
+   * tiers the template uses — so a base template the author cannot assert as
+   * device-exact never claims `exact`. This is the base-template analog of the
+   * per-vendor `approximate` flag (which only covers `templates` overrides): a
+   * non-line-CLI platform's config (e.g. a Cradlepoint NCOS `set …` form authored
+   * from public docs but not device-verified, or a JSON fragment, which is
+   * API-shaped and structurally fragile) renders best-effort and says so. The YAML
+   * vars stay always-correct; only the preview is flagged. Apply with
+   * `withFidelityFloor` (`../preview`) — never read it raw — so the clamp is
+   * consistent across the workbench and the build tray.
+   */
+  fidelityFloor?: 'approximate';
   /** Default output scope (e.g. group `all`). */
   defaultScope?: TaskScope;
 }

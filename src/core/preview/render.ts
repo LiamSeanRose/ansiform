@@ -46,6 +46,24 @@ export interface PreviewResult {
   filters: string[];
 }
 
+/**
+ * Clamp a preview's fidelity down to at-worst `approximate` when a task declares
+ * a `fidelityFloor` (#36 design / #40). An `exact` render becomes `approximate`
+ * so the pane shows the degrade notice; an `approximate`/`unsupported` render is
+ * returned unchanged (already at or below the floor). Pure — the single place the
+ * floor is applied, mirroring the workbench's per-vendor `approximate` clamp so a
+ * floored task degrades identically in the workbench and the build tray.
+ */
+export function withFidelityFloor(
+  result: PreviewResult,
+  floor: 'approximate' | undefined,
+): PreviewResult {
+  if (floor === 'approximate' && result.fidelity === 'exact') {
+    return { ...result, fidelity: 'approximate' };
+  }
+  return result;
+}
+
 /** A value scope: variable name → value. Loop variables are layered on top. */
 export type Scope = Record<string, unknown>;
 
