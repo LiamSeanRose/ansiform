@@ -115,6 +115,20 @@ const junosTemplate = [
   '{% endif %}',
 ].join('\n');
 
+// Huawei VRP (#73). IOS-adjacent line CLI: `ip address <addr> <mask>` (dotted
+// mask, same as IOS) and `description` map verbatim, but VRP enables an interface
+// with `undo shutdown` (not `no shutdown`). Authored from public VRP references,
+// not curated against gear, so flagged approximate.
+const vrpTemplate = [
+  'interface {{ interface }}',
+  '{% if description %} description {{ description }}',
+  "{% endif %} ip address {{ ip_address | ipaddr('address') }} {{ ip_address | ipaddr('netmask') }}",
+  '{% if mtu %} mtu {{ mtu }}',
+  '{% endif %}{% if enabled %} undo shutdown',
+  '{% else %} shutdown',
+  '{% endif %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'interface-ip',
@@ -133,6 +147,8 @@ export const task: TaskModule = {
       // IOS-XR uses `ipv4 address <addr> <mask>`, verified exact (#37).
       'cisco-iosxr': iosxrTemplate,
       'juniper-junos': { template: junosTemplate, fidelity: 'approximate' },
+      // Huawei VRP: IOS-like, but `undo shutdown` to enable (#73). Approximate.
+      'huawei-vrp': { template: vrpTemplate, fidelity: 'approximate' },
     },
     defaultScope: { kind: 'host', name: 'switch1' },
   },

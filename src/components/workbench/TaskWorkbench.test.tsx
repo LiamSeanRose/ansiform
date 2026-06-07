@@ -86,6 +86,7 @@ const messages: WorkbenchMessages = {
       'cradlepoint-ncos': 'Cradlepoint NCOS',
       'juniper-junos': 'Juniper Junos',
       vyos: 'VyOS',
+      'huawei-vrp': 'Huawei VRP',
     },
   },
 };
@@ -172,6 +173,7 @@ describe('TaskWorkbench', () => {
       'arista-eos',
       'cisco-iosxr',
       'juniper-junos',
+      'huawei-vrp',
     ]);
 
     // Heading reflects the default vendor, then relabels on switch.

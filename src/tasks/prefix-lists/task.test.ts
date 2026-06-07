@@ -119,5 +119,19 @@ describe('prefix-lists task', () => {
         expect(out.text).toBe(expected);
       });
     }
+
+    // #73: Huawei VRP uses `ip ip-prefix … index … greater-equal/less-equal`,
+    // splitting the CIDR into address + mask length; approximate.
+    it('Huawei VRP is approximate and uses ip ip-prefix with split address/length', () => {
+      expect(vendorTemplateApproximate(def, 'huawei-vrp')).toBe(true);
+      const out = renderPreview(templateForVendor(def, 'huawei-vrp'), full, registry);
+      expect(out.text).toBe(
+        [
+          'ip ip-prefix MGMT-NETS index 5 permit 10.0.0.0 8 greater-equal 24 less-equal 24',
+          'ip ip-prefix MGMT-NETS index 10 deny 0.0.0.0 0',
+          '',
+        ].join('\n'),
+      );
+    });
   });
 });

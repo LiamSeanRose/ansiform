@@ -92,6 +92,18 @@ const template = [
   '{% endfor %}',
 ].join('\n');
 
+// Huawei VRP (#73). VRP enters the process with `ospf <id> [router-id X]`, then
+// nests each `network <addr> <wildcard>` under an `area <id>` block — a different
+// shape from IOS's flat `network … area` lines. Authored from public VRP
+// references, not curated against gear, so flagged approximate.
+const vrpTemplate = [
+  '{% if router_id %}ospf {{ process_id }} router-id {{ router_id }}',
+  '{% else %}ospf {{ process_id }}',
+  '{% endif %}{% for n in networks %} area {{ n.area }}',
+  '  network {{ n.network }} {{ n.wildcard }}',
+  '{% endfor %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'ospf',
@@ -106,6 +118,8 @@ export const task: TaskModule = {
       // per-interface rather than with `network` statements, so it is omitted
       // rather than rendered wrong.)
       'cisco-iosxe': template,
+      // Huawei VRP nests network under area; authored, approximate (#73).
+      'huawei-vrp': { template: vrpTemplate, fidelity: 'approximate' },
     },
     defaultScope: { kind: 'host', name: 'router1' },
   },

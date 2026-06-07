@@ -35,7 +35,8 @@ export type Vendor =
   | 'cisco-iosxr'
   | 'cradlepoint-ncos'
   | 'juniper-junos'
-  | 'vyos';
+  | 'vyos'
+  | 'huawei-vrp';
 
 /** The vendor assumed when a task declares none. */
 export const DEFAULT_VENDOR: Vendor = 'cisco-ios';

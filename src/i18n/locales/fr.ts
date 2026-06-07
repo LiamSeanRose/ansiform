@@ -75,6 +75,7 @@ export const fr: Messages = {
   'vendor.cradlepoint-ncos': 'Cradlepoint NCOS',
   'vendor.juniper-junos': 'Juniper Junos',
   'vendor.vyos': 'VyOS',
+  'vendor.huawei-vrp': 'Huawei VRP',
 
   'output.copyLabel': 'Copier',
   'output.copied': 'Copié dans le presse-papiers.',

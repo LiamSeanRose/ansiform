@@ -142,5 +142,21 @@ describe('interface-ip task', () => {
         ].join('\n'),
       );
     });
+
+    // #73: Huawei VRP is IOS-adjacent but enables with `undo shutdown`; approximate.
+    it('Huawei VRP is approximate and enables with undo shutdown', () => {
+      expect(vendorTemplateApproximate(def, 'huawei-vrp')).toBe(true);
+      const out = renderPreview(templateForVendor(def, 'huawei-vrp'), values, registry);
+      expect(out.text).toBe(
+        [
+          'interface GigabitEthernet0/0/0/0',
+          ' description Uplink to core',
+          ' ip address 10.0.0.1 255.255.255.0',
+          ' mtu 1500',
+          ' undo shutdown',
+          '',
+        ].join('\n'),
+      );
+    });
   });
 });

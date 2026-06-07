@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm, secretFieldNames } from '../../components/form';
 import type { Field, FormValues } from '../../core';
@@ -116,5 +117,25 @@ describe('ospf task (multi-network)', () => {
 
   it('declares no secret fields', () => {
     expect(secretFieldNames(schema).size).toBe(0);
+  });
+
+  // #73: Huawei VRP nests network under area; approximate.
+  describe('per-vendor preview (#73)', () => {
+    const def = task.definition;
+
+    it('Huawei VRP is approximate and nests network under area', () => {
+      expect(vendorTemplateApproximate(def, 'huawei-vrp')).toBe(true);
+      const out = renderPreview(templateForVendor(def, 'huawei-vrp'), full, registry);
+      expect(out.text).toBe(
+        [
+          'ospf 1 router-id 1.1.1.1',
+          ' area 0',
+          '  network 10.0.0.0 0.0.0.255',
+          ' area 0',
+          '  network 10.1.0.0 0.0.255.255',
+          '',
+        ].join('\n'),
+      );
+    });
   });
 });

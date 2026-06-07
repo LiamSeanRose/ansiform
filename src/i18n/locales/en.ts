@@ -85,6 +85,7 @@ export const en = {
   'vendor.cradlepoint-ncos': 'Cradlepoint NCOS',
   'vendor.juniper-junos': 'Juniper Junos',
   'vendor.vyos': 'VyOS',
+  'vendor.huawei-vrp': 'Huawei VRP',
 
   // Output actions (#12) — copy / download of the group_vars/host_vars YAML.
   'output.copyLabel': 'Copy',

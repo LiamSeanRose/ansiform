@@ -114,6 +114,7 @@ export function TaskPage() {
         'cradlepoint-ncos': t('vendor.cradlepoint-ncos'),
         'juniper-junos': t('vendor.juniper-junos'),
         vyos: t('vendor.vyos'),
+        'huawei-vrp': t('vendor.huawei-vrp'),
       },
     },
   };

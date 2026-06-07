@@ -94,6 +94,13 @@ const schema: FormSchema = {
 const template =
   "{% for e in entries %}ip prefix-list {{ name }} seq {{ e.seq }} {{ e.action }} {{ e.prefix }}{% if e.ge %} ge {{ e.ge }}{% endif %}{% if e.le %} le {{ e.le }}{% endif %}{{ '\\n' }}{% endfor %}";
 
+// Huawei VRP (#73). VRP spells this `ip ip-prefix NAME index N {permit|deny}
+// <address> <mask-length>` with `greater-equal`/`less-equal` bounds — so the CIDR
+// is split into address + prefix length via the exact-tier ipaddr filter.
+// Authored from public VRP references, not curated against gear; approximate.
+const vrpTemplate =
+  "{% for e in entries %}ip ip-prefix {{ name }} index {{ e.seq }} {{ e.action }} {{ e.prefix | ipaddr('network') }} {{ e.prefix | ipaddr('prefix') }}{% if e.ge %} greater-equal {{ e.ge }}{% endif %}{% if e.le %} less-equal {{ e.le }}{% endif %}{{ '\\n' }}{% endfor %}";
+
 export const task: TaskModule = {
   definition: {
     slug: 'prefix-lists',
@@ -111,6 +118,8 @@ export const task: TaskModule = {
       // (`ip prefix-list NAME [seq N] {permit|deny} <prefix> [ge N] [le N]`).
       'cisco-nxos': template,
       'arista-eos': template,
+      // Huawei VRP uses `ip ip-prefix … index … greater-equal/less-equal` (#73).
+      'huawei-vrp': { template: vrpTemplate, fidelity: 'approximate' },
     },
     defaultScope: { kind: 'group', name: 'all' },
   },

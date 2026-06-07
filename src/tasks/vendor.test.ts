@@ -57,6 +57,7 @@ describe('per-vendor preview overlay (#27)', () => {
       'arista-eos',
       'cisco-iosxr',
       'juniper-junos',
+      'huawei-vrp',
     ]);
   });
 
