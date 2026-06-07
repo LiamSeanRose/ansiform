@@ -12,7 +12,7 @@
  * contract and never touches `src/tasks`.
  */
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import type { MessageKey } from '../i18n';
 import { getTaskModule, listTaskSummaries } from '../tasks/registry';
@@ -41,8 +41,14 @@ const VENDOR_ORDER: Vendor[] = [
 
 export function TasksIndexPage() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('all');
+  // Seed the category from a `?category=` deep link (breadcrumb target, #92) —
+  // allowlisted to known categories, else "All". Read once on mount.
+  const [category, setCategory] = useState(() => {
+    const c = searchParams.get('category');
+    return c && (c === 'all' || GROUP_ORDER.includes(c)) ? c : 'all';
+  });
   const [vendors, setVendors] = useState<ReadonlySet<Vendor>>(new Set());
   const [inView, setInView] = useState<string | null>(null);
   const searchId = useId();

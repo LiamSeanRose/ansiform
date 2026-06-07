@@ -26,9 +26,17 @@ export const en = {
   'home.tasksHeading': 'Tasks',
   'home.tasksEmpty': 'The curated task library is coming soon.',
   'home.referenceHeading': 'Reference & guides',
+  // Hero CTAs + section header (#92).
+  'home.ctaBrowse': 'Browse the task library',
+  'home.ctaCompose': 'Compose a var-file set',
+  'home.ctaRead': 'Read a template',
+  'home.viewAll': 'View all {count} tasks →',
 
   'task.backToHome': '← All tasks',
   'task.relatedHeading': 'Related tasks',
+  // Breadcrumb trail (#92).
+  'breadcrumb.label': 'Breadcrumb',
+  'breadcrumb.home': 'Home',
   // Static worked example on each task page (#87) — sample → YAML → device CLI.
   'task.example.heading': 'Worked example',
   'task.example.intro':

@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import type { MessageKey } from '../i18n';
 import { getTaskModule, taskMessages } from '../tasks/registry';
-import { relatedSlugs } from '../tasks/categories';
+import { categoryOf, relatedSlugs } from '../tasks/categories';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { TaskWorkbench, WorkedExample, type WorkbenchMessages } from '../components/workbench';
 import type { FormMessages, Translate as FieldTranslate } from '../components/form';
 import { RunRecipe, type RunRecipeMessages } from '../components/output';
@@ -179,9 +180,17 @@ export function TaskPage() {
 
   return (
     <section className="page page--task" aria-labelledby="task-title">
-      <p>
-        <Link to="/tasks">{t('task.backToHome')}</Link>
-      </p>
+      <Breadcrumbs
+        label={t('breadcrumb.label')}
+        items={[
+          { label: t('breadcrumb.home'), to: '/' },
+          {
+            label: t(`tasksIndex.category.${categoryOf(slug)}` as MessageKey),
+            to: `/tasks?category=${categoryOf(slug)}`,
+          },
+          { label: mod.definition.title },
+        ]}
+      />
       <h1 id="task-title">{mod.definition.title}</h1>
       <p className="lede">{mod.definition.description}</p>
 

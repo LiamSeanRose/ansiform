@@ -177,6 +177,25 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* Primary output action (Download = save the file): the one accented CTA (#92). */
+.output__action--primary {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text);
+}
+.output__action--primary:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+.output__action:focus-visible,
+.build__download:focus-visible,
+.build__download-all:focus-visible,
+.build__add:focus-visible,
+.build__remove:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 .output__path {
   margin: var(--space-3) 0 var(--space-2);
   font-size: var(--text-sm);

@@ -22,11 +22,14 @@ export function HomePage() {
         </h1>
         <p className="lede hero__lede">{t('home.lede')}</p>
         <div className="hero__actions">
-          <Link className="btn btn--primary" to="/build">
-            {t('nav.build')}
+          <Link className="btn btn--primary" to="/tasks">
+            {t('home.ctaBrowse')}
+          </Link>
+          <Link className="btn btn--ghost" to="/build">
+            {t('home.ctaCompose')}
           </Link>
           <Link className="btn btn--ghost" to="/reader">
-            {t('nav.reader')}
+            {t('home.ctaRead')}
           </Link>
         </div>
         {chips.length > 0 && (
@@ -40,12 +43,19 @@ export function HomePage() {
         )}
       </div>
 
-      <h2>{t('home.tasksHeading')}</h2>
+      <div className="home__section-header">
+        <h2>{t('home.tasksHeading')}</h2>
+        {tasks.length > 0 && (
+          <Link className="home__view-all" to="/tasks">
+            {t('home.viewAll', { count: tasks.length })}
+          </Link>
+        )}
+      </div>
       {tasks.length === 0 ? (
         <p className="muted">{t('home.tasksEmpty')}</p>
       ) : (
         <ul className="task-list">
-          {tasks.map((task) => (
+          {tasks.slice(0, 6).map((task) => (
             <li key={task.slug} className="task-list__item">
               <Link className="task-list__link" to={`/tasks/${task.slug}`}>
                 {task.title}

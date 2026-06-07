@@ -24,9 +24,17 @@ export const fr: Messages = {
   'home.tasksHeading': 'Tâches',
   'home.tasksEmpty': 'La bibliothèque de tâches arrive bientôt.',
   'home.referenceHeading': 'Référence et guides',
+  // CTA du hero + en-tête de section (#92).
+  'home.ctaBrowse': 'Parcourir la bibliothèque',
+  'home.ctaCompose': 'Composer un jeu de variables',
+  'home.ctaRead': 'Lire un modèle',
+  'home.viewAll': 'Voir les {count} tâches →',
 
   'task.backToHome': '← Toutes les tâches',
   'task.relatedHeading': 'Tâches associées',
+  // Fil d’Ariane (#92).
+  'breadcrumb.label': 'Fil d’Ariane',
+  'breadcrumb.home': 'Accueil',
   // Exemple concret sur chaque page de tâche (#87) — échantillon → YAML → CLI.
   'task.example.heading': 'Exemple concret',
   'task.example.intro':

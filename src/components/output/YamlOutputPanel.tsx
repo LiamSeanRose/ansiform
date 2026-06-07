@@ -11,7 +11,7 @@
  * Note: secrets legitimately appear in this YAML — it is the file the user saves
  * and vaults. That is the intended sharing path (export a file, never a link).
  */
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { OutputArtifact } from '../../core';
 import { copyText } from './clipboard';
 import { downloadText } from './download';
@@ -44,10 +44,20 @@ export interface YamlOutputPanelProps {
 export function YamlOutputPanel({ artifact, messages, secretNames }: YamlOutputPanelProps) {
   const headingId = useId();
   const [status, setStatus] = useState('');
+  const dismissTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Toast-style: announce via the aria-live region (never steals focus) and
+  // auto-clear after a few seconds so it reads as transient feedback (#92).
+  const announce = (message: string) => {
+    setStatus(message);
+    clearTimeout(dismissTimer.current);
+    dismissTimer.current = setTimeout(() => setStatus(''), 4000);
+  };
+  useEffect(() => () => clearTimeout(dismissTimer.current), []);
 
   const handleCopy = async () => {
     const ok = await copyText(artifact.content);
-    setStatus(ok ? messages.copiedStatus : messages.copyFailedStatus);
+    announce(ok ? messages.copiedStatus : messages.copyFailedStatus);
   };
 
   const handleDownload = () => {
@@ -64,7 +74,11 @@ export function YamlOutputPanel({ artifact, messages, secretNames }: YamlOutputP
           <button type="button" className="output__action" onClick={handleCopy}>
             {messages.copyLabel}
           </button>
-          <button type="button" className="output__action" onClick={handleDownload}>
+          <button
+            type="button"
+            className="output__action output__action--primary"
+            onClick={handleDownload}
+          >
             {messages.downloadLabel}
           </button>
         </div>
