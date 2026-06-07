@@ -32,6 +32,7 @@ describe('vendor seam (#21)', () => {
       'cisco-asa',
       'cisco-iosxr',
       'cradlepoint-ncos',
+      'juniper-junos',
     ];
     for (const summary of summaries) {
       // Never undefined — a summary always resolves a concrete platform (#21).
@@ -54,6 +55,7 @@ describe('per-vendor preview overlay (#27)', () => {
       'cisco-nxos',
       'arista-eos',
       'cisco-iosxr',
+      'juniper-junos',
     ]);
   });
 
@@ -104,5 +106,13 @@ describe('per-vendor preview overlay (#27)', () => {
     );
     expect(vendorTemplateApproximate(interfaceIp.definition, 'cisco-nxos')).toBe(true);
     expect(vendorTemplateApproximate(interfaceIp.definition, 'arista-eos')).toBe(true);
+  });
+
+  it('overlays Juniper Junos as the flat set-form preview, flagged approximate (#39)', () => {
+    expect(taskVendors(interfaceIp.definition)).toContain('juniper-junos');
+    const junos = templateForVendor(interfaceIp.definition, 'juniper-junos');
+    expect(junos).toContain('set interfaces');
+    expect(junos).not.toBe(interfaceIp.definition.template);
+    expect(vendorTemplateApproximate(interfaceIp.definition, 'juniper-junos')).toBe(true);
   });
 });

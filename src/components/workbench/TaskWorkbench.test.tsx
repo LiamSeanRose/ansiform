@@ -81,7 +81,10 @@ const messages: WorkbenchMessages = {
       'cisco-iosxe': 'Cisco IOS-XE',
       'cisco-nxos': 'Cisco NX-OS',
       'arista-eos': 'Arista EOS',
+      'cisco-asa': 'Cisco ASA',
       'cisco-iosxr': 'Cisco IOS-XR',
+      'cradlepoint-ncos': 'Cradlepoint NCOS',
+      'juniper-junos': 'Juniper Junos',
     },
   },
 };
@@ -167,6 +170,7 @@ describe('TaskWorkbench', () => {
       'cisco-nxos',
       'arista-eos',
       'cisco-iosxr',
+      'juniper-junos',
     ]);
 
     // Heading reflects the default vendor, then relabels on switch.
@@ -186,6 +190,22 @@ describe('TaskWorkbench', () => {
     // NX-OS ships an approximate template — the degrade notice must appear.
     setSelect(select, 'cisco-nxos');
     expect(el.querySelector('.preview__heading')!.textContent).toBe('Live preview (Cisco NX-OS)');
+    expect(el.querySelector('.preview__notice')).not.toBeNull();
+  });
+
+  it('renders the Juniper Junos set-form preview, flagged approximate (#39)', () => {
+    const el = render(<TaskWorkbench task={interfaceIp} t={echo} messages={messages} />);
+    const intf = el.querySelector<HTMLInputElement>('input[name="interface"]')!;
+    const ip = el.querySelector<HTMLInputElement>('input[name="ip_address"]')!;
+    setValue(intf, 'ge-0/0/0');
+    setValue(ip, '10.0.0.1/24');
+    setSelect(el.querySelector<HTMLSelectElement>('.workbench__vendor select')!, 'juniper-junos');
+
+    expect(el.querySelector('.preview__heading')!.textContent).toBe('Live preview (Juniper Junos)');
+    const cli = el.querySelector('.preview__cli')!.textContent!;
+    // Renders the flat `set` form (CIDR taken verbatim), no structural breakage.
+    expect(cli).toContain('set interfaces ge-0/0/0 unit 0 family inet address 10.0.0.1/24');
+    // Authored-not-curated → visible degrade.
     expect(el.querySelector('.preview__notice')).not.toBeNull();
   });
 

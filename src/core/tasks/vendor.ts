@@ -15,15 +15,16 @@
  */
 
 /**
- * Supported network OS. Grows additively (#27, #37, #38, #40). Most members are
- * the line-CLI family — they share the curated schemas and render IOS-shaped CLI,
- * so they overlay onto existing tasks via {@link TaskVendorView.templates} (#37
- * added `cisco-iosxr`). A platform with a genuinely different config model joins
- * as its OWN task family rather than a template overlay: `cisco-asa` (#38,
- * firewall) and `cradlepoint-ncos` (#40, cellular/edge) are such members — their
- * tasks set the vendor and declare no `templates` overlay. A non-line-CLI platform
- * additionally sets a `fidelityFloor` (#40) so its best-effort preview never
- * claims `exact`.
+ * Supported network OS. Grows additively (#27, #37, #38, #39, #40). Most members
+ * are the line-CLI family — they share the curated schemas and render IOS-shaped
+ * CLI, so they overlay onto existing tasks via {@link TaskVendorView.templates}
+ * (#37 added `cisco-iosxr`; #39 added `juniper-junos`, which renders the flat
+ * `set …` form, flagged `approximate`). A platform with a genuinely different
+ * config model joins as its OWN task family rather than a template overlay:
+ * `cisco-asa` (#38, firewall) and `cradlepoint-ncos` (#40, cellular/edge) are such
+ * members — their tasks set the vendor and declare no `templates` overlay. A
+ * non-line-CLI platform additionally sets a `fidelityFloor` (#40) so its
+ * best-effort preview never claims `exact`.
  */
 export type Vendor =
   | 'cisco-ios'
@@ -32,7 +33,8 @@ export type Vendor =
   | 'arista-eos'
   | 'cisco-asa'
   | 'cisco-iosxr'
-  | 'cradlepoint-ncos';
+  | 'cradlepoint-ncos'
+  | 'juniper-junos';
 
 /** The vendor assumed when a task declares none. */
 export const DEFAULT_VENDOR: Vendor = 'cisco-ios';

@@ -71,6 +71,7 @@ export const fr: Messages = {
   'vendor.cisco-asa': 'Cisco ASA',
   'vendor.cisco-iosxr': 'Cisco IOS-XR',
   'vendor.cradlepoint-ncos': 'Cradlepoint NCOS',
+  'vendor.juniper-junos': 'Juniper Junos',
 
   'output.copyLabel': 'Copier',
   'output.copied': 'Copié dans le presse-papiers.',

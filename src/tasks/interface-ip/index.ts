@@ -104,6 +104,17 @@ const iosxrTemplate = [
   '{% endif %}',
 ].join('\n');
 
+// Juniper Junos renders the flat `set …` form (#39, per the #36 decision). Authored
+// from public Junos syntax, not curated against gear, so flagged approximate.
+// `ip_address` is already CIDR (e.g. 10.0.0.1/24), which Junos takes verbatim.
+const junosTemplate = [
+  'set interfaces {{ interface }} unit 0 family inet address {{ ip_address }}',
+  '{% if description %}set interfaces {{ interface }} description "{{ description }}"',
+  '{% endif %}{% if mtu %}set interfaces {{ interface }} mtu {{ mtu }}',
+  '{% endif %}{% if enabled %}{% else %}set interfaces {{ interface }} disable',
+  '{% endif %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'interface-ip',
@@ -121,6 +132,7 @@ export const task: TaskModule = {
       'arista-eos': { template: slashTemplate, fidelity: 'approximate' },
       // IOS-XR uses `ipv4 address <addr> <mask>`, verified exact (#37).
       'cisco-iosxr': iosxrTemplate,
+      'juniper-junos': { template: junosTemplate, fidelity: 'approximate' },
     },
     defaultScope: { kind: 'host', name: 'switch1' },
   },
