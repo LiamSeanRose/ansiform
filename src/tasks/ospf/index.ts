@@ -100,6 +100,13 @@ export const task: TaskModule = {
       'Generate Ansible host_vars and a Cisco IOS OSPF configuration — process ID, router ID, and one or more network/area statements — with a live device-CLI preview.',
     schema,
     template,
+    templates: {
+      // IOS-XE renders identical `router ospf` + `network … area` CLI (#27): an
+      // explicit per-vendor claim, not an inference. (NX-OS advertises networks
+      // per-interface rather than with `network` statements, so it is omitted
+      // rather than rendered wrong.)
+      'cisco-iosxe': template,
+    },
     defaultScope: { kind: 'host', name: 'router1' },
   },
   messages: {

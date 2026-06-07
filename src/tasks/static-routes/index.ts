@@ -88,6 +88,13 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS static routing configuration — a repeating list of ip route entries with prefix, mask, next hop, and optional administrative distance — with a live device-CLI preview.',
     schema,
     template,
+    templates: {
+      // IOS-XE renders identical `ip route <prefix> <mask> <next-hop>` CLI (#27):
+      // an explicit per-vendor claim, not an inference. (NX-OS and EOS take the
+      // destination as prefix/length rather than address + mask, a different shape
+      // the same schema can't feed, so they are omitted rather than rendered wrong.)
+      'cisco-iosxe': template,
+    },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

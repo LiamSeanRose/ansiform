@@ -98,6 +98,12 @@ export const task: TaskModule = {
       'Generate Ansible host_vars and a Cisco IOS HSRP configuration — an interface carrying a repeating list of standby groups with virtual IP, priority, and preempt — with a live device-CLI preview.',
     schema,
     template,
+    templates: {
+      // IOS-XE renders identical `standby` HSRP CLI (#27): an explicit per-vendor
+      // claim, not an inference. (NX-OS feature-gates HSRP and configures it in a
+      // per-group submode, and EOS has no HSRP — both are omitted, not guessed.)
+      'cisco-iosxe': template,
+    },
     defaultScope: { kind: 'host', name: 'dist1' },
   },
   messages: {

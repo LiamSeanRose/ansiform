@@ -110,6 +110,18 @@ const template = [
   '{% endfor %}',
 ].join('\n');
 
+// NX-OS and Arista EOS name an extended ACL without the `extended` keyword
+// (`ip access-list NAME`); the per-entry body is identical. This has not had a
+// curated-correctness pass, so it ships `approximate` and the preview shows the
+// degrade banner — an un-vetted vendor render is never mistaken for ground truth.
+const namedAclTemplate = [
+  'ip access-list {{ name }}',
+  '{% for e in entries %}{% if e.remark %} remark {{ e.remark }}',
+  "{% endif %} {{ e.action }} {{ e.protocol }} {{ e.source }} {{ e.destination }}" +
+    "{% if e.port and (e.protocol == 'tcp' or e.protocol == 'udp') %} eq {{ e.port }}{% endif %}{{ '' }}",
+  '{% endfor %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'acl',
@@ -118,6 +130,13 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS extended access list — one or more entries of action, protocol, source, destination, and an optional port — with a live device-CLI preview.',
     schema,
     template,
+    templates: {
+      // IOS-XE renders an identical extended-ACL CLI (#27): an explicit per-vendor
+      // claim, not an inference — same schema, same vars, only the label changes.
+      'cisco-iosxe': template,
+      'cisco-nxos': { template: namedAclTemplate, fidelity: 'approximate' },
+      'arista-eos': { template: namedAclTemplate, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

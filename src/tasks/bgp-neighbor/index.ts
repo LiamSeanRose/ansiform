@@ -83,6 +83,16 @@ export const task: TaskModule = {
       'Generate Ansible host_vars and a Cisco IOS BGP neighbor configuration — local AS, peer address, remote AS, description, and an optional MD5 password — with a live device-CLI preview.',
     schema,
     template,
+    templates: {
+      // IOS-XE renders identical BGP neighbor CLI (#27): an explicit per-vendor
+      // claim, not an inference — same schema, same vars.
+      'cisco-iosxe': template,
+      // EOS uses the same flat `neighbor … remote-as/description/password` form,
+      // but this has not had a curated-correctness pass — ship approximate so the
+      // preview shows the degrade banner. (NX-OS configures the neighbor in a
+      // submode, a genuinely different model, so it is omitted rather than guessed.)
+      'arista-eos': { template, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'host', name: 'router1' },
   },
   messages: {

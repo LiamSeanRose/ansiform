@@ -102,6 +102,15 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS IP prefix-list — a named list of permit/deny entries with sequence, prefix, and optional ge/le bounds — with a live device-CLI preview.',
     schema,
     template,
+    templates: {
+      // IOS-XE renders identical `ip prefix-list … seq … ge/le` CLI (#27): an
+      // explicit per-vendor claim, not an inference.
+      'cisco-iosxe': template,
+      // NX-OS and EOS share this prefix-list syntax, but neither has had a curated
+      // pass here — ship approximate so the preview shows the degrade banner.
+      'cisco-nxos': { template, fidelity: 'approximate' },
+      'arista-eos': { template, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

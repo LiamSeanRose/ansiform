@@ -110,6 +110,15 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS route-map — a named policy of permit/deny sequences with match (IP prefix-list) and set (local-preference, metric) clauses — with a live device-CLI preview.',
     schema,
     template,
+    templates: {
+      // IOS-XE renders identical `route-map` match/set CLI (#27): an explicit
+      // per-vendor claim, not an inference.
+      'cisco-iosxe': template,
+      // NX-OS and EOS share this route-map syntax, but neither has had a curated
+      // pass here — ship approximate so the preview shows the degrade banner.
+      'cisco-nxos': { template, fidelity: 'approximate' },
+      'arista-eos': { template, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

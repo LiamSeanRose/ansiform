@@ -97,6 +97,13 @@ export const task: TaskModule = {
       'Generate Ansible host_vars and a Cisco IOS VRRP configuration — an interface carrying a repeating list of VRRP groups with virtual IP, priority, and preempt — with a live device-CLI preview.',
     schema,
     template,
+    templates: {
+      // IOS-XE accepts the legacy `vrrp <group> ip <vip>` FHRP CLI (#27): an
+      // explicit per-vendor claim, not an inference. (NX-OS feature-gates VRRP in a
+      // per-group submode, and EOS spells the VIP with an `ipv4` keyword — both are
+      // genuinely different shapes, so they are omitted rather than guessed.)
+      'cisco-iosxe': template,
+    },
     defaultScope: { kind: 'host', name: 'dist1' },
   },
   messages: {
