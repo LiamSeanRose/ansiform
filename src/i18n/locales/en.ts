@@ -196,6 +196,11 @@ export const en = {
   'tasksIndex.resultsCount': '{count} task(s)',
   'tasksIndex.empty': 'No tasks match your search.',
   'tasksIndex.vendorsLabel': 'Renders:',
+  // Left category nav + filters (#92).
+  'tasksIndex.categoriesLabel': 'Categories',
+  'tasksIndex.allCategories': 'All tasks',
+  'tasksIndex.vendorFilterLabel': 'Filter by platform',
+  'tasksIndex.clearFilters': 'Clear filters',
   'tasksIndex.category.interfaces': 'Interfaces & addressing',
   'tasksIndex.category.switching': 'VLANs & switching',
   'tasksIndex.category.routing': 'Routing',

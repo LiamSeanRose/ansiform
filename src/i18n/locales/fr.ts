@@ -186,6 +186,11 @@ export const fr: Messages = {
   'tasksIndex.resultsCount': '{count} tâche(s)',
   'tasksIndex.empty': 'Aucune tâche ne correspond à votre recherche.',
   'tasksIndex.vendorsLabel': 'Génère :',
+  // Navigation par catégorie + filtres (#92).
+  'tasksIndex.categoriesLabel': 'Catégories',
+  'tasksIndex.allCategories': 'Toutes les tâches',
+  'tasksIndex.vendorFilterLabel': 'Filtrer par plateforme',
+  'tasksIndex.clearFilters': 'Effacer les filtres',
   'tasksIndex.category.interfaces': 'Interfaces et adressage',
   'tasksIndex.category.switching': 'VLAN et commutation',
   'tasksIndex.category.routing': 'Routage',
