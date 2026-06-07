@@ -102,6 +102,16 @@ export const en = {
   'output.vault.copyAllLabel': 'Copy all',
   'output.vault.copied': 'Command copied — the value is still typed at your shell.',
   'output.vault.copyFailed': 'Copy failed — select the command and copy manually.',
+  // Run recipe (#83) — where the files sit + the ansible-playbook command. Guidance,
+  // not a generated playbook (playbook.yml is the user's own).
+  'output.runRecipe.heading': 'Run it',
+  'output.runRecipe.intro':
+    'Drop these into your Ansible project and run. This is guidance, not a generated playbook — playbook.yml is your own.',
+  'output.runRecipe.layoutLabel': 'File layout',
+  'output.runRecipe.commandLabel': 'Command',
+  'output.runRecipe.copyLabel': 'Copy command',
+  'output.runRecipe.copied': 'Command copied to clipboard.',
+  'output.runRecipe.copyFailed': 'Copy failed — select the command and copy manually.',
   // Merge into an existing file (#82) — diff generated vars against a pasted file.
   'output.varsDiff.summary': 'Already have a var file? Show what this would change',
   'output.varsDiff.description':

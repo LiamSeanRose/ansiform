@@ -20,10 +20,11 @@ import type { FormSchema, FormValues, ScalarValue } from '../core';
 import type { TaskScope } from '../core/tasks/types';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../components/form';
 import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../core/preview';
-import { downloadText, downloadBlob, SurveyDownloadButton, VarsDiff, type VarsDiffMessages } from '../components/output';
+import { downloadText, downloadBlob, SurveyDownloadButton, VarsDiff, RunRecipe, type VarsDiffMessages, type RunRecipeMessages } from '../components/output';
 import { composeTree } from '../core/output/compose';
 import { parseVarsYaml } from '../core/output/vars-diff';
 import { buildInventory, INVENTORY_FILENAME } from '../core/output/inventory';
+import { buildRunRecipe } from '../core/output/run-recipe';
 import { buildCombinedSurveySpec } from '../core/output/survey-spec';
 import { makeZip } from '../core/output/zip';
 import { createSeedRegistry } from '../core/filters/seed';
@@ -128,6 +129,28 @@ export function BuildPage() {
     () => buildInventory(instances.filter((inst) => getTaskModule(inst.slug)).map((inst) => inst.scope)),
     [instances],
   );
+
+  // Run recipe (#83): where the composed files sit + the ansible-playbook command,
+  // tailored from the scopes entered. Built from the same files/inventory shown,
+  // so the guidance matches the set exactly. Null ⇒ nothing to wire yet.
+  const runRecipe = useMemo(
+    () =>
+      buildRunRecipe({
+        files: tree.files.map((f) => f.path),
+        scopes: instances.filter((inst) => getTaskModule(inst.slug)).map((inst) => inst.scope),
+        inventory: inventory ? INVENTORY_FILENAME : undefined,
+      }),
+    [tree, inventory, instances],
+  );
+  const runRecipeMessages: RunRecipeMessages = {
+    heading: t('output.runRecipe.heading'),
+    intro: t('output.runRecipe.intro'),
+    layoutLabel: t('output.runRecipe.layoutLabel'),
+    commandLabel: t('output.runRecipe.commandLabel'),
+    copyLabel: t('output.runRecipe.copyLabel'),
+    copiedStatus: t('output.runRecipe.copied'),
+    copyFailedStatus: t('output.runRecipe.copyFailed'),
+  };
 
   // One AWX/AAP survey spec spanning the composed set (#33), schema-only.
   const surveySpec = useMemo(
@@ -274,6 +297,7 @@ export function BuildPage() {
             </pre>
           </div>
         )}
+        {runRecipe && <RunRecipe recipe={runRecipe} messages={runRecipeMessages} />}
       </section>
     </section>
   );

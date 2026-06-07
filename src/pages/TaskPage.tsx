@@ -6,6 +6,9 @@ import { getTaskModule, taskMessages } from '../tasks/registry';
 import { relatedSlugs } from '../tasks/categories';
 import { TaskWorkbench, type WorkbenchMessages } from '../components/workbench';
 import type { FormMessages, Translate as FieldTranslate } from '../components/form';
+import { RunRecipe, type RunRecipeMessages } from '../components/output';
+import { buildRunRecipe } from '../core/output/run-recipe';
+import { suggestFilename } from '../core/output/yaml';
 import { listReferences } from './reference';
 import { NotFoundPage } from './NotFoundPage';
 
@@ -139,6 +142,23 @@ export function TaskPage() {
     },
   };
 
+  // Run recipe (#83): static "now what?" guidance. The single-task var-file path
+  // is fixed by the task's default scope, so it needs no entered values.
+  const recipeScope = mod.definition.defaultScope ?? { kind: 'group', name: 'all' };
+  const runRecipe = buildRunRecipe({
+    files: [suggestFilename(recipeScope)],
+    scopes: [recipeScope],
+  });
+  const runRecipeMessages: RunRecipeMessages = {
+    heading: t('output.runRecipe.heading'),
+    intro: t('output.runRecipe.intro'),
+    layoutLabel: t('output.runRecipe.layoutLabel'),
+    commandLabel: t('output.runRecipe.commandLabel'),
+    copyLabel: t('output.runRecipe.copyLabel'),
+    copiedStatus: t('output.runRecipe.copied'),
+    copyFailedStatus: t('output.runRecipe.copyFailed'),
+  };
+
   return (
     <section className="page page--task" aria-labelledby="task-title">
       <p>
@@ -148,6 +168,8 @@ export function TaskPage() {
       <p className="lede">{mod.definition.description}</p>
 
       <TaskWorkbench task={mod} t={tt} messages={messages} />
+
+      {runRecipe && <RunRecipe recipe={runRecipe} messages={runRecipeMessages} />}
 
       {related.length > 0 && (
         <nav className="task-links" aria-labelledby="related-heading">

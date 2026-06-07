@@ -89,6 +89,16 @@ export const fr: Messages = {
   'output.vault.copyAllLabel': 'Tout copier',
   'output.vault.copied': 'Commande copiée — la valeur reste saisie dans votre terminal.',
   'output.vault.copyFailed': 'Échec de la copie — sélectionnez la commande et copiez-la manuellement.',
+  // Recette d’exécution (#83) — où placer les fichiers + la commande ansible-playbook.
+  // Un guide, pas un playbook généré (playbook.yml reste celui de l’utilisateur).
+  'output.runRecipe.heading': 'Exécuter',
+  'output.runRecipe.intro':
+    'Placez ces fichiers dans votre projet Ansible et lancez la commande. Ceci est un guide, pas un playbook généré — playbook.yml est le vôtre.',
+  'output.runRecipe.layoutLabel': 'Arborescence des fichiers',
+  'output.runRecipe.commandLabel': 'Commande',
+  'output.runRecipe.copyLabel': 'Copier la commande',
+  'output.runRecipe.copied': 'Commande copiée dans le presse-papiers.',
+  'output.runRecipe.copyFailed': 'Échec de la copie — sélectionnez la commande et copiez-la manuellement.',
   // Fusion dans un fichier existant (#82) — comparer les variables générées à un fichier collé.
   'output.varsDiff.summary': 'Vous avez déjà un fichier de variables ? Voir ce qui changerait',
   'output.varsDiff.description':
