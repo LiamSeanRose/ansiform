@@ -82,6 +82,8 @@ export const en = {
   'output.copied': 'Copied to clipboard.',
   'output.copyFailed': 'Copy failed — select the text and copy manually.',
   'output.downloadLabel': 'Download',
+  // AWX/AAP survey-spec export (#33) — a local file, never a server round-trip.
+  'output.awxSurveySpec.label': 'AWX survey (.json)',
 
   // Composition / build page (#26).
   'build.title': 'Build a var-file set',

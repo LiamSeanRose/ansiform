@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { awxSurveySpecSink, buildSurveySpec, type SurveySpec } from './survey-spec';
+import {
+  awxSurveySpecSink,
+  buildCombinedSurveySpec,
+  buildSurveySpec,
+  type SurveySpec,
+} from './survey-spec';
 import type { FormSchema, FormValues } from '../types';
 import { task as deviceBasics } from '../../tasks/device-basics';
 
@@ -112,5 +117,39 @@ describe('AWX survey-spec sink', () => {
       expect(q.type).toBe('password');
       expect(q.default).toBe('');
     }
+  });
+});
+
+describe('buildCombinedSurveySpec (multi-task /build)', () => {
+  const schemaA: FormSchema = {
+    groups: [
+      {
+        fields: [
+          { type: 'text', name: 'hostname', label: 'l', default: 'a' },
+          { type: 'text', name: 'description', label: 'l' }, // no default → ''
+        ],
+      },
+    ],
+  };
+  const schemaB: FormSchema = {
+    groups: [
+      {
+        fields: [
+          { type: 'text', name: 'description', label: 'l', default: 'dup' }, // duplicate variable
+          { type: 'number', name: 'mtu', label: 'l' },
+        ],
+      },
+    ],
+  };
+
+  it('concatenates schemas in order and dedups variables (first occurrence wins)', () => {
+    const spec = buildCombinedSurveySpec([schemaA, schemaB]);
+    expect(spec.spec.map((q) => q.variable)).toEqual(['hostname', 'description', 'mtu']);
+    // `description` keeps schema A's question (default ''), not schema B's 'dup'.
+    expect(byVar(spec, 'description').default).toBe('');
+  });
+
+  it('returns an empty spec for no schemas', () => {
+    expect(buildCombinedSurveySpec([]).spec).toEqual([]);
   });
 });

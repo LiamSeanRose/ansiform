@@ -67,6 +67,7 @@ const messages: WorkbenchMessages = {
       incomplete: 'incomplete',
     },
   },
+  surveyLabel: 'AWX survey (.json)',
   preview: {
     regionLabel: 'Device CLI preview',
     heading: 'Live preview ({vendor})',
@@ -93,6 +94,13 @@ describe('TaskWorkbench', () => {
     expect(el.querySelector('.output__filename')!.textContent).toBe('host_vars/switch1.yml');
     // enabled defaults on, so the initial preview shows "no shutdown".
     expect(el.querySelector('.preview__cli')!.textContent).toContain('no shutdown');
+  });
+
+  it('offers an AWX survey-spec download alongside the YAML output', () => {
+    const el = render(<TaskWorkbench task={interfaceIp} t={echo} messages={messages} />);
+    const survey = el.querySelector('.workbench__survey button');
+    expect(survey).not.toBeNull();
+    expect(survey!.textContent).toBe('AWX survey (.json)');
   });
 
   it('live-updates the YAML and CLI preview as the form changes', () => {

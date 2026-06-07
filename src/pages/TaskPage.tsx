@@ -85,6 +85,7 @@ export function TaskPage() {
       downloadLabel: t('output.downloadLabel'),
     },
     form,
+    surveyLabel: t('output.awxSurveySpec.label'),
     preview: {
       regionLabel: t('preview.regionLabel'),
       heading: t('preview.heading'),

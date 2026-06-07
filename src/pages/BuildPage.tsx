@@ -17,12 +17,13 @@ import { useId, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import type { MessageKey } from '../i18n';
-import type { FormValues, ScalarValue } from '../core';
+import type { FormSchema, FormValues, ScalarValue } from '../core';
 import type { TaskScope } from '../core/tasks/types';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../components/form';
 import { PreviewPane, renderPreview, type PreviewMessages } from '../core/preview';
-import { downloadText, downloadBlob } from '../components/output';
+import { downloadText, downloadBlob, SurveyDownloadButton } from '../components/output';
 import { composeTree } from '../core/output/compose';
+import { buildCombinedSurveySpec } from '../core/output/survey-spec';
 import { makeZip } from '../core/output/zip';
 import { createSeedRegistry } from '../core/filters/seed';
 import { getTaskModule, listTaskSummaries, taskMessages, type TaskModule } from '../tasks/registry';
@@ -96,6 +97,17 @@ export function BuildPage() {
       .filter((x): x is NonNullable<typeof x> => x !== null);
     return composeTree(composable);
   }, [instances]);
+
+  // One AWX/AAP survey spec spanning the composed set (#33), schema-only.
+  const surveySpec = useMemo(
+    () =>
+      buildCombinedSurveySpec(
+        instances
+          .map((inst) => getTaskModule(inst.slug)?.definition.schema)
+          .filter((s): s is FormSchema => s !== undefined),
+      ),
+    [instances],
+  );
 
   return (
     <section className="page page--build" aria-labelledby="build-title">
@@ -172,6 +184,13 @@ export function BuildPage() {
             >
               {t('output.downloadLabel')} (.zip)
             </button>
+          )}
+          {surveySpec.spec.length > 0 && (
+            <SurveyDownloadButton
+              spec={surveySpec}
+              label={t('output.awxSurveySpec.label')}
+              className="build__download-all"
+            />
           )}
         </div>
         {tree.files.length === 0 ? (

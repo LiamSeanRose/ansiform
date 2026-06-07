@@ -71,6 +71,7 @@ export const fr: Messages = {
   'output.copied': 'Copié dans le presse-papiers.',
   'output.copyFailed': 'Échec de la copie — sélectionnez le texte et copiez-le manuellement.',
   'output.downloadLabel': 'Télécharger',
+  'output.awxSurveySpec.label': 'Enquête AWX (.json)',
 
   'build.title': 'Composer un jeu de variables',
   'build.lede':

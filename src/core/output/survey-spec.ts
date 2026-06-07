@@ -144,6 +144,27 @@ export function buildSurveySpec(schema: FormSchema): SurveySpec {
 }
 
 /**
+ * Build one survey spec spanning several schemas — the `/build` composition case
+ * — in instance order. AWX requires each `variable` to be unique across a survey,
+ * so a variable that recurs across tasks keeps its FIRST occurrence and later
+ * duplicates are dropped: the same first-wins rule the var-file composition uses
+ * for colliding keys. Schema-only, like {@link buildSurveySpec} — carries no
+ * entered values.
+ */
+export function buildCombinedSurveySpec(schemas: FormSchema[]): SurveySpec {
+  const spec: SurveyQuestion[] = [];
+  const seen = new Set<string>();
+  for (const schema of schemas) {
+    for (const question of buildSurveySpec(schema).spec) {
+      if (seen.has(question.variable)) continue;
+      seen.add(question.variable);
+      spec.push(question);
+    }
+  }
+  return { name: 'Ansiform survey', description: '', spec };
+}
+
+/**
  * The AWX/AAP survey-spec output sink.
  *
  * `label` is an i18n key resolved by the output picker (#12), mirroring the YAML

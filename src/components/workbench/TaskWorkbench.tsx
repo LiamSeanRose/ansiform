@@ -26,8 +26,9 @@ import { useId, useMemo, useState } from 'react';
 import type { FormValues } from '../../core';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../form';
 import { PreviewPane, renderPreview, type PreviewMessages } from '../../core/preview';
-import { YamlOutputPanel, type OutputMessages } from '../output';
+import { YamlOutputPanel, SurveyDownloadButton, type OutputMessages } from '../output';
 import { groupVarsYamlSink } from '../../core/output/yaml';
+import { buildSurveySpec } from '../../core/output/survey-spec';
 import { createSeedRegistry } from '../../core/filters/seed';
 import {
   taskVendors,
@@ -44,6 +45,8 @@ export interface WorkbenchMessages {
   output: OutputMessages;
   form: FormMessages;
   preview: PreviewMessages;
+  /** Label for the AWX/AAP survey-spec download action (#33). */
+  surveyLabel: string;
   /** Preview-target selector copy (multi-vendor, #27). */
   vendor: {
     /** Accessible label for the vendor `<select>`. */
@@ -85,6 +88,10 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
     () => groupVarsYamlSink.render({ schema, values, scope: defaultScope }),
     [schema, values, defaultScope],
   );
+
+  // AWX/AAP survey spec (#33): schema-only, so it never reflects entered values
+  // and never re-renders on keystroke.
+  const surveySpec = useMemo(() => buildSurveySpec(schema), [schema]);
 
   // Device-CLI preview, with secrets masked out of the rendered scope.
   const preview = useMemo(() => {
@@ -145,6 +152,11 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
         )}
         <PreviewPane result={preview} messages={previewMessages} />
         <YamlOutputPanel artifact={artifact} messages={messages.output} />
+        {surveySpec.spec.length > 0 && (
+          <div className="workbench__survey">
+            <SurveyDownloadButton spec={surveySpec} label={messages.surveyLabel} />
+          </div>
+        )}
       </div>
     </div>
   );

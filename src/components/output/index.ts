@@ -3,5 +3,9 @@
  * `../output`.
  */
 export { YamlOutputPanel, type YamlOutputPanelProps, type OutputMessages } from './YamlOutputPanel';
+export {
+  SurveyDownloadButton,
+  type SurveyDownloadButtonProps,
+} from './SurveyDownloadButton';
 export { copyText } from './clipboard';
 export { downloadText, downloadBlob } from './download';
