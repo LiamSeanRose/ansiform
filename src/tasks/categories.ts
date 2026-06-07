@@ -9,7 +9,7 @@
  */
 export const CATEGORIES: { id: string; slugs: string[] }[] = [
   { id: 'interfaces', slugs: ['interface-ip', 'interface-ranges', 'etherchannel', 'vyos-interface'] },
-  { id: 'switching', slugs: ['vlan', 'spanning-tree'] },
+  { id: 'switching', slugs: ['vlan', 'spanning-tree', 'nxos-vpc', 'nxos-vxlan'] },
   {
     id: 'routing',
     slugs: [
