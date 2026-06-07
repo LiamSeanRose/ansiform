@@ -30,7 +30,15 @@ export const CATEGORIES: { id: string; slugs: string[] }[] = [
   { id: 'policy', slugs: ['acl', 'prefix-lists', 'route-maps', 'ios-nat'] },
   {
     id: 'firewall',
-    slugs: ['asa-interface', 'asa-acl', 'asa-objects', 'asa-access-group', 'asa-nat', 'asa-management'],
+    slugs: [
+      'asa-interface',
+      'asa-acl',
+      'asa-objects',
+      'asa-access-group',
+      'asa-nat',
+      'asa-management',
+      'asa-vpn',
+    ],
   },
   {
     id: 'edge',
