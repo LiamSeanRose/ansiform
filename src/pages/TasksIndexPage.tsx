@@ -16,41 +16,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import type { MessageKey } from '../i18n';
 import { getTaskModule, listTaskSummaries } from '../tasks/registry';
 import { taskVendors, type Vendor } from '../core/tasks/vendor';
-
-/** Function groups in display order. Slugs not listed fall into `other`. */
-const CATEGORIES: { id: string; slugs: string[] }[] = [
-  { id: 'interfaces', slugs: ['interface-ip', 'interface-ranges', 'etherchannel'] },
-  { id: 'switching', slugs: ['vlan'] },
-  { id: 'routing', slugs: ['ospf', 'bgp-neighbor', 'static-routes', 'hsrp', 'vrrp', 'vrf'] },
-  { id: 'policy', slugs: ['acl', 'prefix-lists', 'route-maps', 'ios-nat'] },
-  { id: 'firewall', slugs: ['asa-interface', 'asa-acl', 'asa-access-group', 'asa-nat'] },
-  {
-    id: 'edge',
-    slugs: ['cradlepoint-lan', 'cradlepoint-static-route', 'cradlepoint-wan', 'cradlepoint-firewall'],
-  },
-  {
-    id: 'management',
-    slugs: [
-      'device-basics',
-      'aaa-servers',
-      'ntp-auth',
-      'syslog',
-      'snmpv3',
-      'ssh-hardening',
-      'banners',
-      'device-hardening',
-      'junos-system',
-    ],
-  },
-];
-
-const CATEGORY_OF: Record<string, string> = (() => {
-  const map: Record<string, string> = {};
-  for (const cat of CATEGORIES) for (const slug of cat.slugs) map[slug] = cat.id;
-  return map;
-})();
-
-const GROUP_ORDER = [...CATEGORIES.map((c) => c.id), 'other'];
+import { GROUP_ORDER, categoryOf } from '../tasks/categories';
 
 interface IndexedTask {
   slug: string;
@@ -105,7 +71,7 @@ export function TasksIndexPage() {
   const groups = useMemo(() => {
     const byCat = new Map<string, IndexedTask[]>();
     for (const task of filtered) {
-      const cat = CATEGORY_OF[task.slug] ?? 'other';
+      const cat = categoryOf(task.slug);
       const list = byCat.get(cat) ?? [];
       list.push(task);
       byCat.set(cat, list);

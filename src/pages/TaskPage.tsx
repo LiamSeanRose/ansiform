@@ -3,8 +3,10 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import type { MessageKey } from '../i18n';
 import { getTaskModule, taskMessages } from '../tasks/registry';
+import { relatedSlugs } from '../tasks/categories';
 import { TaskWorkbench, type WorkbenchMessages } from '../components/workbench';
 import type { FormMessages, Translate as FieldTranslate } from '../components/form';
+import { listReferences } from './reference';
 import { NotFoundPage } from './NotFoundPage';
 
 /** Keep the document title + meta description in sync with the active task (§8). */
@@ -53,6 +55,14 @@ export function TaskPage() {
   useDocumentMeta(mod?.definition.title, mod?.definition.description);
 
   if (!mod) return <NotFoundPage />;
+
+  // Crosslinks (#62): other tasks in the same function category, and the
+  // reference guides — turning each task page from an island into a navigable
+  // hub for search engines and people alike.
+  const related = relatedSlugs(slug)
+    .map((s) => getTaskModule(s))
+    .filter((m): m is NonNullable<typeof m> => m !== undefined);
+  const references = listReferences(locale);
 
   // Task-scoped translator: resolve the schema's own keys first, then fall back
   // to the global catalogue (which carries the form/preview/workbench chrome).
@@ -116,6 +126,36 @@ export function TaskPage() {
       <p className="lede">{mod.definition.description}</p>
 
       <TaskWorkbench task={mod} t={tt} messages={messages} />
+
+      {related.length > 0 && (
+        <nav className="task-links" aria-labelledby="related-heading">
+          <h2 id="related-heading">{t('task.relatedHeading')}</h2>
+          <ul className="task-list">
+            {related.map((m) => (
+              <li key={m.definition.slug} className="task-list__item">
+                <Link className="task-list__link" to={`/tasks/${m.definition.slug}`}>
+                  {m.definition.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      {references.length > 0 && (
+        <nav className="task-links" aria-labelledby="task-ref-heading">
+          <h2 id="task-ref-heading">{t('home.referenceHeading')}</h2>
+          <ul className="reference-list">
+            {references.map((ref) => (
+              <li key={ref.slug} className="reference-list__item">
+                <Link className="reference-list__link" to={`/reference/${ref.slug}`}>
+                  {ref.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </section>
   );
 }

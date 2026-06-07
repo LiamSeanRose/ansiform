@@ -25,6 +25,7 @@ export const fr: Messages = {
   'home.referenceHeading': 'Référence et guides',
 
   'task.backToHome': '← Toutes les tâches',
+  'task.relatedHeading': 'Tâches associées',
   'task.placeholderHeading': 'Tâche : {task}',
   'task.placeholderBody':
     'Ceci est un espace réservé de routage. Le moteur de formulaire et les tâches ne sont pas encore construits.',

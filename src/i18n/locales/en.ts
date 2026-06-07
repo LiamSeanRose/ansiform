@@ -27,6 +27,7 @@ export const en = {
   'home.referenceHeading': 'Reference & guides',
 
   'task.backToHome': '← All tasks',
+  'task.relatedHeading': 'Related tasks',
   'task.placeholderHeading': 'Task: {task}',
   'task.placeholderBody':
     'This is a routing placeholder. The form engine and curated tasks are not built yet.',
