@@ -110,7 +110,7 @@ export function TaskPage() {
   return (
     <section className="page page--task" aria-labelledby="task-title">
       <p>
-        <Link to="/">{t('task.backToHome')}</Link>
+        <Link to="/tasks">{t('task.backToHome')}</Link>
       </p>
       <h1 id="task-title">{mod.definition.title}</h1>
       <p className="lede">{mod.definition.description}</p>

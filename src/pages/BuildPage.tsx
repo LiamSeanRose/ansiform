@@ -14,7 +14,6 @@
  * each instance owns its own value model. Downloads go out as Blobs (#12).
  */
 import { useId, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import type { MessageKey } from '../i18n';
 import type { FormSchema, FormValues, ScalarValue } from '../core';
@@ -111,9 +110,6 @@ export function BuildPage() {
 
   return (
     <section className="page page--build" aria-labelledby="build-title">
-      <p>
-        <Link to="/">{t('task.backToHome')}</Link>
-      </p>
       <h1 id="build-title">{t('build.title')}</h1>
       <p className="lede">{t('build.lede')}</p>
 
@@ -204,6 +200,7 @@ export function BuildPage() {
                   type="button"
                   className="build__download"
                   onClick={() => downloadText(file.content, file.path, 'text/yaml')}
+                  aria-label={t('build.downloadFileNamed', { path: file.path })}
                 >
                   {t('output.downloadLabel')}
                 </button>
@@ -286,7 +283,12 @@ function InstanceCard({
     <div className="build__instance">
       <div className="build__instance-header">
         <h2 className="build__instance-title">{mod.definition.title}</h2>
-        <button type="button" className="build__remove" onClick={onRemove}>
+        <button
+          type="button"
+          className="build__remove"
+          onClick={onRemove}
+          aria-label={globalT('build.removeTaskNamed', { title: mod.definition.title })}
+        >
           {scopeCopy.remove}
         </button>
       </div>

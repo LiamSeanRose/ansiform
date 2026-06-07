@@ -96,6 +96,8 @@ export const fr: Messages = {
   'build.outputEmpty': 'Les tâches remplies apparaissent ici sous forme de fichiers group_vars / host_vars.',
   'build.collision':
     'Clés en conflit (la dernière valeur l’emporte — à résoudre avant utilisation) : {keys}',
+  'build.removeTaskNamed': 'Retirer cette tâche : {title}',
+  'build.downloadFileNamed': 'Télécharger {path}',
 
   // Index de découverte des tâches (#35) — /tasks, groupé par fonction + filtrable.
   'tasksIndex.title': 'Bibliothèque de tâches',

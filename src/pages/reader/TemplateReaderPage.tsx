@@ -13,7 +13,6 @@
  * Credential-named variables are masked; Vault blocks are flagged, never decoded.
  */
 import { Fragment, useEffect, useId, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from '../../i18n/useTranslation';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { extractTemplate, MAX_TEMPLATE_LENGTH, renderPreview, type Scope } from '../../core/preview';
@@ -70,9 +69,6 @@ export function TemplateReaderPage() {
 
   return (
     <section className="page page--task" aria-labelledby="reader-title">
-      <p>
-        <Link to="/">{t('reader.title')}</Link>
-      </p>
       <h1 id="reader-title">{t('reader.title')}</h1>
       <p className="reader__scope-note">{t('reader.scopeNote')}</p>
       <p className="lede">{t('reader.lede')}</p>

@@ -108,6 +108,10 @@ export const en = {
   'build.outputHeading': 'Composed files',
   'build.outputEmpty': 'Filled tasks appear here as group_vars / host_vars files.',
   'build.collision': 'Conflicting keys (last value wins — resolve before use): {keys}',
+  // Accessible names that disambiguate the per-task / per-file action buttons
+  // (#44). Each contains its button's visible label so it satisfies "label in name".
+  'build.removeTaskNamed': 'Remove this task: {title}',
+  'build.downloadFileNamed': 'Download {path}',
 
   // Task discovery index (#35) — /tasks, grouped by function + filterable.
   'tasksIndex.title': 'Task library',
