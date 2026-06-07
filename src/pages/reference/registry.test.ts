@@ -11,6 +11,7 @@ const KNOWN = [
   'ansible-cisco-ios-config-from-a-form',
   'ansible-cisco-nxos-config-from-a-form',
   'cookbook-worked-examples',
+  'bring-your-own-ansible-role-argument-specs',
 ];
 
 describe('reference registry', () => {

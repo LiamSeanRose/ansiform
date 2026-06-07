@@ -242,4 +242,39 @@ export const fr: Messages = {
   'reader.argspec.formHeading': 'Renseigner les variables déclarées',
   'reader.argspec.outputHeading': 'Variables du rôle (YAML)',
   'reader.argspec.submitLabel': 'Valider',
+  // Lien depuis le lecteur (beta) vers l’importateur de première classe (#85).
+  'reader.toImportText': 'Vous importez le argument_specs.yml d’un rôle ?',
+  'reader.toImportLink': 'Utilisez l’importateur de première classe →',
+
+  // Importateur de spécification de rôle (#85) — route /import de première classe.
+  'nav.import': 'Importer une spéc. de rôle',
+  'import.title': 'Importer le argument_specs d’un rôle',
+  'import.metaDescription':
+    'Collez le meta/argument_specs.yml d’un rôle Ansible et obtenez le formulaire exact qu’il déclare — remplissez-le, exportez les group_vars/host_vars attendus par le rôle. Côté client, sans sortie réseau.',
+  'import.lede':
+    'Vous avez déjà des rôles ? Collez le meta/argument_specs.yml d’un rôle pour obtenir le formulaire exact qu’il déclare — chaque champ reflète le contrat du rôle — puis exportez les group_vars/host_vars qui s’intègrent directement à votre dépôt.',
+  'import.exactNote':
+    'Exact, pas une supposition : types, obligation, valeurs par défaut et choix proviennent tous des déclarations de la spéc. Rien n’est inféré.',
+  'import.noPreviewNote':
+    'Aucun aperçu CLI ici, par conception — une spéc déclare des variables, pas une configuration rendue ; il n’y a donc aucune affirmation de fidélité à faire. Le YAML exporté est exact au caractère près pour les valeurs saisies.',
+  'import.readerLinkText': 'Vous collez plutôt un template Jinja2 brut ?',
+  'import.readerLink': 'Ouvrir le lecteur de template (beta) →',
+  'import.pasteLabel': 'Collez meta/argument_specs.yml',
+  'import.pasteHelp':
+    'La spéc déclarée du rôle. Reste en mémoire uniquement — jamais enregistrée, partagée ou envoyée.',
+  'import.placeholder':
+    'argument_specs:\n  main:\n    options:\n      vlan_id:\n        type: int\n        required: true',
+  'import.empty':
+    'Collez un document argument_specs ci-dessus pour construire le formulaire exact qu’il déclare.',
+  'import.tooLarge':
+    'Cette spéc dépasse {max} Ko (ou comporte trop d’alias) — réduisez-la et collez à nouveau.',
+  'import.parseError': 'Ce n’est pas du YAML valide — vérifiez l’indentation et collez à nouveau.',
+  'import.shapeError':
+    'Aucune option argument_specs trouvée. Attendu : un mappage argument_specs (ou un point d’entrée unique avec options).',
+  'import.entrypoint': 'Point d’entrée : {name}',
+  'import.approximated':
+    '{count} option(s) n’ont pas pu être représentées exactement et sont affichées en texte brut — définissez leur structure à la main : {names}',
+  'import.formHeading': 'Renseigner les variables déclarées',
+  'import.outputHeading': 'Variables du rôle (YAML)',
+  'import.submitLabel': 'Valider',
 };

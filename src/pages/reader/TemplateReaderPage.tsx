@@ -13,6 +13,7 @@
  * Credential-named variables are masked; Vault blocks are flagged, never decoded.
  */
 import { Fragment, useEffect, useId, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from '../../i18n/useTranslation';
 import type { MessageKey } from '../../i18n';
 import { createSeedRegistry } from '../../core/filters/seed';
@@ -108,6 +109,9 @@ export function TemplateReaderPage() {
       <h1 id="reader-title">{t('reader.title')}</h1>
       <p className="reader__scope-note">{t('reader.scopeNote')}</p>
       <p className="lede">{t('reader.lede')}</p>
+      <p className="muted">
+        {t('reader.toImportText')} <Link to="/import">{t('reader.toImportLink')}</Link>
+      </p>
 
       <fieldset className="form__group reader__source">
         <legend className="form__legend">{t('reader.source.label')}</legend>

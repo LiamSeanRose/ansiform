@@ -255,6 +255,40 @@ export const en = {
   'reader.argspec.formHeading': 'Fill the declared variables',
   'reader.argspec.outputHeading': 'Role vars (YAML)',
   'reader.argspec.submitLabel': 'Validate',
+  // Cross-link from the beta reader to the first-class importer (#85).
+  'reader.toImportText': 'Importing a role’s argument_specs.yml?',
+  'reader.toImportLink': 'Use the first-class importer →',
+
+  // Bring-your-own role-spec importer (#85) — first-class /import route.
+  'nav.import': 'Import a role spec',
+  'import.title': 'Import a role’s argument_specs',
+  'import.metaDescription':
+    'Paste an Ansible role’s meta/argument_specs.yml and get the exact form it declares — fill it in, export the group_vars/host_vars the role expects. Client-side, zero egress.',
+  'import.lede':
+    'Already have roles? Paste a role’s meta/argument_specs.yml to get the exact form it declares — every field mirrors the role’s contract — then export the group_vars/host_vars that drop straight into your repo.',
+  'import.exactNote':
+    'Exact, not a guess: types, requiredness, defaults, and choices all come from the spec’s own declarations. Nothing is inferred.',
+  'import.noPreviewNote':
+    'No device-CLI preview here, by design — a spec declares variables, not rendered config, so there is no fidelity claim to make. The YAML you export is byte-correct for the values you enter.',
+  'import.readerLinkText': 'Pasting a raw Jinja2 template instead?',
+  'import.readerLink': 'Open the template reader (beta) →',
+  'import.pasteLabel': 'Paste meta/argument_specs.yml',
+  'import.pasteHelp':
+    'The role’s declared spec. Stays in memory only — never saved, shared, or sent anywhere.',
+  'import.placeholder':
+    'argument_specs:\n  main:\n    options:\n      vlan_id:\n        type: int\n        required: true',
+  'import.empty': 'Paste an argument_specs document above to build the exact form it declares.',
+  'import.tooLarge':
+    'That spec is larger than {max} KB (or too deeply aliased) — trim it and paste again.',
+  'import.parseError': 'That is not valid YAML — check the indentation and paste again.',
+  'import.shapeError':
+    'No argument_specs options found. Expected an argument_specs map (or a single entry point with options).',
+  'import.entrypoint': 'Entry point: {name}',
+  'import.approximated':
+    '{count} option(s) could not be represented exactly and are shown as plain text — set their structure by hand: {names}',
+  'import.formHeading': 'Fill the declared variables',
+  'import.outputHeading': 'Role vars (YAML)',
+  'import.submitLabel': 'Validate',
 } as const;
 
 /**

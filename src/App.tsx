@@ -21,6 +21,9 @@ const ReferencePage = lazy(() =>
 const TemplateReaderPage = lazy(() =>
   import('./pages/reader').then((m) => ({ default: m.TemplateReaderPage })),
 );
+const ArgSpecImportPage = lazy(() =>
+  import('./pages/import/ArgSpecImportPage').then((m) => ({ default: m.ArgSpecImportPage })),
+);
 const NotFoundPage = lazy(() =>
   import('./pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })),
 );
@@ -47,6 +50,7 @@ export function App() {
         <nav className="site-nav" aria-label={t('nav.primary')}>
           <Link to="/tasks">{t('nav.tasks')}</Link>
           <Link to="/build">{t('nav.build')}</Link>
+          <Link to="/import">{t('nav.import')}</Link>
           <Link to="/reader">{t('nav.reader')}</Link>
         </nav>
         <LocaleSwitcher />
@@ -66,6 +70,7 @@ export function App() {
             <Route path="/tasks/:task" element={<TaskPage />} />
             <Route path="/build" element={<BuildPage />} />
             <Route path="/reader" element={<TemplateReaderPage />} />
+            <Route path="/import" element={<ArgSpecImportPage />} />
             <Route path="/reference/:page" element={<ReferencePage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
