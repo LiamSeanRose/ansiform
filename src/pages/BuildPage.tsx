@@ -9,18 +9,23 @@
  * — never a silent merge.
  *
  * Spine: this is a vars-generator, not a config-push tool. Nothing is persisted
- * (no localStorage), nothing is URL-encoded, no telemetry. Secret values are
- * masked before reaching the preview and never promoted to a shared store —
- * each instance owns its own value model. Downloads go out as Blobs (#12).
+ * (no localStorage), and **no field value is ever URL-encoded** — the only thing
+ * a link may carry is the task *selection* (slugs), so a coworker can be sent a
+ * "fill these" link (#88); values stay out of the URL entirely. No telemetry.
+ * Secret values are masked before reaching the preview and never promoted to a
+ * shared store — each instance owns its own value model. Downloads go out as
+ * Blobs (#12).
  */
 import { useId, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from '../i18n/useTranslation';
 import type { MessageKey } from '../i18n';
 import type { FormSchema, FormValues, ScalarValue } from '../core';
 import type { TaskScope } from '../core/tasks/types';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../components/form';
 import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../core/preview';
-import { downloadText, downloadBlob, SurveyDownloadButton, VarsDiff, RunRecipe, type VarsDiffMessages, type RunRecipeMessages } from '../components/output';
+import { downloadText, downloadBlob, copyText, SurveyDownloadButton, VarsDiff, RunRecipe, type VarsDiffMessages, type RunRecipeMessages } from '../components/output';
+import { parseSharedTasks, buildShareQuery } from '../core/build/share-link';
 import { composeTree } from '../core/output/compose';
 import { parseVarsYaml } from '../core/output/vars-diff';
 import { buildInventory, INVENTORY_FILENAME } from '../core/output/inventory';
@@ -40,6 +45,27 @@ interface Instance {
   values: FormValues;
 }
 
+/** Build a fresh, empty-valued instance for a known task slug. */
+function makeInstance(slug: string, id: number): Instance | null {
+  const mod = getTaskModule(slug);
+  if (!mod) return null;
+  const scope: TaskScope = mod.definition.defaultScope ?? { kind: 'group', name: 'all' };
+  return { id, slug, scope: { ...scope }, values: initialValues(mod.definition.schema) };
+}
+
+/**
+ * Seed the tray from a `?tasks=` deep link (#88) — selection only. Only
+ * allowlisted slugs (the registered tasks) are honoured; every other query param
+ * is ignored, so no field value can ride in through the URL. Each seeded instance
+ * starts with its schema's blank/default values, exactly like an Add-button add.
+ */
+function seedInstancesFromSearch(search: string): Instance[] {
+  const allowed = listTaskSummaries().map((s) => s.slug);
+  return parseSharedTasks(search, allowed)
+    .map((slug, i) => makeInstance(slug, i + 1))
+    .filter((inst): inst is Instance => inst !== null);
+}
+
 function interpolate(template: string, vars?: Record<string, string | number>): string {
   if (!vars) return template;
   return template.replace(/\{(\w+)\}/g, (m, name: string) => (name in vars ? String(vars[name]) : m));
@@ -47,9 +73,14 @@ function interpolate(template: string, vars?: Record<string, string | number>): 
 
 export function BuildPage() {
   const { t, locale } = useTranslation();
-  const [instances, setInstances] = useState<Instance[]>([]);
-  const [nextId, setNextId] = useState(1);
+  const [searchParams] = useSearchParams();
+  // Seed once, on mount, from the shared selection (#88) — slugs only, no values.
+  const [instances, setInstances] = useState<Instance[]>(() =>
+    seedInstancesFromSearch(searchParams.toString()),
+  );
+  const [nextId, setNextId] = useState(() => instances.length + 1);
   const [pick, setPick] = useState('');
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const pickerId = useId();
 
   const summaries = listTaskSummaries();
@@ -97,14 +128,23 @@ export function BuildPage() {
   };
 
   const addTask = () => {
-    const mod = getTaskModule(pick);
-    if (!mod) return;
-    const scope: TaskScope = mod.definition.defaultScope ?? { kind: 'group', name: 'all' };
-    setInstances((prev) => [
-      ...prev,
-      { id: nextId, slug: pick, scope: { ...scope }, values: initialValues(mod.definition.schema) },
-    ]);
+    const inst = makeInstance(pick, nextId);
+    if (!inst) return;
+    setInstances((prev) => [...prev, inst]);
     setNextId((n) => n + 1);
+  };
+
+  // Copy a "fill these tasks" link — the current selection (slugs) only. The link
+  // builder is fed slugs and an allowlist, so no field value can be encoded (#88).
+  const copyShareLink = async () => {
+    const query = buildShareQuery(
+      instances.map((inst) => inst.slug),
+      summaries.map((s) => s.slug),
+    );
+    const base =
+      typeof window !== 'undefined' ? window.location.origin + window.location.pathname : '';
+    const ok = await copyText(base + query);
+    setShareStatus(ok ? 'copied' : 'failed');
   };
 
   const updateInstance = (id: number, patch: Partial<Instance>) =>
@@ -182,6 +222,22 @@ export function BuildPage() {
           {t('build.addButton')}
         </button>
       </div>
+
+      {instances.length > 0 && (
+        <div className="build__share">
+          <button type="button" className="build__share-link" onClick={copyShareLink}>
+            {t('build.shareLink')}
+          </button>{' '}
+          <span className="build__share-status" role="status" aria-live="polite">
+            {shareStatus === 'copied'
+              ? t('build.shareCopied')
+              : shareStatus === 'failed'
+                ? t('build.shareCopyFailed')
+                : ''}
+          </span>
+          <p className="build__share-help muted">{t('build.shareHelp')}</p>
+        </div>
+      )}
 
       {instances.length === 0 ? (
         <p className="muted">{t('build.empty')}</p>

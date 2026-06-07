@@ -10,14 +10,14 @@ import { BuildPage } from './BuildPage';
 let root: Root | null = null;
 let container: HTMLElement | null = null;
 
-function mount(): HTMLElement {
+function mount(initialEntry = '/build'): HTMLElement {
   container = document.createElement('div');
   document.body.appendChild(container);
   act(() => {
     root = createRoot(container!);
     root.render(
       <I18nProvider>
-        <MemoryRouter>
+        <MemoryRouter initialEntries={[initialEntry]}>
           <BuildPage />
         </MemoryRouter>
       </I18nProvider>,
@@ -158,5 +158,38 @@ describe('BuildPage (composition session)', () => {
     const el = mount();
     addTask(el, 'device-hardening');
     expect(setItem).not.toHaveBeenCalled();
+  });
+
+  it('seeds the tray from a ?tasks= deep link, selection only (#88)', () => {
+    const el = mount('/build?tasks=device-hardening');
+    expect(el.querySelectorAll('.build__instance')).toHaveLength(1);
+    expect(el.querySelector('.build__file-path')!.textContent).toBe('group_vars/all.yml');
+  });
+
+  it('ignores unknown slugs and never reflects extra params as values (#88)', () => {
+    // The link tries to smuggle field values; only the known slug is honoured and
+    // the YAML shows the schema default, not the injected value.
+    const el = mount(
+      '/build?tasks=device-hardening,not-a-real-task&service_password_encryption=false&hostname=evil',
+    );
+    expect(el.querySelectorAll('.build__instance')).toHaveLength(1);
+    const yaml = el.querySelector('.build__yaml')!.textContent!;
+    expect(yaml).toContain('service_password_encryption: true'); // default, not the URL's "false"
+    expect(el.textContent).not.toContain('evil');
+  });
+
+  it('copy-share-link carries the task selection only — no value (#88)', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal('navigator', { clipboard: { writeText } });
+    const el = mount('/build?tasks=device-hardening');
+    await act(async () => {
+      el.querySelector<HTMLButtonElement>('.build__share-link')!.click();
+    });
+    expect(writeText).toHaveBeenCalledTimes(1);
+    const copied = writeText.mock.calls[0][0] as string;
+    expect(copied).toMatch(/\?tasks=device-hardening$/);
+    // No field value or extra param could be encoded.
+    expect(copied).not.toContain('&');
+    expect(copied.split('?tasks=')[1]).toMatch(/^[a-z0-9,-]+$/);
   });
 });

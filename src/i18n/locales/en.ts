@@ -161,6 +161,12 @@ export const en = {
   'build.downloadInventory': 'Download inventory (hosts.ini)',
   'build.inventoryNote':
     'Scaffold to match the files above — add each group’s member hosts before use. The “all” group is implicit and needs no entry.',
+  // Structure-only share links (#88) — a link carries the task selection only.
+  'build.shareLink': 'Copy share link',
+  'build.shareCopied': 'Link copied — it carries the task selection only, never your values.',
+  'build.shareCopyFailed': 'Copy failed — select the address bar and copy manually.',
+  'build.shareHelp':
+    'Share a link that pre-selects these tasks for someone else to fill. No field values are ever included.',
 
   // Task discovery index (#35) — /tasks, grouped by function + filterable.
   'tasksIndex.title': 'Task library',

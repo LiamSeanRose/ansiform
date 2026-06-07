@@ -148,6 +148,14 @@ export const fr: Messages = {
   'build.downloadInventory': 'Télécharger l’inventaire (hosts.ini)',
   'build.inventoryNote':
     'Canevas correspondant aux fichiers ci-dessus — ajoutez les hôtes membres de chaque groupe avant utilisation. Le groupe « all » est implicite et ne nécessite aucune entrée.',
+  // Liens de partage structurels (#88) — un lien ne porte que la sélection de tâches.
+  'build.shareLink': 'Copier le lien de partage',
+  'build.shareCopied':
+    'Lien copié — il ne porte que la sélection de tâches, jamais vos valeurs.',
+  'build.shareCopyFailed':
+    'Échec de la copie — sélectionnez la barre d’adresse et copiez manuellement.',
+  'build.shareHelp':
+    'Partagez un lien qui présélectionne ces tâches pour qu’une autre personne les remplisse. Aucune valeur de champ n’est jamais incluse.',
 
   // Index de découverte des tâches (#35) — /tasks, groupé par fonction + filtrable.
   'tasksIndex.title': 'Bibliothèque de tâches',
