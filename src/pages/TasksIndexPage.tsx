@@ -22,7 +22,7 @@ const CATEGORIES: { id: string; slugs: string[] }[] = [
   { id: 'interfaces', slugs: ['interface-ip', 'interface-ranges', 'etherchannel'] },
   { id: 'switching', slugs: ['vlan'] },
   { id: 'routing', slugs: ['ospf', 'bgp-neighbor', 'static-routes', 'hsrp', 'vrrp', 'vrf'] },
-  { id: 'policy', slugs: ['acl', 'prefix-lists', 'route-maps'] },
+  { id: 'policy', slugs: ['acl', 'prefix-lists', 'route-maps', 'ios-nat'] },
   { id: 'firewall', slugs: ['asa-interface', 'asa-acl', 'asa-access-group', 'asa-nat'] },
   {
     id: 'edge',
