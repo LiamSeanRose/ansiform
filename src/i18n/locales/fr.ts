@@ -89,6 +89,30 @@ export const fr: Messages = {
   'output.vault.copyAllLabel': 'Tout copier',
   'output.vault.copied': 'Commande copiée — la valeur reste saisie dans votre terminal.',
   'output.vault.copyFailed': 'Échec de la copie — sélectionnez la commande et copiez-la manuellement.',
+  // Fusion dans un fichier existant (#82) — comparer les variables générées à un fichier collé.
+  'output.varsDiff.summary': 'Vous avez déjà un fichier de variables ? Voir ce qui changerait',
+  'output.varsDiff.description':
+    'Collez votre fichier group_vars/host_vars actuel pour voir, clé par clé, ce qui serait ajouté ou modifié — et copier uniquement ces lignes à fusionner à la main. Rien n’est réécrit à votre place.',
+  'output.varsDiff.pasteLabel': 'Votre fichier existant',
+  'output.varsDiff.pasteHelp':
+    'Reste dans votre navigateur — jamais envoyé, enregistré ou partagé. Seules les clés de premier niveau sont comparées.',
+  'output.varsDiff.placeholder': '# collez ici votre YAML group_vars/host_vars',
+  'output.varsDiff.added': 'Nouvelles clés à ajouter',
+  'output.varsDiff.changed': 'Clés qui changeraient',
+  'output.varsDiff.unchanged': 'Déjà à jour',
+  'output.varsDiff.current': 'actuellement',
+  'output.varsDiff.noChanges': 'Votre fichier contient déjà toutes les clés générées — rien à ajouter.',
+  'output.varsDiff.blockHeading': 'Lignes à ajouter à votre fichier',
+  'output.varsDiff.blockNote':
+    'Clés ajoutées et modifiées uniquement, dans l’ordre. Les valeurs secrètes sont réelles ici (c’est le fichier que vous enregistrez) — chiffrez-les au besoin.',
+  'output.varsDiff.copyLabel': 'Copier le bloc',
+  'output.varsDiff.copied': 'Bloc copié dans le presse-papiers.',
+  'output.varsDiff.copyFailed': 'Échec de la copie — sélectionnez le texte et copiez-le manuellement.',
+  'output.varsDiff.errorTooLarge': 'Ce fichier est trop volumineux pour être comparé ici.',
+  'output.varsDiff.errorParse':
+    'Cela ne s’analyse pas comme du YAML — vérifiez l’indentation et réessayez.',
+  'output.varsDiff.errorShape':
+    'Un fichier group_vars/host_vars doit être un mappage de clés au premier niveau.',
 
   'build.title': 'Composer un jeu de variables',
   'build.lede':

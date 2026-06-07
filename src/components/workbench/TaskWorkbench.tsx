@@ -26,8 +26,8 @@ import { useId, useMemo, useState } from 'react';
 import type { FormValues } from '../../core';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../form';
 import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../../core/preview';
-import { YamlOutputPanel, SurveyDownloadButton, type OutputMessages } from '../output';
-import { groupVarsYamlSink } from '../../core/output/yaml';
+import { YamlOutputPanel, SurveyDownloadButton, VarsDiff, type OutputMessages, type VarsDiffMessages } from '../output';
+import { buildVars, groupVarsYamlSink } from '../../core/output/yaml';
 import { buildSurveySpec } from '../../core/output/survey-spec';
 import { createSeedRegistry } from '../../core/filters/seed';
 import {
@@ -47,6 +47,8 @@ export interface WorkbenchMessages {
   preview: PreviewMessages;
   /** Label for the AWX/AAP survey-spec download action (#33). */
   surveyLabel: string;
+  /** Merge-into-existing-file diff copy (#82). */
+  varsDiff: VarsDiffMessages;
   /** Preview-target selector copy (multi-vendor, #27). */
   vendor: {
     /** Accessible label for the vendor `<select>`. */
@@ -108,6 +110,10 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
     () => groupVarsYamlSink.render({ schema, values, scope: defaultScope }),
     [schema, values, defaultScope],
   );
+
+  // The same always-correct top-level vars, as an object, for the merge-into-an-
+  // existing-file diff (#82). Built from the identical path as the YAML above.
+  const generatedVars = useMemo(() => buildVars(schema, values), [schema, values]);
 
   // AWX/AAP survey spec (#33): schema-only, so it never reflects entered values
   // and never re-renders on keystroke.
@@ -173,6 +179,7 @@ export function TaskWorkbench({ task, t, messages }: TaskWorkbenchProps) {
         )}
         <PreviewPane result={preview} messages={previewMessages} />
         <YamlOutputPanel artifact={artifact} messages={outputMessages} secretNames={secretNames} />
+        <VarsDiff generated={generatedVars} messages={messages.varsDiff} />
         {surveySpec.spec.length > 0 && (
           <div className="workbench__survey">
             <SurveyDownloadButton spec={surveySpec} label={messages.surveyLabel} />

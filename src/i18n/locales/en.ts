@@ -102,6 +102,28 @@ export const en = {
   'output.vault.copyAllLabel': 'Copy all',
   'output.vault.copied': 'Command copied — the value is still typed at your shell.',
   'output.vault.copyFailed': 'Copy failed — select the command and copy manually.',
+  // Merge into an existing file (#82) — diff generated vars against a pasted file.
+  'output.varsDiff.summary': 'Already have a var file? Show what this would change',
+  'output.varsDiff.description':
+    'Paste your current group_vars/host_vars file to see, key by key, what this would add or change — and copy just those lines to merge in by hand. Nothing is rewritten for you.',
+  'output.varsDiff.pasteLabel': 'Your existing file',
+  'output.varsDiff.pasteHelp':
+    'Stays in your browser — never uploaded, saved, or shared. Only top-level keys are compared.',
+  'output.varsDiff.placeholder': '# paste your group_vars/host_vars YAML here',
+  'output.varsDiff.added': 'New keys to add',
+  'output.varsDiff.changed': 'Keys that would change',
+  'output.varsDiff.unchanged': 'Already up to date',
+  'output.varsDiff.current': 'currently',
+  'output.varsDiff.noChanges': 'Your file already has every generated key — nothing to add.',
+  'output.varsDiff.blockHeading': 'Lines to add to your file',
+  'output.varsDiff.blockNote':
+    'Added and changed keys only, in order. Secret values are real here (this is the file you save) — vault them as needed.',
+  'output.varsDiff.copyLabel': 'Copy block',
+  'output.varsDiff.copied': 'Block copied to clipboard.',
+  'output.varsDiff.copyFailed': 'Copy failed — select the text and copy manually.',
+  'output.varsDiff.errorTooLarge': 'That file is too large to compare here.',
+  'output.varsDiff.errorParse': 'That does not parse as YAML — check the indentation and try again.',
+  'output.varsDiff.errorShape': 'A group_vars/host_vars file must be a mapping of keys at the top level.',
 
   // Composition / build page (#26).
   'build.title': 'Build a var-file set',

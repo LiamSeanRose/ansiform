@@ -20,8 +20,9 @@ import type { FormSchema, FormValues, ScalarValue } from '../core';
 import type { TaskScope } from '../core/tasks/types';
 import { Form, initialValues, secretFieldNames, type FormMessages, type Translate } from '../components/form';
 import { PreviewPane, renderPreview, withFidelityFloor, type PreviewMessages } from '../core/preview';
-import { downloadText, downloadBlob, SurveyDownloadButton } from '../components/output';
+import { downloadText, downloadBlob, SurveyDownloadButton, VarsDiff, type VarsDiffMessages } from '../components/output';
 import { composeTree } from '../core/output/compose';
+import { parseVarsYaml } from '../core/output/vars-diff';
 import { buildInventory, INVENTORY_FILENAME } from '../core/output/inventory';
 import { buildCombinedSurveySpec } from '../core/output/survey-spec';
 import { makeZip } from '../core/output/zip';
@@ -70,6 +71,28 @@ export function BuildPage() {
     heading: t('build.previewHeading'),
     degradedNotice: t('preview.degradedNotice'),
     empty: t('preview.empty'),
+  };
+  // Per-file merge-into-existing-file diff (#82): each composed file can be
+  // diffed against the operator's current version of that same path.
+  const varsDiffMessages: VarsDiffMessages = {
+    summaryLabel: t('output.varsDiff.summary'),
+    description: t('output.varsDiff.description'),
+    pasteLabel: t('output.varsDiff.pasteLabel'),
+    pasteHelp: t('output.varsDiff.pasteHelp'),
+    placeholder: t('output.varsDiff.placeholder'),
+    addedLabel: t('output.varsDiff.added'),
+    changedLabel: t('output.varsDiff.changed'),
+    unchangedLabel: t('output.varsDiff.unchanged'),
+    currentLabel: t('output.varsDiff.current'),
+    noChanges: t('output.varsDiff.noChanges'),
+    blockHeading: t('output.varsDiff.blockHeading'),
+    blockNote: t('output.varsDiff.blockNote'),
+    copyLabel: t('output.varsDiff.copyLabel'),
+    copiedStatus: t('output.varsDiff.copied'),
+    copyFailedStatus: t('output.varsDiff.copyFailed'),
+    errorTooLarge: t('output.varsDiff.errorTooLarge'),
+    errorParse: t('output.varsDiff.errorParse'),
+    errorShape: t('output.varsDiff.errorShape'),
   };
 
   const addTask = () => {
@@ -228,6 +251,7 @@ export function BuildPage() {
               <pre className="build__yaml" tabIndex={0} aria-label={file.path}>
                 {file.content}
               </pre>
+              <VarsDiff generated={parseVarsYaml(file.content).vars} messages={varsDiffMessages} />
             </div>
           ))
         )}
