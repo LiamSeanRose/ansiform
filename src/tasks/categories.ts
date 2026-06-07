@@ -8,7 +8,7 @@
  * is filled in as a follow-up to keep discovery tidy.
  */
 export const CATEGORIES: { id: string; slugs: string[] }[] = [
-  { id: 'interfaces', slugs: ['interface-ip', 'interface-ranges', 'etherchannel'] },
+  { id: 'interfaces', slugs: ['interface-ip', 'interface-ranges', 'etherchannel', 'vyos-interface'] },
   { id: 'switching', slugs: ['vlan', 'spanning-tree'] },
   {
     id: 'routing',

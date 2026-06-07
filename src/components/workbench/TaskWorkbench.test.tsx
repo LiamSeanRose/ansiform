@@ -85,6 +85,7 @@ const messages: WorkbenchMessages = {
       'cisco-iosxr': 'Cisco IOS-XR',
       'cradlepoint-ncos': 'Cradlepoint NCOS',
       'juniper-junos': 'Juniper Junos',
+      vyos: 'VyOS',
     },
   },
 };

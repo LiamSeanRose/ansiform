@@ -33,6 +33,7 @@ describe('vendor seam (#21)', () => {
       'cisco-iosxr',
       'cradlepoint-ncos',
       'juniper-junos',
+      'vyos',
     ];
     for (const summary of summaries) {
       // Never undefined — a summary always resolves a concrete platform (#21).

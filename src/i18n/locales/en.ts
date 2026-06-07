@@ -84,6 +84,7 @@ export const en = {
   'vendor.cisco-iosxr': 'Cisco IOS-XR',
   'vendor.cradlepoint-ncos': 'Cradlepoint NCOS',
   'vendor.juniper-junos': 'Juniper Junos',
+  'vendor.vyos': 'VyOS',
 
   // Output actions (#12) — copy / download of the group_vars/host_vars YAML.
   'output.copyLabel': 'Copy',

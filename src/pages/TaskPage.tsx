@@ -113,6 +113,7 @@ export function TaskPage() {
         'cisco-iosxr': t('vendor.cisco-iosxr'),
         'cradlepoint-ncos': t('vendor.cradlepoint-ncos'),
         'juniper-junos': t('vendor.juniper-junos'),
+        vyos: t('vendor.vyos'),
       },
     },
   };

@@ -74,6 +74,7 @@ export const fr: Messages = {
   'vendor.cisco-iosxr': 'Cisco IOS-XR',
   'vendor.cradlepoint-ncos': 'Cradlepoint NCOS',
   'vendor.juniper-junos': 'Juniper Junos',
+  'vendor.vyos': 'VyOS',
 
   'output.copyLabel': 'Copier',
   'output.copied': 'Copié dans le presse-papiers.',

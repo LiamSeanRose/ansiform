@@ -34,7 +34,8 @@ export type Vendor =
   | 'cisco-asa'
   | 'cisco-iosxr'
   | 'cradlepoint-ncos'
-  | 'juniper-junos';
+  | 'juniper-junos'
+  | 'vyos';
 
 /** The vendor assumed when a task declares none. */
 export const DEFAULT_VENDOR: Vendor = 'cisco-ios';
