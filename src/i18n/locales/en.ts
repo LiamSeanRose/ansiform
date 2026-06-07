@@ -29,6 +29,12 @@ export const en = {
 
   'task.backToHome': '← All tasks',
   'task.relatedHeading': 'Related tasks',
+  // Static worked example on each task page (#87) — sample → YAML → device CLI.
+  'task.example.heading': 'Worked example',
+  'task.example.intro':
+    'Sample inputs, the exact Ansible vars they produce, and the device CLI they render to.',
+  'task.example.yamlLabel': 'group_vars / host_vars (YAML)',
+  'task.example.cliLabel': 'Device CLI',
   'task.placeholderHeading': 'Task: {task}',
   'task.placeholderBody':
     'This is a routing placeholder. The form engine and curated tasks are not built yet.',

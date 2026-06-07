@@ -62,4 +62,17 @@ describe('TaskPage crosslinks (#62)', () => {
     const el = mountAt('/tasks/not-a-real-task');
     expect(el.querySelector('[aria-labelledby="related-heading"]')).toBeNull();
   });
+
+  it('renders a static worked example with sample YAML (#87)', () => {
+    const el = mountAt('/tasks/interface-ip');
+    const example = el.querySelector('.worked-example');
+    expect(example).not.toBeNull();
+    // The example carries real, byte-correct YAML for the synthesized sample.
+    const yaml = example!.querySelector('.worked-example__yaml')!.textContent!;
+    expect(yaml.length).toBeGreaterThan(0);
+    expect(yaml).toMatch(/\w+:/); // at least one key: value line
+    // It is static body copy, above the interactive workbench in the DOM.
+    expect(example!.compareDocumentPosition(el.querySelector('.workbench')!) &
+      Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });

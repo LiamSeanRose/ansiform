@@ -3,3 +3,8 @@
  * `../components/workbench`.
  */
 export { TaskWorkbench, type TaskWorkbenchProps, type WorkbenchMessages } from './TaskWorkbench';
+export {
+  WorkedExample,
+  type WorkedExampleProps,
+  type WorkedExampleMessages,
+} from './WorkedExample';

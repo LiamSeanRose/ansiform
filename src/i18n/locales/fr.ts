@@ -27,6 +27,12 @@ export const fr: Messages = {
 
   'task.backToHome': '← Toutes les tâches',
   'task.relatedHeading': 'Tâches associées',
+  // Exemple concret sur chaque page de tâche (#87) — échantillon → YAML → CLI.
+  'task.example.heading': 'Exemple concret',
+  'task.example.intro':
+    'Des valeurs d’exemple, les variables Ansible exactes qu’elles produisent, et la configuration CLI rendue.',
+  'task.example.yamlLabel': 'group_vars / host_vars (YAML)',
+  'task.example.cliLabel': 'CLI de l’équipement',
   'task.placeholderHeading': 'Tâche : {task}',
   'task.placeholderBody':
     'Ceci est un espace réservé de routage. Le moteur de formulaire et les tâches ne sont pas encore construits.',

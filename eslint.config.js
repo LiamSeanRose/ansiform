@@ -25,4 +25,11 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // The SSR prerender entry (#87) is a build-time module, not part of the
+    // browser Fast-Refresh graph — it intentionally exports render helpers, not
+    // components, so the refresh-boundary rule does not apply.
+    files: ['src/entry-server.tsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
 );

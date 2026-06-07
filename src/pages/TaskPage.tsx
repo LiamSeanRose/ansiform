@@ -4,13 +4,20 @@ import { useTranslation } from '../i18n/useTranslation';
 import type { MessageKey } from '../i18n';
 import { getTaskModule, taskMessages } from '../tasks/registry';
 import { relatedSlugs } from '../tasks/categories';
-import { TaskWorkbench, type WorkbenchMessages } from '../components/workbench';
+import { TaskWorkbench, WorkedExample, type WorkbenchMessages } from '../components/workbench';
 import type { FormMessages, Translate as FieldTranslate } from '../components/form';
 import { RunRecipe, type RunRecipeMessages } from '../components/output';
 import { buildRunRecipe } from '../core/output/run-recipe';
-import { suggestFilename } from '../core/output/yaml';
+import { buildVars, suggestFilename, toYaml } from '../core/output/yaml';
+import { renderPreview, withFidelityFloor } from '../core/preview';
+import { createSeedRegistry } from '../core/filters/seed';
+import { synthesizeExample } from '../core/example/synth';
 import { listReferences } from './reference';
 import { NotFoundPage } from './NotFoundPage';
+
+// Filter registry for the static worked-example preview (#87). Module-level: the
+// seed set is fixed, so one instance is reused across renders.
+const exampleRegistry = createSeedRegistry();
 
 /** Keep the document title + meta description in sync with the active task (§8). */
 function useDocumentMeta(title: string | undefined, description: string | undefined) {
@@ -159,6 +166,17 @@ export function TaskPage() {
     copyFailedStatus: t('output.runRecipe.copyFailed'),
   };
 
+  // Static worked example (#87): synthesized sample values → exact YAML + device
+  // CLI. Pure + deterministic, so it prerenders identically. Shown only when the
+  // sample yields real vars (a task with no defaults/placeholders shows none).
+  const exampleValues = synthesizeExample(mod.definition.schema);
+  const exampleVars = buildVars(mod.definition.schema, exampleValues);
+  const exampleYaml = Object.keys(exampleVars).length > 0 ? toYaml(exampleVars) : '';
+  const examplePreview = withFidelityFloor(
+    renderPreview(mod.definition.template, exampleValues, exampleRegistry),
+    mod.definition.fidelityFloor,
+  );
+
   return (
     <section className="page page--task" aria-labelledby="task-title">
       <p>
@@ -166,6 +184,19 @@ export function TaskPage() {
       </p>
       <h1 id="task-title">{mod.definition.title}</h1>
       <p className="lede">{mod.definition.description}</p>
+
+      {exampleYaml && (
+        <WorkedExample
+          yaml={exampleYaml}
+          preview={examplePreview}
+          messages={{
+            heading: t('task.example.heading'),
+            intro: t('task.example.intro'),
+            yamlLabel: t('task.example.yamlLabel'),
+            cliLabel: t('task.example.cliLabel'),
+          }}
+        />
+      )}
 
       <TaskWorkbench task={mod} t={tt} messages={messages} />
 
