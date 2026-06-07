@@ -139,6 +139,10 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS SSH service and VTY line hardening configuration — SSH version, timeout and auth retries, VTY exec-timeout, inbound transport, login, and an optional inbound access-class — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE shares the IOS SSH/VTY CLI verbatim (exact). NX-OS (`feature ssh`,
+    // no `ip ssh version`) and EOS (`management ssh`) differ materially and are
+    // intentionally NOT offered here rather than shipped as a guess.
+    templates: { 'cisco-iosxe': template },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

@@ -103,6 +103,25 @@ const template = [
   '{% endfor %}',
 ].join('\n');
 
+// NX-OS: destinations are `logging server` (VRF via `use-vrf`); severity is set
+// per-facility with `logging level`, not a single `logging trap`, so trap level
+// and the IOS `transport` keyword are dropped here. Shipped APPROXIMATE.
+const templateNxos = [
+  '{% if source_interface %}logging source-interface {{ source_interface }}',
+  '{% endif %}{% for h in hosts %}logging server {{ h.host }}{% if h.vrf %} use-vrf {{ h.vrf }}{% endif %}',
+  '{% endfor %}',
+].join('\n');
+
+// Arista EOS: IOS-like `logging host`/`logging trap`/`logging source-interface`,
+// but the host line takes an optional port (not a `transport` keyword), so that
+// keyword is dropped here. Shipped APPROXIMATE — not verified against EOS.
+const templateEos = [
+  '{% if source_interface %}logging source-interface {{ source_interface }}',
+  '{% endif %}logging trap {{ trap_level }}',
+  '{% for h in hosts %}logging host {{ h.host }}{% if h.vrf %} vrf {{ h.vrf }}{% endif %}',
+  '{% endfor %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'syslog',
@@ -111,6 +130,13 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS logging configuration — trap level, source-interface, and a repeating list of syslog hosts with per-host VRF and transport — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE shares the IOS logging CLI verbatim (exact). NX-OS/EOS differ in
+    // destination syntax and are flagged approximate so the preview degrades.
+    templates: {
+      'cisco-iosxe': template,
+      'cisco-nxos': { template: templateNxos, fidelity: 'approximate' },
+      'arista-eos': { template: templateEos, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {

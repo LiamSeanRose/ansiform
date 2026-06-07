@@ -65,6 +65,19 @@ const template = [
   '{% endif %}',
 ].join('\n');
 
+// Arista EOS: banners are entered without an inline delimiter and terminated by a
+// lone `EOF` line; EOS has no `exec` banner, so that field is not rendered here.
+// Shipped APPROXIMATE — not verified against EOS.
+const templateEos = [
+  '{% if motd %}banner motd',
+  '{{ motd }}',
+  'EOF',
+  '{% endif %}{% if login %}banner login',
+  '{{ login }}',
+  'EOF',
+  '{% endif %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'banners',
@@ -73,6 +86,12 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and Cisco IOS banner configuration — message-of-the-day, login, and exec banners — with a live device-CLI preview.',
     schema,
     template,
+    // IOS-XE shares the IOS banner CLI verbatim (exact). EOS uses a different
+    // delimiter and is flagged approximate so the preview degrades.
+    templates: {
+      'cisco-iosxe': template,
+      'arista-eos': { template: templateEos, fidelity: 'approximate' },
+    },
     defaultScope: { kind: 'group', name: 'all' },
   },
   messages: {
