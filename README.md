@@ -90,27 +90,48 @@ npm run typecheck  # tsc, no emit
 ```
 
 **Stack:** React 19 + TypeScript + Vite, React Router (one route per task), a
-dependency-free i18n layer (English now, French planned), and `js-yaml` for
-byte-correct output. No runtime backend, ever.
+dependency-free i18n layer (English and French), and `js-yaml` for byte-correct
+output. No runtime backend, ever.
 
 ## Task library
 
-v1 targets Cisco IOS and ships a small, curated set of common tasks — each its own
-page with its own form and preview:
+A curated library of common network tasks — each its own page with its own form
+and live preview. Coverage spans interfaces and IP addressing, VLANs, routing
+(OSPF, BGP, static routes, HSRP/VRRP), traffic policy (ACLs, prefix-lists,
+route-maps), and the management plane (SNMPv3, NTP, syslog, AAA, SSH hardening,
+banners, device basics).
 
-- Interface / IP addressing
-- VLAN
-- OSPF
-- BGP neighbor
-- Access control list (ACL)
-- Device basics (SNMP / NTP / TACACS)
+**Multi-vendor.** Every task renders the same form to **Cisco IOS, IOS-XE,
+NX-OS, and Arista EOS** behind one schema — pick the preview target and the
+device-CLI preview switches, while the YAML output stays vendor-independent and
+correct. Where a vendor's CLI hasn't been line-for-line verified, the preview
+says so ("preview may differ") rather than showing a silently-wrong result.
 
-Breadth across more vendors, bring-your-own templates, and runnable-playbook output
-are explicitly deferred to later versions.
+Beyond single tasks, **Build** (`/build`) composes several tasks into a complete
+multi-file `group_vars`/`host_vars` set with visible collision warnings and a
+one-click `.zip`, and **Reader** (`/reader`, beta) explains an existing
+Cisco/Jinja2 template — the variables it expects, the filters it uses, and a live
+preview — entirely in your browser.
 
-> **Status:** pre-1.0 and under active development. The app shell, routing,
-> security posture, output engine, and form/preview engine are in place; the
-> curated task library is being filled in.
+## Roadmap
+
+Near-term, in priority order:
+
+1. **Preview-fidelity completion** — promote the remaining NX-OS / EOS previews
+   from "approximate" to line-verified exact, locked by per-vendor tests.
+2. **AWX/AAP survey-spec export** — download a survey spec alongside the var
+   files (a local file, never a server round-trip), so a form maps straight into
+   an AWX/AAP workflow.
+3. **Task discovery** — a searchable index across the task library and a clearer
+   graduation path out of the Reader beta.
+
+Junos (its `set`/JSON config diverges from the line-CLI model), bring-your-own
+arbitrary templates, runnable-playbook output, and any backend remain explicitly
+deferred — the zero-egress, vars-only contract comes first.
+
+> **Status:** pre-1.0 and under active development. The form/preview engine,
+> output engine, composition, multi-vendor previews, and a broad curated task
+> library are in place across Cisco IOS / IOS-XE / NX-OS / EOS.
 
 ## Contributing
 
