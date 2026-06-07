@@ -69,6 +69,7 @@ export const fr: Messages = {
   'vendor.cisco-nxos': 'Cisco NX-OS',
   'vendor.arista-eos': 'Arista EOS',
   'vendor.cisco-asa': 'Cisco ASA',
+  'vendor.cisco-iosxr': 'Cisco IOS-XR',
 
   'output.copyLabel': 'Copier',
   'output.copied': 'Copié dans le presse-papiers.',

@@ -81,6 +81,7 @@ const messages: WorkbenchMessages = {
       'cisco-iosxe': 'Cisco IOS-XE',
       'cisco-nxos': 'Cisco NX-OS',
       'arista-eos': 'Arista EOS',
+      'cisco-iosxr': 'Cisco IOS-XR',
     },
   },
 };
@@ -165,6 +166,7 @@ describe('TaskWorkbench', () => {
       'cisco-iosxe',
       'cisco-nxos',
       'arista-eos',
+      'cisco-iosxr',
     ]);
 
     // Heading reflects the default vendor, then relabels on switch.

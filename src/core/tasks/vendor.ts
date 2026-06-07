@@ -15,14 +15,21 @@
  */
 
 /**
- * Supported network OS. Grows additively (#27, #38). Most members are the
+ * Supported network OS. Grows additively (#27, #37, #38). Most members are the
  * line-CLI family — they share the curated schemas and render IOS-shaped CLI, so
- * they overlay onto existing tasks via {@link TaskVendorView.templates}. A platform
- * with a genuinely different config model joins as its OWN task family rather than
- * a template overlay: `cisco-asa` (#38) is the first such member — its firewall
- * tasks set `vendor: 'cisco-asa'` and declare no `templates` overlay.
+ * they overlay onto existing tasks via {@link TaskVendorView.templates} (#37 added
+ * `cisco-iosxr`). A platform with a genuinely different config model joins as its
+ * OWN task family rather than a template overlay: `cisco-asa` (#38) is the first
+ * such member — its firewall tasks set `vendor: 'cisco-asa'` and declare no
+ * `templates` overlay.
  */
-export type Vendor = 'cisco-ios' | 'cisco-iosxe' | 'cisco-nxos' | 'arista-eos' | 'cisco-asa';
+export type Vendor =
+  | 'cisco-ios'
+  | 'cisco-iosxe'
+  | 'cisco-nxos'
+  | 'arista-eos'
+  | 'cisco-asa'
+  | 'cisco-iosxr';
 
 /** The vendor assumed when a task declares none. */
 export const DEFAULT_VENDOR: Vendor = 'cisco-ios';

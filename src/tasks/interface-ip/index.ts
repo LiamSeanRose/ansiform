@@ -89,6 +89,21 @@ const slashTemplate = [
   '{% endif %}',
 ].join('\n');
 
+// Cisco IOS-XR (#37). Verified exact against Cisco's IOS-XR IP Addresses command
+// reference: the address keyword is `ipv4 address <addr> <mask>` (not IOS's
+// `ip address`); `description`, interface-level `mtu`, and `shutdown`/`no
+// shutdown` are identical. IOS-XR routers are L3 by default, so no switchport
+// caveat applies here (unlike the NX-OS/EOS overlays above).
+const iosxrTemplate = [
+  'interface {{ interface }}',
+  '{% if description %} description {{ description }}',
+  "{% endif %} ipv4 address {{ ip_address | ipaddr('address') }} {{ ip_address | ipaddr('netmask') }}",
+  '{% if mtu %} mtu {{ mtu }}',
+  '{% endif %}{% if enabled %} no shutdown',
+  '{% else %} shutdown',
+  '{% endif %}',
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'interface-ip',
@@ -104,6 +119,8 @@ export const task: TaskModule = {
       'cisco-iosxe': template,
       'cisco-nxos': { template: slashTemplate, fidelity: 'approximate' },
       'arista-eos': { template: slashTemplate, fidelity: 'approximate' },
+      // IOS-XR uses `ipv4 address <addr> <mask>`, verified exact (#37).
+      'cisco-iosxr': iosxrTemplate,
     },
     defaultScope: { kind: 'host', name: 'switch1' },
   },

@@ -45,6 +45,7 @@ describe('per-vendor preview overlay (#27)', () => {
       'cisco-iosxe',
       'cisco-nxos',
       'arista-eos',
+      'cisco-iosxr',
     ]);
   });
 

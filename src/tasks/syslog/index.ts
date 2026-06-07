@@ -126,6 +126,17 @@ const templateEos = [
   "{% for h in hosts %}{% if h.vrf %}logging vrf {{ h.vrf }} host {{ h.host }}{% else %}logging host {{ h.host }}{% endif %}{{ '\\n' }}{% endfor %}",
 ].join('\n');
 
+// Cisco IOS-XR (#37): destinations are a bare `logging <ip>` (no `host` keyword),
+// and `logging source-interface` is identical. Crucially, `trap_level` is dropped
+// here — on IOS-XR `logging trap <severity>` sets the SNMP-trap severity, NOT the
+// syslog-destination severity, so reusing it would be silently wrong. Shipped
+// APPROXIMATE: the VRF/severity placement on the destination line and the
+// `transport` keyword (absent on IOS-XR) are not yet line-verified.
+const templateIosxr = [
+  '{% if source_interface %}logging source-interface {{ source_interface }}',
+  "{% endif %}{% for h in hosts %}logging {{ h.host }}{% if h.vrf %} vrf {{ h.vrf }}{% endif %}{{ '\\n' }}{% endfor %}",
+].join('\n');
+
 export const task: TaskModule = {
   definition: {
     slug: 'syslog',
@@ -135,12 +146,14 @@ export const task: TaskModule = {
     schema,
     template,
     // IOS-XE shares the IOS logging CLI verbatim; NX-OS is verified exact against
-    // Cisco's Nexus guide (#34). EOS stays approximate — partially corrected but
-    // not yet fully line-verified — so its preview keeps the degrade banner.
+    // Cisco's Nexus guide (#34). EOS and IOS-XR stay approximate — partially
+    // corrected but not yet fully line-verified — so their previews keep the
+    // degrade banner (#37 for IOS-XR).
     templates: {
       'cisco-iosxe': template,
       'cisco-nxos': templateNxos,
       'arista-eos': { template: templateEos, fidelity: 'approximate' },
+      'cisco-iosxr': { template: templateIosxr, fidelity: 'approximate' },
     },
     defaultScope: { kind: 'group', name: 'all' },
   },

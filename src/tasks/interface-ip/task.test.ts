@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues } from '../../core';
@@ -113,5 +114,33 @@ describe('interface-ip task', () => {
     // interface + ip_address are required and unset at first.
     const errors = validateForm(schema, init);
     expect(Object.keys(errors).sort()).toEqual(['interface', 'ip_address']);
+  });
+
+  // #37: IOS-XR interface CLI verified exact (`ipv4 address <addr> <mask>`) and locked.
+  describe('per-vendor preview (#37)', () => {
+    const def = task.definition;
+    const values: FormValues = {
+      interface: 'GigabitEthernet0/0/0/0',
+      description: 'Uplink to core',
+      ip_address: '10.0.0.1/24',
+      mtu: 1500,
+      enabled: true,
+    };
+
+    it('IOS-XR is exact and uses the `ipv4 address <addr> <mask>` form', () => {
+      expect(vendorTemplateApproximate(def, 'cisco-iosxr')).toBe(false);
+      const out = renderPreview(templateForVendor(def, 'cisco-iosxr'), values, registry);
+      expect(out.fidelity).toBe('exact');
+      expect(out.text).toBe(
+        [
+          'interface GigabitEthernet0/0/0/0',
+          ' description Uplink to core',
+          ' ipv4 address 10.0.0.1 255.255.255.0',
+          ' mtu 1500',
+          ' no shutdown',
+          '',
+        ].join('\n'),
+      );
+    });
   });
 });

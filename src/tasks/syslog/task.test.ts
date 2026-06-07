@@ -155,5 +155,20 @@ describe('syslog task', () => {
     it('EOS stays approximate so the preview degrades visibly', () => {
       expect(vendorTemplateApproximate(def, 'arista-eos')).toBe(true);
     });
+
+    // #37: IOS-XR uses bare `logging <ip>` and drops `logging trap` (which sets
+    // SNMP-trap severity on IOS-XR, not syslog) — shipped approximate.
+    it('IOS-XR stays approximate and omits the IOS `logging trap` line', () => {
+      expect(vendorTemplateApproximate(def, 'cisco-iosxr')).toBe(true);
+      const out = renderPreview(templateForVendor(def, 'cisco-iosxr'), full, registry);
+      expect(out.text).toBe(
+        [
+          'logging source-interface Loopback0',
+          'logging 192.0.2.50',
+          'logging 192.0.2.51 vrf Mgmt-intf',
+          '',
+        ].join('\n'),
+      );
+    });
   });
 });
