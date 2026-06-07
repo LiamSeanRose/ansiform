@@ -111,9 +111,9 @@ const template = [
 ].join('\n');
 
 // NX-OS and Arista EOS name an extended ACL without the `extended` keyword
-// (`ip access-list NAME`); the per-entry body is identical. This has not had a
-// curated-correctness pass, so it ships `approximate` and the preview shows the
-// degrade banner — an un-vetted vendor render is never mistaken for ground truth.
+// (`ip access-list NAME`); the per-entry body is identical. Verified exact (#34)
+// against Cisco's Nexus IP ACL guide and Arista's ACL manual — both accept a
+// named ACL with `<action> <proto> <src> <dst> [eq <port>]` entries and `remark`.
 const namedAclTemplate = [
   'ip access-list {{ name }}',
   '{% for e in entries %}{% if e.remark %} remark {{ e.remark }}',
@@ -134,8 +134,8 @@ export const task: TaskModule = {
       // IOS-XE renders an identical extended-ACL CLI (#27): an explicit per-vendor
       // claim, not an inference — same schema, same vars, only the label changes.
       'cisco-iosxe': template,
-      'cisco-nxos': { template: namedAclTemplate, fidelity: 'approximate' },
-      'arista-eos': { template: namedAclTemplate, fidelity: 'approximate' },
+      'cisco-nxos': namedAclTemplate,
+      'arista-eos': namedAclTemplate,
     },
     defaultScope: { kind: 'group', name: 'all' },
   },

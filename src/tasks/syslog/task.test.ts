@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues, ListField } from '../../core';
@@ -129,6 +130,30 @@ describe('syslog task', () => {
       expect(validateForm(schema, { ...initialValues(schema), hosts: [{ host: 'nope', transport: 'udp' }] }).hosts?.code).toBe(
         'incomplete',
       );
+    });
+  });
+
+  // #34: NX-OS promoted to verified-exact and locked; EOS deliberately stays
+  // approximate (not yet line-verified) so its preview keeps the degrade banner.
+  describe('per-vendor preview (#34)', () => {
+    const def = task.definition;
+
+    it('NX-OS is exact and renders one logging server line per host', () => {
+      expect(vendorTemplateApproximate(def, 'cisco-nxos')).toBe(false);
+      const out = renderPreview(templateForVendor(def, 'cisco-nxos'), full, registry);
+      expect(out.fidelity).toBe('exact');
+      expect(out.text).toBe(
+        [
+          'logging source-interface Loopback0',
+          'logging server 192.0.2.50',
+          'logging server 192.0.2.51 use-vrf Mgmt-intf',
+          '',
+        ].join('\n'),
+      );
+    });
+
+    it('EOS stays approximate so the preview degrades visibly', () => {
+      expect(vendorTemplateApproximate(def, 'arista-eos')).toBe(true);
     });
   });
 });

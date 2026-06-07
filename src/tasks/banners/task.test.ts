@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues } from '../../core';
@@ -107,6 +108,28 @@ describe('banners task', () => {
   describe('validation', () => {
     it('all banners optional — empty form is valid', () => {
       expect(validateForm(schema, initialValues(schema))).toEqual({});
+    });
+  });
+
+  // #34: EOS promoted to verified-exact (EOF-terminated banners) and locked.
+  describe('per-vendor preview (#34)', () => {
+    const def = task.definition;
+
+    it('EOS is exact, uses EOF terminators, and omits the exec banner', () => {
+      expect(vendorTemplateApproximate(def, 'arista-eos')).toBe(false);
+      const out = renderPreview(templateForVendor(def, 'arista-eos'), full, registry);
+      expect(out.fidelity).toBe('exact');
+      expect(out.text).toBe(
+        [
+          'banner motd',
+          'Authorized access only',
+          'EOF',
+          'banner login',
+          'Restricted to authorized users',
+          'EOF',
+          '',
+        ].join('\n'),
+      );
     });
   });
 });

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { taskVendors, templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues } from '../../core';
@@ -103,5 +104,30 @@ describe('bgp-neighbor task', () => {
 
   it('flags a malformed neighbor IP via the field pattern', () => {
     expect(validateForm(schema, { ...full, peer_ip: 'not-an-ip' }).peer_ip?.code).toBe('pattern');
+  });
+
+  // #34: EOS flat-neighbor BGP CLI verified exact and locked. NX-OS is omitted
+  // (submode neighbor model) — it must not silently fall back to this form.
+  describe('per-vendor preview (#34)', () => {
+    const def = task.definition;
+
+    it('EOS is exact: flat neighbor remote-as/description/password lines', () => {
+      expect(vendorTemplateApproximate(def, 'arista-eos')).toBe(false);
+      const out = renderPreview(templateForVendor(def, 'arista-eos'), full, registry);
+      expect(out.fidelity).toBe('exact');
+      expect(out.text).toBe(
+        [
+          'router bgp 65001',
+          ' neighbor 10.0.0.2 remote-as 65002',
+          ' neighbor 10.0.0.2 description ISP uplink',
+          ' neighbor 10.0.0.2 password s3cr3t',
+          '',
+        ].join('\n'),
+      );
+    });
+
+    it('does not offer NX-OS (submode model not rendered)', () => {
+      expect(taskVendors(def)).not.toContain('cisco-nxos');
+    });
   });
 });

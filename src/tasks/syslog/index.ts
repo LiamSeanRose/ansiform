@@ -105,21 +105,25 @@ const template = [
 
 // NX-OS: destinations are `logging server` (VRF via `use-vrf`); severity is set
 // per-facility with `logging level`, not a single `logging trap`, so trap level
-// and the IOS `transport` keyword are dropped here. Shipped APPROXIMATE.
+// and the IOS `transport` keyword are dropped here. Verified exact against
+// Cisco's Nexus System Management Configuration Guide: `logging source-interface
+// <intf>` and `logging server <host> [use-vrf <vrf>]` (the optional
+// severity/facility tokens are omitted). The per-row newline uses `{{ '\n' }}`
+// because trim_blocks would eat one placed after the inline `{% endif %}`.
 const templateNxos = [
   '{% if source_interface %}logging source-interface {{ source_interface }}',
-  '{% endif %}{% for h in hosts %}logging server {{ h.host }}{% if h.vrf %} use-vrf {{ h.vrf }}{% endif %}',
-  '{% endfor %}',
+  "{% endif %}{% for h in hosts %}logging server {{ h.host }}{% if h.vrf %} use-vrf {{ h.vrf }}{% endif %}{{ '\\n' }}{% endfor %}",
 ].join('\n');
 
-// Arista EOS: IOS-like `logging host`/`logging trap`/`logging source-interface`,
-// but the host line takes an optional port (not a `transport` keyword), so that
-// keyword is dropped here. Shipped APPROXIMATE — not verified against EOS.
+// Arista EOS: corrected toward verified syntax — EOS uses `logging
+// local-interface` (not `source-interface`) and orders VRF before the host
+// (`logging vrf <vrf> host <host>`). Still shipped APPROXIMATE: the standalone
+// `logging local-interface` form (no VRF) and the full trap-severity name set
+// have not been line-verified, so the preview keeps its degrade banner.
 const templateEos = [
-  '{% if source_interface %}logging source-interface {{ source_interface }}',
+  '{% if source_interface %}logging local-interface {{ source_interface }}',
   '{% endif %}logging trap {{ trap_level }}',
-  '{% for h in hosts %}logging host {{ h.host }}{% if h.vrf %} vrf {{ h.vrf }}{% endif %}',
-  '{% endfor %}',
+  "{% for h in hosts %}{% if h.vrf %}logging vrf {{ h.vrf }} host {{ h.host }}{% else %}logging host {{ h.host }}{% endif %}{{ '\\n' }}{% endfor %}",
 ].join('\n');
 
 export const task: TaskModule = {
@@ -130,11 +134,12 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS logging configuration — trap level, source-interface, and a repeating list of syslog hosts with per-host VRF and transport — with a live device-CLI preview.',
     schema,
     template,
-    // IOS-XE shares the IOS logging CLI verbatim (exact). NX-OS/EOS differ in
-    // destination syntax and are flagged approximate so the preview degrades.
+    // IOS-XE shares the IOS logging CLI verbatim; NX-OS is verified exact against
+    // Cisco's Nexus guide (#34). EOS stays approximate — partially corrected but
+    // not yet fully line-verified — so its preview keeps the degrade banner.
     templates: {
       'cisco-iosxe': template,
-      'cisco-nxos': { template: templateNxos, fidelity: 'approximate' },
+      'cisco-nxos': templateNxos,
       'arista-eos': { template: templateEos, fidelity: 'approximate' },
     },
     defaultScope: { kind: 'group', name: 'all' },

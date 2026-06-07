@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues, ListField } from '../../core';
@@ -110,6 +111,34 @@ describe('aaa-servers task', () => {
     it('flags a server row missing its required address as incomplete', () => {
       expect(validateForm(schema, { ...initialValues(schema), servers: [{ name: 'TAC1' }] }).servers?.code).toBe(
         'incomplete',
+      );
+    });
+  });
+
+  // #34: verified-exact promotions, each locked so a regression re-degrades in CI.
+  describe('per-vendor preview (#34)', () => {
+    const def = task.definition;
+
+    it('NX-OS is exact and renders one tacacs-server host line per server', () => {
+      expect(vendorTemplateApproximate(def, 'cisco-nxos')).toBe(false);
+      const out = renderPreview(templateForVendor(def, 'cisco-nxos'), full, registry);
+      expect(out.fidelity).toBe('exact');
+      expect(out.text).toBe(
+        [
+          'feature tacacs+',
+          'tacacs-server host 192.0.2.20 key sEcret-key',
+          'tacacs-server host 192.0.2.21',
+          '',
+        ].join('\n'),
+      );
+    });
+
+    it('EOS is exact and omits aaa new-model (AAA always on)', () => {
+      expect(vendorTemplateApproximate(def, 'arista-eos')).toBe(false);
+      const out = renderPreview(templateForVendor(def, 'arista-eos'), full, registry);
+      expect(out.fidelity).toBe('exact');
+      expect(out.text).toBe(
+        ['tacacs-server host 192.0.2.20 key sEcret-key', 'tacacs-server host 192.0.2.21', ''].join('\n'),
       );
     });
   });

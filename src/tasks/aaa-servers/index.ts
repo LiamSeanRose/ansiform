@@ -83,20 +83,23 @@ const template = [
 ].join('\n');
 
 // NX-OS: TACACS+ is feature-gated and configured as flat `tacacs-server host`
-// lines (keyed by host, so the per-server name is not used). Shipped APPROXIMATE
-// — not verified against a live switch; the preview shows the degrade banner.
+// lines (keyed by host, so the per-server name is not used). Verified exact
+// against Cisco's Nexus Security Configuration Guide: `feature tacacs+` enables
+// the feature and `tacacs-server host <ip> key <key>` registers each server (the
+// `[0|7]` encryption type is optional, so a bare cleartext key is valid). The
+// per-row newline is emitted with `{{ '\n' }}` because trim_blocks would eat a
+// newline placed after the inline `{% endif %}`.
 const templateNxos = [
   '{% if new_model %}feature tacacs+',
-  '{% endif %}{% for s in servers %}tacacs-server host {{ s.address }}{% if s.key %} key {{ s.key }}{% endif %}',
-  '{% endfor %}',
+  "{% endif %}{% for s in servers %}tacacs-server host {{ s.address }}{% if s.key %} key {{ s.key }}{% endif %}{{ '\\n' }}{% endfor %}",
 ].join('\n');
 
 // Arista EOS: AAA is always on (no `aaa new-model`); servers are flat
-// `tacacs-server host` lines. Shipped APPROXIMATE — not verified against EOS.
-const templateEos = [
-  '{% for s in servers %}tacacs-server host {{ s.address }}{% if s.key %} key {{ s.key }}{% endif %}',
-  '{% endfor %}',
-].join('\n');
+// `tacacs-server host <ip> key <key>` lines. Verified exact against Arista's EOS
+// User Security manual, whose own example omits the encryption-type digit
+// (`tacacs-server host TAC-1 key rp31E2v`), so the bare cleartext key is valid.
+const templateEos =
+  "{% for s in servers %}tacacs-server host {{ s.address }}{% if s.key %} key {{ s.key }}{% endif %}{{ '\\n' }}{% endfor %}";
 
 export const task: TaskModule = {
   definition: {
@@ -106,13 +109,13 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS TACACS+ server configuration — aaa new-model and a repeating list of TACACS+ servers with address and shared key — with a live device-CLI preview.',
     schema,
     template,
-    // IOS-XE shares the named-server TACACS+ CLI verbatim — an explicit
-    // per-vendor correctness claim (exact), not an inference. NX-OS/EOS render a
-    // different model and are flagged approximate so the preview degrades.
+    // IOS-XE shares the named-server TACACS+ CLI verbatim; NX-OS and EOS use a
+    // different flat-host model, each verified exact against the vendor's own
+    // configuration guide (#34). All three are exact claims, not inferences.
     templates: {
       'cisco-iosxe': template,
-      'cisco-nxos': { template: templateNxos, fidelity: 'approximate' },
-      'arista-eos': { template: templateEos, fidelity: 'approximate' },
+      'cisco-nxos': templateNxos,
+      'arista-eos': templateEos,
     },
     defaultScope: { kind: 'group', name: 'all' },
   },

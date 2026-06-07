@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues, ListField } from '../../core';
@@ -99,5 +100,24 @@ describe('prefix-lists task', () => {
         'incomplete',
       );
     });
+  });
+
+  // #34: NX-OS and EOS prefix-list CLI verified exact and locked.
+  describe('per-vendor preview (#34)', () => {
+    const def = task.definition;
+    const expected = [
+      'ip prefix-list MGMT-NETS seq 5 permit 10.0.0.0/8 ge 24 le 24',
+      'ip prefix-list MGMT-NETS seq 10 deny 0.0.0.0/0',
+      '',
+    ].join('\n');
+
+    for (const vendor of ['cisco-nxos', 'arista-eos'] as const) {
+      it(`${vendor} is exact and renders one prefix-list line per entry`, () => {
+        expect(vendorTemplateApproximate(def, vendor)).toBe(false);
+        const out = renderPreview(templateForVendor(def, vendor), full, registry);
+        expect(out.fidelity).toBe('exact');
+        expect(out.text).toBe(expected);
+      });
+    }
   });
 });
