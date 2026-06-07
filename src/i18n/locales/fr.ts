@@ -9,6 +9,7 @@ import type { Messages } from './en';
 export const fr: Messages = {
   'app.name': 'Ansiform',
   'app.tagline': 'Des templates Ansible sans le YAML',
+  'app.loading': 'Chargement…',
 
   'nav.home': 'Accueil',
   'nav.skipToContent': 'Aller au contenu principal',

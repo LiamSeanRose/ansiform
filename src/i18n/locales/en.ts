@@ -11,6 +11,7 @@
 export const en = {
   'app.name': 'Ansiform',
   'app.tagline': 'Ansible templates without the YAML',
+  'app.loading': 'Loading…',
 
   'nav.home': 'Home',
   'nav.skipToContent': 'Skip to main content',
