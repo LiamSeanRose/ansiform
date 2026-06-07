@@ -5,6 +5,11 @@ const KNOWN = [
   'ansible-jinja2-filters-cheatsheet',
   'ansible-variable-precedence',
   'awx-survey-alternative',
+  'group-vars-vs-host-vars',
+  'ansible-network-automation-without-awx',
+  'ansible-ipaddr-filter',
+  'ansible-cisco-ios-config-from-a-form',
+  'ansible-cisco-nxos-config-from-a-form',
 ];
 
 describe('reference registry', () => {
