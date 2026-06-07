@@ -36,6 +36,7 @@ const CATEGORIES: { id: string; slugs: string[] }[] = [
       'ssh-hardening',
       'banners',
       'device-hardening',
+      'junos-system',
     ],
   },
 ];
