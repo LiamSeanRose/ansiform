@@ -161,6 +161,9 @@ export const en = {
   'output.varsDiff.errorTooLarge': 'That file is too large to compare here.',
   'output.varsDiff.errorParse': 'That does not parse as YAML — check the indentation and try again.',
   'output.varsDiff.errorShape': 'A group_vars/host_vars file must be a mapping of keys at the top level.',
+  // Per-key selection of which changes to apply (#93).
+  'output.varsDiff.includeKey': 'Include {key} in the block to paste',
+  'output.varsDiff.noneSelected': 'No keys selected — tick at least one to build a block to paste.',
 
   // Composition / build page (#26).
   'build.title': 'Build a var-file set',

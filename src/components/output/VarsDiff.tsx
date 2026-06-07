@@ -16,8 +16,8 @@
  * The whole panel is a collapsed `<details>` so it stays out of the way until an
  * operator with an existing file reaches for it.
  */
-import { useId, useMemo, useState } from 'react';
-import { diffVars, type VarsDiffError } from '../../core/output/vars-diff';
+import { useEffect, useId, useMemo, useState } from 'react';
+import { buildBlock, diffVars, type VarsDiffError } from '../../core/output/vars-diff';
 import { copyText } from './clipboard';
 
 /** Externalized diff copy; the page builds this from the i18n catalogue. */
@@ -40,6 +40,10 @@ export interface VarsDiffMessages {
   errorTooLarge: string;
   errorParse: string;
   errorShape: string;
+  /** Accessible label for a key's include checkbox (#93); `{key}` is interpolated. */
+  includeKey: string;
+  /** Shown when every selectable key has been unticked (#93). */
+  noneSelected: string;
 }
 
 export interface VarsDiffProps {
@@ -67,8 +71,36 @@ export function VarsDiff({ generated, messages: m }: VarsDiffProps) {
   const trimmed = pasted.trim().length > 0;
   const result = useMemo(() => diffVars(pasted, generated), [pasted, generated]);
 
+  // Keys the user can choose to apply: every added + changed key, in generated
+  // order. Unchanged keys aren't selectable — there's nothing to apply.
+  const selectableKeys = useMemo(
+    () => (result.ok ? [...result.added, ...result.changed] : []),
+    [result],
+  );
+  // Per-key include selection (#93). Ephemeral — never persisted. Resets to "all
+  // selected" whenever the diff changes (new paste / new generated vars).
+  const selectableSig = selectableKeys.join('\n');
+  const [selected, setSelected] = useState<Set<string>>(() => new Set(selectableKeys));
+  useEffect(() => {
+    setSelected(new Set(selectableSig ? selectableSig.split('\n') : []));
+  }, [selectableSig]);
+
+  const toggle = (key: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+
+  // The block reflects the current selection — same byte-correct path as the core.
+  const block = useMemo(
+    () => (result.ok ? buildBlock(generated, selected) : ''),
+    [result.ok, generated, selected],
+  );
+
   const handleCopy = async () => {
-    const ok = await copyText(result.block);
+    const ok = await copyText(block);
     setStatus(ok ? m.copiedStatus : m.copyFailedStatus);
   };
 
@@ -116,7 +148,15 @@ export function VarsDiff({ generated, messages: m }: VarsDiffProps) {
                 <ul className="vars-diff__keys">
                   {added.map((e) => (
                     <li key={e.key} className="vars-diff__key">
-                      <code>{e.key}</code>
+                      <label className="vars-diff__check">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(e.key)}
+                          onChange={() => toggle(e.key)}
+                          aria-label={m.includeKey.replace('{key}', e.key)}
+                        />{' '}
+                        <code>{e.key}</code>
+                      </label>
                     </li>
                   ))}
                 </ul>
@@ -131,7 +171,15 @@ export function VarsDiff({ generated, messages: m }: VarsDiffProps) {
                 <ul className="vars-diff__keys">
                   {changed.map((e) => (
                     <li key={e.key} className="vars-diff__key">
-                      <code>{e.key}</code>{' '}
+                      <label className="vars-diff__check">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(e.key)}
+                          onChange={() => toggle(e.key)}
+                          aria-label={m.includeKey.replace('{key}', e.key)}
+                        />{' '}
+                        <code>{e.key}</code>
+                      </label>{' '}
                       <span className="vars-diff__current">
                         {m.currentLabel} <code>{e.existing}</code>
                       </span>
@@ -156,8 +204,10 @@ export function VarsDiff({ generated, messages: m }: VarsDiffProps) {
               </section>
             )}
 
-            {result.block === '' ? (
+            {selectableKeys.length === 0 ? (
               <p className="vars-diff__no-changes">{m.noChanges}</p>
+            ) : block === '' ? (
+              <p className="vars-diff__no-changes">{m.noneSelected}</p>
             ) : (
               <section className="vars-diff__block-section">
                 <div className="vars-diff__block-header">
@@ -169,7 +219,7 @@ export function VarsDiff({ generated, messages: m }: VarsDiffProps) {
                 <p className="vars-diff__block-note">{m.blockNote}</p>
                 {/* Text node only — the YAML is data, never markup. */}
                 <pre className="vars-diff__block" tabIndex={0} aria-label={m.blockHeading}>
-                  {result.block}
+                  {block}
                 </pre>
               </section>
             )}

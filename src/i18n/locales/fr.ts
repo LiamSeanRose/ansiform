@@ -151,6 +151,10 @@ export const fr: Messages = {
     'Cela ne s’analyse pas comme du YAML — vérifiez l’indentation et réessayez.',
   'output.varsDiff.errorShape':
     'Un fichier group_vars/host_vars doit être un mappage de clés au premier niveau.',
+  // Sélection par clé des changements à appliquer (#93).
+  'output.varsDiff.includeKey': 'Inclure {key} dans le bloc à coller',
+  'output.varsDiff.noneSelected':
+    'Aucune clé sélectionnée — cochez-en au moins une pour construire un bloc à coller.',
 
   'build.title': 'Composer un jeu de variables',
   'build.lede':

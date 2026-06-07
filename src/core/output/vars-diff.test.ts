@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { diffVars, parseVarsYaml, SECRET_MASK, MAX_VARS_LENGTH } from './vars-diff';
+import { buildBlock, diffVars, parseVarsYaml, SECRET_MASK, MAX_VARS_LENGTH } from './vars-diff';
 
 describe('parseVarsYaml', () => {
   it('treats empty / whitespace / comments-only as a valid empty mapping', () => {
@@ -153,5 +153,26 @@ describe('diffVars', () => {
     expect(r.changed).toEqual(['hostname']);
     // The vault key is the file's own — not a generated key — so it is left alone.
     expect(r.entries.map((e) => e.key)).toEqual(['hostname']);
+  });
+});
+
+describe('buildBlock (#93 — per-key selection)', () => {
+  const generated = { hostname: 'r1', vlan_id: 20, domain: 'example.com' };
+
+  it('emits only the selected keys, in generated order regardless of selection order', () => {
+    expect(buildBlock(generated, ['domain', 'hostname'])).toBe('hostname: r1\ndomain: example.com\n');
+  });
+
+  it('accepts a Set and ignores keys not in generated', () => {
+    expect(buildBlock(generated, new Set(['vlan_id', 'not_a_key']))).toBe('vlan_id: 20\n');
+  });
+
+  it('returns empty string for an empty selection', () => {
+    expect(buildBlock(generated, [])).toBe('');
+  });
+
+  it('matches diffVars.block when given all added + changed keys', () => {
+    const r = diffVars('hostname: r1\nvlan_id: 10\n', generated); // hostname unchanged
+    expect(buildBlock(generated, [...r.added, ...r.changed])).toBe(r.block);
   });
 });

@@ -87,6 +87,8 @@ const messages: WorkbenchMessages = {
     errorTooLarge: 'Too large.',
     errorParse: 'Not YAML.',
     errorShape: 'Must be a mapping.',
+    includeKey: 'Include {key} in the block',
+    noneSelected: 'No keys selected.',
   },
   preview: {
     regionLabel: 'Device CLI preview',

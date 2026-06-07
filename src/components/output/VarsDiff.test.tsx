@@ -53,6 +53,8 @@ const messages: VarsDiffMessages = {
   errorTooLarge: 'Too large.',
   errorParse: 'Not YAML.',
   errorShape: 'Must be a mapping.',
+  includeKey: 'Include {key} in the block',
+  noneSelected: 'No keys selected.',
 };
 
 function paste(el: HTMLElement, value: string) {
@@ -139,5 +141,57 @@ describe('VarsDiff', () => {
 
     expect(writeText).toHaveBeenCalledWith('vlan_id: 20\n');
     expect(el.querySelector('.vars-diff__status')!.textContent).toBe('Block copied.');
+  });
+
+  // Per-key selection (#93)
+  const checkbox = (el: HTMLElement, key: string) =>
+    el.querySelector<HTMLInputElement>(`input[aria-label="Include ${key} in the block"]`)!;
+
+  it('renders a checkbox per added and changed key, all ticked by default', () => {
+    const el = render(
+      <VarsDiff generated={{ hostname: 'r1', vlan_id: 20, domain: 'x' }} messages={messages} />,
+    );
+    paste(el, 'hostname: r1\nvlan_id: 10\n'); // unchanged: hostname, changed: vlan_id, added: domain
+    expect(checkbox(el, 'vlan_id').checked).toBe(true);
+    expect(checkbox(el, 'domain').checked).toBe(true);
+    // unchanged keys are not selectable
+    expect(el.querySelector('input[aria-label="Include hostname in the block"]')).toBeNull();
+    expect(el.querySelector('.vars-diff__block')!.textContent).toBe('vlan_id: 20\ndomain: x\n');
+  });
+
+  it('unticking a key drops it from the block', () => {
+    const el = render(<VarsDiff generated={{ vlan_id: 20, domain: 'x' }} messages={messages} />);
+    paste(el, '{}\n'); // empty existing → both added
+    act(() => checkbox(el, 'vlan_id').click());
+    expect(el.querySelector('.vars-diff__block')!.textContent).toBe('domain: x\n');
+  });
+
+  it('copies only the selected subset', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal('navigator', { clipboard: { writeText } });
+    const el = render(<VarsDiff generated={{ vlan_id: 20, domain: 'x' }} messages={messages} />);
+    paste(el, '{}\n');
+    act(() => checkbox(el, 'domain').click()); // drop domain, keep vlan_id
+    await act(async () => el.querySelector<HTMLButtonElement>('.vars-diff__copy')!.click());
+    await flush();
+    expect(writeText).toHaveBeenCalledWith('vlan_id: 20\n');
+  });
+
+  it('shows the none-selected message when every key is unticked', () => {
+    const el = render(<VarsDiff generated={{ vlan_id: 20 }} messages={messages} />);
+    paste(el, '{}\n');
+    act(() => checkbox(el, 'vlan_id').click());
+    expect(el.querySelector('.vars-diff__block')).toBeNull();
+    expect(el.querySelector('.vars-diff__no-changes')!.textContent).toBe('No keys selected.');
+  });
+
+  it('resets selection to all when the diff changes', () => {
+    const el = render(<VarsDiff generated={{ vlan_id: 20, domain: 'x' }} messages={messages} />);
+    paste(el, '{}\n');
+    act(() => checkbox(el, 'vlan_id').click()); // deselect one
+    expect(el.querySelector('.vars-diff__block')!.textContent).toBe('domain: x\n');
+    paste(el, 'vlan_id: 99\n'); // new paste → selection resets to all selectable
+    expect(checkbox(el, 'vlan_id').checked).toBe(true);
+    expect(checkbox(el, 'domain').checked).toBe(true);
   });
 });

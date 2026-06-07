@@ -126,6 +126,8 @@ export function TaskPage() {
       errorTooLarge: t('output.varsDiff.errorTooLarge'),
       errorParse: t('output.varsDiff.errorParse'),
       errorShape: t('output.varsDiff.errorShape'),
+      includeKey: t('output.varsDiff.includeKey'),
+      noneSelected: t('output.varsDiff.noneSelected'),
     },
     preview: {
       regionLabel: t('preview.regionLabel'),

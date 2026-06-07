@@ -181,7 +181,6 @@ export function diffVars(pasted: string, generated: Record<string, unknown>): Va
   const added: string[] = [];
   const changed: string[] = [];
   const unchanged: string[] = [];
-  const blockVars: Record<string, unknown> = {};
 
   for (const key of Object.keys(generated)) {
     const inExisting = Object.prototype.hasOwnProperty.call(existing, key);
@@ -203,9 +202,26 @@ export function diffVars(pasted: string, generated: Record<string, unknown>): Va
     else if (status === 'changed') changed.push(key);
     else unchanged.push(key);
 
-    if (status === 'added' || status === 'changed') blockVars[key] = generated[key];
   }
 
-  const block = Object.keys(blockVars).length > 0 ? toYaml(blockVars) : '';
+  // The default block is every added + changed key. The UI (#93) can rebuild a
+  // narrower block from a user-selected subset via `buildBlock` — same pure path.
+  const block = buildBlock(generated, [...added, ...changed]);
   return { ok: true, entries, added, changed, unchanged, block };
+}
+
+/**
+ * Build the paste-able block for a chosen subset of generated keys (#93), in
+ * generated (schema/form) order, via the same byte-correct `toYaml` path as the
+ * YAML sink. Pure. Keys not present in `generated` are ignored; an empty
+ * selection yields `''`. Used both for the default diff block (all added +
+ * changed) and for the UI's per-key selection.
+ */
+export function buildBlock(generated: Record<string, unknown>, keys: Iterable<string>): string {
+  const want = keys instanceof Set ? keys : new Set(keys);
+  const subset: Record<string, unknown> = {};
+  for (const key of Object.keys(generated)) {
+    if (want.has(key)) subset[key] = generated[key];
+  }
+  return Object.keys(subset).length > 0 ? toYaml(subset) : '';
 }

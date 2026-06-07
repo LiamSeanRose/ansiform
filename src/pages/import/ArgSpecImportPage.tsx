@@ -149,6 +149,8 @@ function SpecForm({ schema, t }: { schema: FormSchema; t: ReturnType<typeof useT
     errorTooLarge: t('output.varsDiff.errorTooLarge'),
     errorParse: t('output.varsDiff.errorParse'),
     errorShape: t('output.varsDiff.errorShape'),
+    includeKey: t('output.varsDiff.includeKey'),
+    noneSelected: t('output.varsDiff.noneSelected'),
   };
 
   return (
