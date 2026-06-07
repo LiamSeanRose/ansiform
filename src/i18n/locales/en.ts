@@ -60,6 +60,9 @@ export const en = {
   // Form chrome (#4) — shared by every task. Field labels/help come from the
   // task itself; these are the renderer's own copy.
   'form.requiredLabel': '(required)',
+  // Secret-field handling cue (#92).
+  'form.secretHint':
+    'Stays in your browser, never stored. Encrypt it with Ansible Vault before committing — see the encrypt commands under the output.',
   'form.errorSummaryHeading': 'Please fix the following before continuing:',
   'form.submitLabel': 'Validate',
   'form.error.required': '{label} is required.',
@@ -270,10 +273,6 @@ export const en = {
   'reader.edit.submitLabel': 'Refresh preview',
   'reader.edit.outputHeading': 'Extracted vars (YAML)',
 
-  // Template reader — paste-source selector (#32).
-  'reader.source.label': 'What are you pasting?',
-  'reader.source.template': 'Jinja2 template',
-  'reader.source.argspec': 'argument_specs.yml (exact)',
 
   // Template reader — argument_specs importer (#32). Declarative → exact form.
   'reader.argspec.intro':

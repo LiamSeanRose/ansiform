@@ -27,7 +27,6 @@ import {
 import type { Vendor } from '../../core/tasks/vendor';
 import { hasVaultBlock, looksLikeSecretName, looksLikeSetForm, segmentTemplate } from './segment';
 import { EditMode } from './EditMode';
-import { ArgSpecImporter } from './ArgSpecImporter';
 
 // Pure + stable: build the seed filter registry once for the whole page.
 const registry = createSeedRegistry();
@@ -69,9 +68,6 @@ export function TemplateReaderPage() {
   // validation are NOT inferred. Unchecking the gate drops back to read-only.
   const [acked, setAcked] = useState(false);
   const [mode, setMode] = useState<'read' | 'edit'>('read');
-  // What kind of artifact is being pasted: a Jinja2 template (the explainer, the
-  // default) or a declarative `argument_specs` (the exact importer, #32).
-  const [source, setSource] = useState<'template' | 'argspec'>('template');
   // Preview target (#70): labels the render and applies the non-line-CLI floor.
   const [previewVendor, setPreviewVendor] = useState<Vendor>('cisco-ios');
   const ids = useId();
@@ -113,32 +109,6 @@ export function TemplateReaderPage() {
         {t('reader.toImportText')} <Link to="/import">{t('reader.toImportLink')}</Link>
       </p>
 
-      <fieldset className="form__group reader__source">
-        <legend className="form__legend">{t('reader.source.label')}</legend>
-        <label className="reader__source-opt">
-          <input
-            type="radio"
-            name="reader-source"
-            checked={source === 'template'}
-            onChange={() => setSource('template')}
-          />{' '}
-          {t('reader.source.template')}
-        </label>
-        <label className="reader__source-opt">
-          <input
-            type="radio"
-            name="reader-source"
-            checked={source === 'argspec'}
-            onChange={() => setSource('argspec')}
-          />{' '}
-          {t('reader.source.argspec')}
-        </label>
-      </fieldset>
-
-      {source === 'argspec' && <ArgSpecImporter t={t} />}
-
-      {source === 'template' && (
-        <>
       <div className="form-field">
         <label className="form-field__label" htmlFor={`${ids}-paste`}>
           {t('reader.pasteLabel')}
@@ -315,8 +285,6 @@ export function TemplateReaderPage() {
             </div>
           </div>
           )}
-        </>
-      )}
         </>
       )}
     </section>

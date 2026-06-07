@@ -66,7 +66,11 @@ export function FieldControl({
   const helpId = field.help ? `${fieldId}-help` : undefined;
   const errorId = error ? `${fieldId}-error` : undefined;
   const warningId = warning ? `${fieldId}-warning` : undefined;
-  const aria = describedBy(helpId, errorId, warningId);
+  // Secret-handling cue (#92): a one-line reminder on secret fields that the
+  // value stays local and must be vaulted before committing. The encrypt
+  // commands themselves are surfaced by the vault hand-off below the output.
+  const secretHintId = field.type === 'secret' ? `${fieldId}-secret` : undefined;
+  const aria = describedBy(helpId, errorId, warningId, secretHintId);
   const invalid = error ? true : undefined;
   const label = t(field.label);
 
@@ -86,6 +90,12 @@ export function FieldControl({
   const errorNode = error ? (
     <span className="form-field__error" id={errorId}>
       {t(messages.errors[error.code], { label, ...error.params })}
+    </span>
+  ) : null;
+
+  const secretHintNode = secretHintId ? (
+    <span className="form-field__secret-hint" id={secretHintId}>
+      {t('form.secretHint')}
     </span>
   ) : null;
 
@@ -133,6 +143,7 @@ export function FieldControl({
       </label>
       {!isCheckbox && control}
       {help}
+      {secretHintNode}
       {errorNode}
       {warningNode}
     </div>

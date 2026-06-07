@@ -55,6 +55,9 @@ export const fr: Messages = {
   'footer.tagline': 'Côté client · sans transfert de données · libre et open source (Apache-2.0)',
 
   'form.requiredLabel': '(obligatoire)',
+  // Indication de gestion des champs secrets (#92).
+  'form.secretHint':
+    'Reste dans votre navigateur, jamais enregistré. Chiffrez-le avec Ansible Vault avant de le committer — voir les commandes de chiffrement sous la sortie.',
   'form.errorSummaryHeading': 'Veuillez corriger les points suivants avant de continuer :',
   'form.submitLabel': 'Valider',
   'form.error.required': '{label} est obligatoire.',
@@ -261,10 +264,6 @@ export const fr: Messages = {
   'reader.edit.submitLabel': 'Actualiser l’aperçu',
   'reader.edit.outputHeading': 'Variables extraites (YAML)',
 
-  // Lecteur de template — sélecteur de source collée (#32).
-  'reader.source.label': 'Que collez-vous ?',
-  'reader.source.template': 'Template Jinja2',
-  'reader.source.argspec': 'argument_specs.yml (exact)',
 
   // Lecteur de template — importateur argument_specs (#32). Déclaratif → exact.
   'reader.argspec.intro':
