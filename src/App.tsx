@@ -2,6 +2,7 @@ import { Link, Route, Routes } from 'react-router-dom';
 import { useTranslation } from './i18n/useTranslation';
 import { LocaleSwitcher } from './i18n/LocaleSwitcher';
 import { HomePage } from './pages/HomePage';
+import { TasksIndexPage } from './pages/TasksIndexPage';
 import { TaskPage } from './pages/TaskPage';
 import { BuildPage } from './pages/BuildPage';
 import { ReferencePage } from './pages/reference';
@@ -27,7 +28,8 @@ export function App() {
           {t('app.name')}
         </Link>
         <span className="brand-tagline">{t('app.tagline')}</span>
-        <nav className="site-nav" aria-label={t('nav.build')}>
+        <nav className="site-nav" aria-label={t('nav.primary')}>
+          <Link to="/tasks">{t('nav.tasks')}</Link>
           <Link to="/build">{t('nav.build')}</Link>
           <Link to="/reader">{t('nav.reader')}</Link>
         </nav>
@@ -37,6 +39,7 @@ export function App() {
       <main id="main">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/tasks" element={<TasksIndexPage />} />
           <Route path="/tasks/:task" element={<TaskPage />} />
           <Route path="/build" element={<BuildPage />} />
           <Route path="/reader" element={<TemplateReaderPage />} />

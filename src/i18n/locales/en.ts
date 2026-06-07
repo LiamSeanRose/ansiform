@@ -15,7 +15,9 @@ export const en = {
   'nav.home': 'Home',
   'nav.skipToContent': 'Skip to main content',
   'nav.language': 'Language',
+  'nav.tasks': 'Tasks',
   'nav.build': 'Build',
+  'nav.primary': 'Primary',
 
   'home.title': 'Ansiform',
   'home.lede':
@@ -102,6 +104,22 @@ export const en = {
   'build.outputHeading': 'Composed files',
   'build.outputEmpty': 'Filled tasks appear here as group_vars / host_vars files.',
   'build.collision': 'Conflicting keys (last value wins — resolve before use): {keys}',
+
+  // Task discovery index (#35) — /tasks, grouped by function + filterable.
+  'tasksIndex.title': 'Task library',
+  'tasksIndex.lede':
+    'Browse every task by function. Each renders the same form to Cisco IOS, IOS-XE, NX-OS, and Arista EOS — open one to fill it in.',
+  'tasksIndex.searchLabel': 'Filter tasks',
+  'tasksIndex.searchPlaceholder': 'Search by name or keyword…',
+  'tasksIndex.resultsCount': '{count} task(s)',
+  'tasksIndex.empty': 'No tasks match your search.',
+  'tasksIndex.vendorsLabel': 'Renders:',
+  'tasksIndex.category.interfaces': 'Interfaces & addressing',
+  'tasksIndex.category.switching': 'VLANs & switching',
+  'tasksIndex.category.routing': 'Routing',
+  'tasksIndex.category.policy': 'Traffic policy',
+  'tasksIndex.category.management': 'Management & hardening',
+  'tasksIndex.category.other': 'Other',
 
   // Template reader / explainer (#30) — read-only, beta, walled off from curated.
   'nav.reader': 'Template reader',

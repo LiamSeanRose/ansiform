@@ -13,7 +13,9 @@ export const fr: Messages = {
   'nav.home': 'Accueil',
   'nav.skipToContent': 'Aller au contenu principal',
   'nav.language': 'Langue',
+  'nav.tasks': 'Tâches',
   'nav.build': 'Composer',
+  'nav.primary': 'Principale',
 
   'home.title': 'Ansiform',
   'home.lede':
@@ -90,6 +92,22 @@ export const fr: Messages = {
   'build.outputEmpty': 'Les tâches remplies apparaissent ici sous forme de fichiers group_vars / host_vars.',
   'build.collision':
     'Clés en conflit (la dernière valeur l’emporte — à résoudre avant utilisation) : {keys}',
+
+  // Index de découverte des tâches (#35) — /tasks, groupé par fonction + filtrable.
+  'tasksIndex.title': 'Bibliothèque de tâches',
+  'tasksIndex.lede':
+    'Parcourez chaque tâche par fonction. Chacune génère le même formulaire pour Cisco IOS, IOS-XE, NX-OS et Arista EOS — ouvrez-en une pour la remplir.',
+  'tasksIndex.searchLabel': 'Filtrer les tâches',
+  'tasksIndex.searchPlaceholder': 'Rechercher par nom ou mot-clé…',
+  'tasksIndex.resultsCount': '{count} tâche(s)',
+  'tasksIndex.empty': 'Aucune tâche ne correspond à votre recherche.',
+  'tasksIndex.vendorsLabel': 'Génère :',
+  'tasksIndex.category.interfaces': 'Interfaces et adressage',
+  'tasksIndex.category.switching': 'VLAN et commutation',
+  'tasksIndex.category.routing': 'Routage',
+  'tasksIndex.category.policy': 'Politique de trafic',
+  'tasksIndex.category.management': 'Gestion et durcissement',
+  'tasksIndex.category.other': 'Autre',
 
   // Lecteur de template (#30) — lecture seule, bêta, distinct des tâches curées.
   'nav.reader': 'Lecteur de template',
