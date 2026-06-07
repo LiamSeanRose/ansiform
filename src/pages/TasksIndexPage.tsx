@@ -19,7 +19,7 @@ import { taskVendors, type Vendor } from '../core/tasks/vendor';
 
 /** Function groups in display order. Slugs not listed fall into `other`. */
 const CATEGORIES: { id: string; slugs: string[] }[] = [
-  { id: 'interfaces', slugs: ['interface-ip', 'interface-ranges'] },
+  { id: 'interfaces', slugs: ['interface-ip', 'interface-ranges', 'etherchannel'] },
   { id: 'switching', slugs: ['vlan'] },
   { id: 'routing', slugs: ['ospf', 'bgp-neighbor', 'static-routes', 'hsrp', 'vrrp'] },
   { id: 'policy', slugs: ['acl', 'prefix-lists', 'route-maps'] },
