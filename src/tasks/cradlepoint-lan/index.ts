@@ -38,6 +38,7 @@ const schema: FormSchema = {
           help: 'task.cradlepoint-lan.field.ip_address.help',
           required: true,
           placeholder: '192.168.0.1/24',
+          format: 'cidr',
         },
         {
           type: 'boolean',
@@ -52,6 +53,7 @@ const schema: FormSchema = {
           label: 'task.cradlepoint-lan.field.dhcp_range_start.label',
           help: 'task.cradlepoint-lan.field.dhcp_range_start.help',
           placeholder: '192.168.0.100',
+          format: 'ipv4',
           omitWhenBlank: true,
         },
         {
@@ -60,6 +62,7 @@ const schema: FormSchema = {
           label: 'task.cradlepoint-lan.field.dhcp_range_end.label',
           help: 'task.cradlepoint-lan.field.dhcp_range_end.help',
           placeholder: '192.168.0.200',
+          format: 'ipv4',
           omitWhenBlank: true,
         },
       ],

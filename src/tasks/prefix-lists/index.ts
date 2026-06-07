@@ -62,6 +62,7 @@ const schema: FormSchema = {
               help: 'task.prefix-lists.field.entries.prefix.help',
               required: true,
               placeholder: '10.0.0.0/8',
+              format: 'cidr',
             },
             {
               type: 'number',

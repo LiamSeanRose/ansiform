@@ -32,6 +32,7 @@ const schema: FormSchema = {
           help: 'task.asa-vpn.field.peer_ip.help',
           required: true,
           placeholder: '203.0.113.2',
+          format: 'ipv4',
         },
         {
           type: 'secret',

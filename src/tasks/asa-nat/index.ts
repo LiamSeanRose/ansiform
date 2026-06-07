@@ -49,6 +49,7 @@ const schema: FormSchema = {
           help: 'task.asa-nat.field.real_address.help',
           required: true,
           placeholder: '10.1.1.10',
+          format: 'ipv4',
         },
         {
           type: 'text',
@@ -92,6 +93,7 @@ const schema: FormSchema = {
           help: 'task.asa-nat.field.mapped.help',
           required: true,
           placeholder: '203.0.113.10',
+          format: 'ipv4',
         },
       ],
     },

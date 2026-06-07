@@ -28,6 +28,7 @@ const schema: FormSchema = {
           help: 'task.hsrp.field.interface.help',
           required: true,
           placeholder: 'Vlan10',
+          format: 'ifname',
         },
         {
           type: 'list',

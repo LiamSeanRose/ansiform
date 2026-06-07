@@ -43,6 +43,7 @@ const schema: FormSchema = {
           help: 'task.nxos-vxlan.field.source_loopback.help',
           required: true,
           placeholder: 'loopback0',
+          format: 'ifname',
         },
       ],
     },

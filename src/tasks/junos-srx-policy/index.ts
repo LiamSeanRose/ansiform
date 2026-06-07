@@ -45,6 +45,7 @@ const schema: FormSchema = {
               label: 'task.junos-srx-policy.field.zone_interface.label',
               help: 'task.junos-srx-policy.field.zone_interface.help',
               placeholder: 'ge-0/0/0.0',
+              format: 'ifname',
               omitWhenBlank: true,
             },
             {
@@ -94,6 +95,7 @@ const schema: FormSchema = {
               help: 'task.junos-srx-policy.field.address_prefix.help',
               required: true,
               placeholder: '10.1.1.0/24',
+              format: 'cidr',
             },
           ],
         },

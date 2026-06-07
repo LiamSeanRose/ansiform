@@ -71,6 +71,7 @@ const schema: FormSchema = {
               help: 'task.etherchannel.field.interface.help',
               required: true,
               placeholder: 'GigabitEthernet0/1',
+              format: 'ifname',
             },
           ],
         },

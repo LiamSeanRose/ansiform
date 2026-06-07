@@ -30,6 +30,7 @@ const schema: FormSchema = {
           help: 'task.asa-interface.field.interface.help',
           required: true,
           placeholder: 'GigabitEthernet0/0',
+          format: 'ifname',
         },
         {
           type: 'text',
@@ -63,6 +64,7 @@ const schema: FormSchema = {
           help: 'task.asa-interface.field.ip_address.help',
           required: true,
           placeholder: '203.0.113.1/24',
+          format: 'cidr',
         },
         {
           type: 'boolean',

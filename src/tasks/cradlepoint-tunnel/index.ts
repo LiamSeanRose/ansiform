@@ -46,6 +46,7 @@ const schema: FormSchema = {
           help: 'task.cradlepoint-tunnel.field.remote_gateway.help',
           required: true,
           placeholder: '198.51.100.1',
+          format: 'ipv4',
         },
         {
           type: 'text',
@@ -54,6 +55,7 @@ const schema: FormSchema = {
           help: 'task.cradlepoint-tunnel.field.local_network.help',
           required: true,
           placeholder: '192.168.0.0/24',
+          format: 'cidr',
         },
         {
           type: 'text',
@@ -62,6 +64,7 @@ const schema: FormSchema = {
           help: 'task.cradlepoint-tunnel.field.remote_network.help',
           required: true,
           placeholder: '10.0.0.0/24',
+          format: 'cidr',
         },
         {
           type: 'secret',

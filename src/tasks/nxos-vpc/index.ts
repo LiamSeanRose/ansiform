@@ -30,6 +30,7 @@ const schema: FormSchema = {
           help: 'task.nxos-vpc.field.peer_keepalive_dest.help',
           required: true,
           placeholder: '10.1.1.2',
+          format: 'ipv4',
         },
         {
           type: 'text',
@@ -38,6 +39,7 @@ const schema: FormSchema = {
           help: 'task.nxos-vpc.field.peer_keepalive_source.help',
           required: true,
           placeholder: '10.1.1.1',
+          format: 'ipv4',
         },
         {
           type: 'text',

@@ -34,6 +34,7 @@ const schema: FormSchema = {
           help: 'task.ios-nat.field.inside_interface.help',
           required: true,
           placeholder: 'GigabitEthernet0/1',
+          format: 'ifname',
         },
         {
           type: 'text',
@@ -42,6 +43,7 @@ const schema: FormSchema = {
           help: 'task.ios-nat.field.outside_interface.help',
           required: true,
           placeholder: 'GigabitEthernet0/0',
+          format: 'ifname',
         },
         {
           type: 'text',
@@ -67,6 +69,7 @@ const schema: FormSchema = {
               help: 'task.ios-nat.field.local_ip.help',
               required: true,
               placeholder: '10.0.0.10',
+              format: 'ipv4',
             },
             {
               type: 'text',
@@ -75,6 +78,7 @@ const schema: FormSchema = {
               help: 'task.ios-nat.field.global_ip.help',
               required: true,
               placeholder: '203.0.113.10',
+              format: 'ipv4',
             },
           ],
         },

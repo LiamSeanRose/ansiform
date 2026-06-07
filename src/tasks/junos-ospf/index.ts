@@ -50,6 +50,7 @@ const schema: FormSchema = {
               help: 'task.junos-ospf.field.interface.help',
               required: true,
               placeholder: 'ge-0/0/0.0',
+              format: 'ifname',
             },
             {
               type: 'text',

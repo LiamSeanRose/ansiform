@@ -25,6 +25,7 @@ const schema: FormSchema = {
           help: 'task.l2-hardening.field.interface.help',
           required: true,
           placeholder: 'GigabitEthernet0/1',
+          format: 'ifname',
         },
         {
           type: 'boolean',

@@ -46,6 +46,7 @@ const schema: FormSchema = {
           label: 'task.syslog.field.source_interface.label',
           help: 'task.syslog.field.source_interface.help',
           placeholder: 'Loopback0',
+          format: 'ifname',
           omitWhenBlank: true,
         },
         {

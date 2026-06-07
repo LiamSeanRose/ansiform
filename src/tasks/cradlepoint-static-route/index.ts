@@ -33,6 +33,7 @@ const schema: FormSchema = {
           help: 'task.cradlepoint-static-route.field.dest.help',
           required: true,
           placeholder: '10.0.0.0/24',
+          format: 'cidr',
         },
         {
           type: 'text',
@@ -41,6 +42,7 @@ const schema: FormSchema = {
           help: 'task.cradlepoint-static-route.field.gateway.help',
           required: true,
           placeholder: '192.168.0.254',
+          format: 'ipv4',
         },
         {
           type: 'number',

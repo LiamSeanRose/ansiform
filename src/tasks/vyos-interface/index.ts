@@ -26,6 +26,7 @@ const schema: FormSchema = {
           help: 'task.vyos-interface.field.interface.help',
           required: true,
           placeholder: 'eth0',
+          format: 'ifname',
         },
         {
           type: 'text',
@@ -34,6 +35,7 @@ const schema: FormSchema = {
           help: 'task.vyos-interface.field.ip_address.help',
           required: true,
           placeholder: '192.168.1.1/24',
+          format: 'cidr',
         },
         {
           type: 'text',

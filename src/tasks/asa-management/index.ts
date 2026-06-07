@@ -49,6 +49,7 @@ const schema: FormSchema = {
               help: 'task.asa-management.field.network.help',
               required: true,
               placeholder: '10.0.0.0',
+              format: 'ipv4',
             },
             {
               type: 'text',

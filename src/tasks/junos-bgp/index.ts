@@ -74,6 +74,7 @@ const schema: FormSchema = {
               help: 'task.junos-bgp.field.peer.help',
               required: true,
               placeholder: '203.0.113.1',
+              format: 'ipv4',
             },
           ],
         },
@@ -83,6 +84,7 @@ const schema: FormSchema = {
           label: 'task.junos-bgp.field.local_address.label',
           help: 'task.junos-bgp.field.local_address.help',
           placeholder: '203.0.113.2',
+          format: 'ipv4',
           omitWhenBlank: true,
         },
         {
