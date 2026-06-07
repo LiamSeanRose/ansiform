@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues, ListField } from '../../core';
@@ -119,5 +120,26 @@ describe('ntp-auth task', () => {
         validateForm(schema, { ...initialValues(schema), keys: [{ secret: 'x' }] }).keys?.code,
       ).toBe('incomplete');
     });
+  });
+
+  // #34: NX-OS and EOS NTP-auth CLI verified exact (identical lines) and locked.
+  describe('per-vendor preview (#34)', () => {
+    const def = task.definition;
+    const expected = [
+      'ntp authenticate',
+      'ntp authentication-key 1 md5 kEy-One',
+      'ntp server 192.0.2.10 key 1',
+      'ntp server 192.0.2.11',
+      '',
+    ].join('\n');
+
+    for (const vendor of ['cisco-nxos', 'arista-eos'] as const) {
+      it(`${vendor} is exact: authenticate, md5 key, and per-server key binding`, () => {
+        expect(vendorTemplateApproximate(def, vendor)).toBe(false);
+        const out = renderPreview(templateForVendor(def, vendor), full, registry);
+        expect(out.fidelity).toBe('exact');
+        expect(out.text).toBe(expected);
+      });
+    }
   });
 });

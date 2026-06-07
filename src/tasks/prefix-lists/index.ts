@@ -106,10 +106,11 @@ export const task: TaskModule = {
       // IOS-XE renders identical `ip prefix-list … seq … ge/le` CLI (#27): an
       // explicit per-vendor claim, not an inference.
       'cisco-iosxe': template,
-      // NX-OS and EOS share this prefix-list syntax, but neither has had a curated
-      // pass here — ship approximate so the preview shows the degrade banner.
-      'cisco-nxos': { template, fidelity: 'approximate' },
-      'arista-eos': { template, fidelity: 'approximate' },
+      // NX-OS and EOS render this prefix-list CLI identically, verified exact
+      // (#34) against Cisco's Nexus and Arista's prefix-list references
+      // (`ip prefix-list NAME [seq N] {permit|deny} <prefix> [ge N] [le N]`).
+      'cisco-nxos': template,
+      'arista-eos': template,
     },
     defaultScope: { kind: 'group', name: 'all' },
   },

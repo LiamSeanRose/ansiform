@@ -107,13 +107,14 @@ export const task: TaskModule = {
       'Generate Ansible group_vars and a Cisco IOS authenticated NTP configuration — MD5 authentication keys and the NTP servers that reference them — with a live device-CLI preview.',
     schema,
     template,
-    // IOS-XE NTP CLI is identical (exact). NX-OS/EOS look the same on these lines
-    // but their trusted-key handling isn't curated-verified here (#27), so they ride
-    // the same template flagged approximate — visible degrade, never a false exact.
+    // IOS-XE NTP CLI is identical. NX-OS and EOS use the same lines, verified exact
+    // (#34) against Cisco's Nexus and Arista's NTP references: `ntp authenticate`,
+    // `ntp authentication-key <id> md5 <key>`, and `ntp server <host> [key <id>]`.
+    // (`ntp trusted-key` is a separate, out-of-scope line on every platform.)
     templates: {
       'cisco-iosxe': template,
-      'cisco-nxos': { template, fidelity: 'approximate' },
-      'arista-eos': { template, fidelity: 'approximate' },
+      'cisco-nxos': template,
+      'arista-eos': template,
     },
     defaultScope: { kind: 'group', name: 'all' },
   },

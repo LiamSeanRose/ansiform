@@ -88,10 +88,10 @@ export const task: TaskModule = {
       // claim, not an inference — same schema, same vars.
       'cisco-iosxe': template,
       // EOS uses the same flat `neighbor … remote-as/description/password` form,
-      // but this has not had a curated-correctness pass — ship approximate so the
-      // preview shows the degrade banner. (NX-OS configures the neighbor in a
-      // submode, a genuinely different model, so it is omitted rather than guessed.)
-      'arista-eos': { template, fidelity: 'approximate' },
+      // verified exact (#34) against Arista's BGP references. (NX-OS configures the
+      // neighbor in a submode — a genuinely different model — so it is omitted
+      // rather than guessed.)
+      'arista-eos': template,
     },
     defaultScope: { kind: 'host', name: 'router1' },
   },

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { task } from './index';
 import { groupVarsYamlSink } from '../../core/output/yaml';
 import { renderPreview } from '../../core/preview';
+import { templateForVendor, vendorTemplateApproximate } from '../../core/tasks/vendor';
 import { createSeedRegistry } from '../../core/filters/seed';
 import { initialValues, validateForm } from '../../components/form';
 import type { FormValues, ListField } from '../../core';
@@ -105,5 +106,28 @@ describe('route-maps task', () => {
         'incomplete',
       );
     });
+  });
+
+  // #34: NX-OS and EOS route-map match/set CLI verified exact and locked.
+  describe('per-vendor preview (#34)', () => {
+    const def = task.definition;
+    const expected = [
+      'route-map SET-LOCALPREF permit 10',
+      ' match ip address prefix-list MGMT-NETS',
+      ' set local-preference 200',
+      'route-map SET-LOCALPREF permit 20',
+      ' set metric 100',
+      'route-map SET-LOCALPREF deny 30',
+      '',
+    ].join('\n');
+
+    for (const vendor of ['cisco-nxos', 'arista-eos'] as const) {
+      it(`${vendor} is exact and renders one route-map stanza per sequence`, () => {
+        expect(vendorTemplateApproximate(def, vendor)).toBe(false);
+        const out = renderPreview(templateForVendor(def, vendor), full, registry);
+        expect(out.fidelity).toBe('exact');
+        expect(out.text).toBe(expected);
+      });
+    }
   });
 });

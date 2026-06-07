@@ -114,10 +114,12 @@ export const task: TaskModule = {
       // IOS-XE renders identical `route-map` match/set CLI (#27): an explicit
       // per-vendor claim, not an inference.
       'cisco-iosxe': template,
-      // NX-OS and EOS share this route-map syntax, but neither has had a curated
-      // pass here — ship approximate so the preview shows the degrade banner.
-      'cisco-nxos': { template, fidelity: 'approximate' },
-      'arista-eos': { template, fidelity: 'approximate' },
+      // NX-OS and EOS render this route-map match/set CLI identically, verified
+      // exact (#34) against Cisco's Nexus Route Policy Manager guide and Arista's
+      // route-map manual (`route-map NAME <action> <seq>`, `match ip address
+      // prefix-list`, `set local-preference`, `set metric`).
+      'cisco-nxos': template,
+      'arista-eos': template,
     },
     defaultScope: { kind: 'group', name: 'all' },
   },
